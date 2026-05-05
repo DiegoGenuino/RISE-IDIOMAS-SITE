@@ -6,6 +6,8 @@ import type { SanityPortableBodyNode, SanityPortableTextBlock } from "../../lib/
 import { getBlogPostBySlug, getBlogSlugs } from "../../lib/sanity.blog";
 import PortableRichContent from "../../components/blog/portable/PortableRichContent.astro";
 
+export const prerender = false;
+
 export async function getStaticPaths() {
   const slugs = await getBlogSlugs();
 
@@ -78,12 +80,14 @@ function buildBodyTocItems(body: SanityPortableBodyNode[] | undefined): ArticleT
 }
 
 const { slug } = Astro.params;
+const isPreview = Astro.cookies.get('sanity-preview')?.value === '1';
+
 const {
   post,
   relatedPosts,
   errorMessage: blogErrorMessage,
 } = slug
-  ? await getBlogPostBySlug(slug)
+  ? await getBlogPostBySlug(slug, isPreview)
   : {
       post: undefined,
       relatedPosts: [],

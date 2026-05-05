@@ -136,7 +136,7 @@ async function getAutomaticRelatedPosts(post: SanityPostDocument): Promise<BlogP
   return recentCards.map(mapSanityPostCard).slice(0, 3);
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogDetailResult> {
+export async function getBlogPostBySlug(slug: string, isPreview: boolean = false): Promise<BlogDetailResult> {
   if (!isSanityConfigured || !sanityClient) {
     return {
       post: undefined,
@@ -146,9 +146,14 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogDetailResult>
   }
 
   try {
-    const sanityPost = await sanityClient.fetch<SanityPostDocument | null>(BLOG_POST_BY_SLUG_QUERY, {
-      slug,
-    });
+    const sanityPost = await sanityClient
+      .withConfig({
+        perspective: isPreview ? "previewDrafts" : "published",
+        useCdn: !isPreview,
+      })
+      .fetch<SanityPostDocument | null>(BLOG_POST_BY_SLUG_QUERY, {
+        slug,
+      });
 
     if (!sanityPost) {
       return {
