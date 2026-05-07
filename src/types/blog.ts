@@ -69,27 +69,18 @@ export interface BlogSection {
 export interface BlogPost {
   slug: string;
   title: string;
-  titleLines?: string[];
   featured?: boolean;
-  excerpt: string;
+  description: string;
   category: string;
   publishDate: string;
   publishDateLabel: string;
   readingTimeMinutes: number;
-  summaryPoints?: string[];
-  seoDescription?: string;
-  seoTitle?: string;
-  seoImage?: string;
-  canonicalUrl?: string;
-  noIndex?: boolean;
-  coverImage?: BlogPostHeroImage;
-  heroImage?: BlogPostHeroImage;
-  heroGhostWord?: string;
-  lead: string;
+  image?: BlogPostHeroImage;
   portableBody?: SanityPortableBodyNode[];
   author: BlogAuthor;
-  sections: BlogSection[];
   tags: string[];
-  sidebarCta: BlogSidebarCta;
-  footerStats: BlogFooterStat[];
+  callToAction?: {
+    title: string;
+    url: string;
+  };
 }

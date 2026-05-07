@@ -2,21 +2,19 @@ const BLOG_CARD_PROJECTION = `
   _id,
   title,
   "slug": slug.current,
-  excerpt,
+  "description": description,
   "category": category->title,
   "categorySlug": category->slug.current,
   publishedAt,
   readingTimeMinutes,
-  "coverImage": coverImage{
-    alt,
-    "url": asset->url,
-    "width": asset->metadata.dimensions.width,
-    "height": asset->metadata.dimensions.height
+  "image": image{
+    "alt": description,
+    "url": image.asset->url,
+    "width": image.asset->metadata.dimensions.width,
+    "height": image.asset->metadata.dimensions.height
   },
-  "seoDescription": coalesce(seo.description, excerpt),
-  "seoImage": coalesce(seo.image.asset->url, coverImage.asset->url),
-  heroGhostWord,
   featured,
+  status,
   "author": author->{
     name,
     role,
@@ -87,18 +85,7 @@ export const BLOG_POST_BY_SLUG_QUERY = `
     ${BLOG_CARD_PROJECTION},
     "categoryRef": category._ref,
     "tagRefs": tags[]._ref,
-    titleLines,
-    summaryPoints,
-    lead,
-    "heroImage": coalesce(heroImage, coverImage){
-      alt,
-      "url": asset->url,
-      "width": asset->metadata.dimensions.width,
-      "height": asset->metadata.dimensions.height
-    },
-    seoTitle,
-    canonicalUrl,
-    noIndex,
+    callToAction,
     body[]{
       ...,
       _type == "block" => {
@@ -135,37 +122,6 @@ export const BLOG_POST_BY_SLUG_QUERY = `
           "height": asset->metadata.dimensions.height
         }
       }
-    },
-    sections[]{
-      tocLabel,
-      sectionAnchor,
-      heading,
-      headingHighlight,
-      blocks[]{
-        _type,
-        content,
-        label,
-        quote,
-        attribution,
-        items[]{
-          title,
-          description
-        }
-      }
-    },
-    sidebarCta{
-      label,
-      text,
-      buttonText,
-      buttonUrl
-    },
-    footerStats[]{
-      label,
-      value,
-      emphasis
-    },
-    "relatedPostsManual": relatedPostsManual[]->{
-      ${BLOG_CARD_PROJECTION}
     }
   }
 `;

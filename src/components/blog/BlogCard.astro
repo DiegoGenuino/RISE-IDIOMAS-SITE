@@ -47,13 +47,13 @@ const cardIllustrationSvg = renderCardIllustration(categoryKey);
   <a class="card-link" href={`/blog/${post.slug}`}>
     <div class="card-img">
       {
-        post.coverImage?.url ? (
+        post.image?.url ? (
           <img
             class="card-cover-image"
-            src={post.coverImage.url}
-            alt={post.coverImage.alt || `Capa do post ${post.title}`}
-            width={post.coverImage.width}
-            height={post.coverImage.height}
+            src={post.image.url}
+            alt={post.image.alt || `Capa do post ${post.title}`}
+            width={post.image.width}
+            height={post.image.height}
             loading="lazy"
             decoding="async"
           />
@@ -70,7 +70,7 @@ const cardIllustrationSvg = renderCardIllustration(categoryKey);
       </div>
 
       <h3 class="card-title">{post.title}</h3>
-      <p class="card-excerpt">{post.excerpt}</p>
+      <p class="card-excerpt">{post.description}</p>
 
       <div class="card-foot">
         <span class="card-read">{post.readingTimeMinutes} min</span>

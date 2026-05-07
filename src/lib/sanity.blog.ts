@@ -164,18 +164,7 @@ export async function getBlogPostBySlug(slug: string, isPreview: boolean = false
     }
 
     const post = mapSanityPost(sanityPost);
-    let relatedPosts: BlogPost[] = [];
-
-    if (sanityPost.relatedPostsManual && sanityPost.relatedPostsManual.length > 0) {
-      relatedPosts = sanityPost.relatedPostsManual
-        .map(mapSanityPostCard)
-        .filter((relatedPost) => relatedPost.slug !== post.slug)
-        .slice(0, 3);
-    }
-
-    if (relatedPosts.length === 0) {
-      relatedPosts = await getAutomaticRelatedPosts(sanityPost);
-    }
+    let relatedPosts: BlogPost[] = await getAutomaticRelatedPosts(sanityPost);
 
     return {
       post,

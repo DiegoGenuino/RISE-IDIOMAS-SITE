@@ -99,39 +99,31 @@ if (!post) {
 }
 
 const currentPost: BlogPost = post;
-const titleLines =
-  currentPost.titleLines && currentPost.titleLines.length > 0
-    ? currentPost.titleLines
-    : [currentPost.title];
+const titleLines = currentPost.title ? [currentPost.title] : [];
 const hasPortableBody = Boolean(currentPost.portableBody && currentPost.portableBody.length > 0);
-const hasLegacySections = currentPost.sections.length > 0;
-const hasSectionNavigation = hasLegacySections && !hasPortableBody;
-const bodyTocItems = hasPortableBody ? buildBodyTocItems(currentPost.portableBody || []) : [];
-const legacyTocItems: ArticleTocItem[] = hasSectionNavigation
-  ? currentPost.sections.map((section) => ({
-      id: section.id,
-      label: section.tocLabel,
-      level: "h2",
-    }))
-  : [];
-const tocItems = hasPortableBody ? bodyTocItems : legacyTocItems;
+const tocItems: ArticleTocItem[] = buildBodyTocItems(currentPost.portableBody);
 const hasToc = tocItems.length > 0;
-const summaryPoints = (currentPost.summaryPoints || []).filter(Boolean);
-const hasHeroImage = Boolean(currentPost.heroImage?.url);
-const heroImageAlt = currentPost.heroImage?.alt || `Imagem do post ${currentPost.title}`;
+const hasSectionNavigation = false; // We don't have sections anymore
+const defaultStats = [
+  { label: "Publicado em", valueHtml: currentPost.publishDate },
+  { label: "Leitura", valueHtml: `${currentPost.readingTimeMinutes} min` },
+  { label: "Categoria", valueHtml: currentPost.category },
+];
+const hasHeroImage = Boolean(currentPost.image?.url);
+const heroImageAlt = currentPost.image?.alt || `Imagem do post ${currentPost.title}`;
 const hasAuthorAvatar = Boolean(currentPost.author.avatar?.url);
 const authorAvatarAlt = currentPost.author.avatar?.alt || `Foto de ${currentPost.author.name}`;
 const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
   Astro.url.href,
 )}`;
-const articleImageUrl = new URL(currentPost.seoImage || "/favicon.svg", Astro.url).toString();
+const articleImageUrl = currentPost.image?.url ? new URL(currentPost.image.url, Astro.url).toString() : new URL("/favicon.svg", Astro.url).toString();
 const articleTags = currentPost.tags.slice(0, 6);
 const articlePublishedIso = `${currentPost.publishDate}T00:00:00.000Z`;
 const articleJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Article",
   headline: currentPost.title,
-  description: currentPost.seoDescription || currentPost.excerpt,
+  description: currentPost.description,
   image: [articleImageUrl],
   datePublished: articlePublishedIso,
   dateModified: articlePublishedIso,
@@ -156,11 +148,11 @@ const articleJsonLd = JSON.stringify({
 
 <BaseLayout
   seo={{
-    title: currentPost.seoTitle || currentPost.title,
-    description: currentPost.seoDescription || currentPost.excerpt,
+    title: currentPost.title,
+    description: currentPost.description,
     type: "article",
-    image: currentPost.seoImage || "/favicon.svg",
-    canonicalUrl: currentPost.canonicalUrl,
+    image: currentPost.image?.url || "/favicon.svg",
+    canonicalUrl: undefined,
   }}
 >
   <Fragment slot="head">
@@ -183,7 +175,7 @@ const articleJsonLd = JSON.stringify({
         </Fragment>
       ))
     }
-    {currentPost.noIndex && <meta name="robots" content="noindex, nofollow" />}
+    
     <script type="application/ld+json" set:html={articleJsonLd}></script>
   </Fragment>
 
@@ -306,16 +298,16 @@ const articleJsonLd = JSON.stringify({
           hasHeroImage ? (
             <img
               class="art-hero-image"
-              src={currentPost.heroImage?.url}
+              src={currentPost.image?.url}
               alt={heroImageAlt}
-              width={currentPost.heroImage?.width}
-              height={currentPost.heroImage?.height}
+              width={currentPost.image?.width}
+              height={currentPost.image?.height}
               loading="eager"
               decoding="async"
             />
           ) : (
             <>
-              <div class="art-hero-ghost" aria-hidden="true">{currentPost.heroGhostWord || "FALAR"}</div>
+              <div class="art-hero-ghost" aria-hidden="true">{"RISE IDIOMAS"}</div>
               <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao sobre speaking e fluencia">
                 <path d="M100 140 C100 80 148 40 200 40 C220 40 238 48 252 62 L252 218 C238 232 220 240 200 240 C148 240 100 200 100 140Z" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></path>
                 <path d="M130 100 C138 90 152 92 158 102" stroke="rgba(17,17,32,.12)" stroke-width="1.2" fill="none"></path>
@@ -342,87 +334,15 @@ const articleJsonLd = JSON.stringify({
         }
       </div>
 
-      <div class={`art-body-wrap ${hasSectionNavigation ? "" : "art-body-wrap-no-sections"}`}>
-        {
-          hasSectionNavigation && (
-            <div class="art-rail" aria-hidden="true">
-              {
-                currentPost.sections.map((section, index) => (
-                  <div class="rail-num" id={`rn-${section.id}`}>{String(index + 1).padStart(2, "0")}</div>
-                ))
-              }
-            </div>
-          )
-        }
+      <div class={`art-body-wrap art-body-wrap-no-sections`}>
 
         <div class="art-prose" id="prose">
-          <p class="lead">{currentPost.lead}</p>
-
-          {
-            summaryPoints.length > 0 && (
-              <ul class="summary-points">
-                {summaryPoints.map((point) => <li>{point}</li>)}
-              </ul>
-            )
-          }
-
+          
           {
             hasPortableBody ? (
               <PortableRichContent body={currentPost.portableBody || []} />
             ) : (
-              currentPost.sections.map((section) => (
-                <section id={section.id}>
-                  <h2 set:html={section.headingHtml}></h2>
-                  {
-                    section.blocks.map((block) => {
-                      if (block.type === "paragraph") {
-                        return <Fragment set:html={block.content}></Fragment>;
-                      }
-
-                      if (block.type === "subheading") {
-                        return <h3>{block.content}</h3>;
-                      }
-
-                      if (block.type === "callout") {
-                        return (
-                          <div class="callout">
-                            <div class="callout-label">{block.label}</div>
-                            <div class="callout-content" set:html={block.content}></div>
-                          </div>
-                        );
-                      }
-
-                      if (block.type === "pullquote") {
-                        return (
-                          <div class="pullquote">
-                            <div class="pq-text">{block.quote}</div>
-                            <div class="pq-attr">{block.attribution}</div>
-                          </div>
-                        );
-                      }
-
-                      if (block.type === "numbered-list") {
-                        return (
-                          <ol>
-                            {
-                              block.items.map((item, itemIndex) => (
-                                <li>
-                                  <span class="li-num">{String(itemIndex + 1).padStart(2, "0")}</span>
-                                  <span>
-                                    <strong>{item.title}</strong> {item.description}
-                                  </span>
-                                </li>
-                              ))
-                            }
-                          </ol>
-                        );
-                      }
-
-                      return <hr class="art-rule" />;
-                    })
-                  }
-                </section>
-              ))
+              <p>O conteúdo deste artigo não está disponível de forma portátil.</p>
             )
           }
 
@@ -456,13 +376,15 @@ const articleJsonLd = JSON.stringify({
             )
           }
 
-          <div class="sb-cta">
-            <div class="sb-cta-label">{currentPost.sidebarCta.label}</div>
-            <p class="sb-cta-text">{currentPost.sidebarCta.text}</p>
-            <a href={currentPost.sidebarCta.buttonUrl} class="sb-cta-btn">
-              <span>{currentPost.sidebarCta.buttonText} -></span>
-            </a>
-          </div>
+          {currentPost.callToAction && (
+             <div class="sb-cta">
+               <div class="sb-cta-label">Veja mais</div>
+               <p class="sb-cta-text">{currentPost.callToAction.title}</p>
+               <a href={currentPost.callToAction.url} class="sb-cta-btn">
+                 <span>Acessar -></span>
+               </a>
+             </div>
+          )}
 
           <div class="sb-rel-label">Leia tambem</div>
           {
@@ -528,7 +450,7 @@ const articleJsonLd = JSON.stringify({
 
       <div class="foot-bar">
         {
-          currentPost.footerStats.map((stat) => (
+          defaultStats.map((stat) => (
             <div class="fb">
               <span class="fb-l">{stat.label}</span>
               <span class="fb-v" set:html={stat.valueHtml}></span>
@@ -1859,3 +1781,5 @@ const articleJsonLd = JSON.stringify({
     }
   }
 </style>
+
+

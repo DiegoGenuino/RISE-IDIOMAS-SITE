@@ -188,35 +188,25 @@ export interface SanityPostCardDocument {
   _id: string;
   title?: string;
   slug?: string;
-  excerpt?: string;
+  description?: string;
   category?: string;
   categorySlug?: string;
   publishedAt?: string;
   readingTimeMinutes?: number;
-  coverImage?: SanityHeroImage;
-  seoDescription?: string;
-  seoImage?: string;
-  heroImage?: SanityHeroImage;
-  heroGhostWord?: string;
+  image?: SanityHeroImage;
   featured?: boolean;
   author?: SanityAuthor;
   tags?: string[];
 }
 
 export interface SanityPostDocument extends SanityPostCardDocument {
-  titleLines?: string[];
-  lead?: string;
   body?: SanityPortableBodyNode[];
-  sections?: SanitySection[];
-  summaryPoints?: string[];
-  sidebarCta?: SanitySidebarCta;
-  footerStats?: SanityFooterStat[];
-  seoTitle?: string;
-  canonicalUrl?: string;
-  noIndex?: boolean;
-  relatedPostsManual?: SanityPostCardDocument[];
   categoryRef?: string;
   tagRefs?: string[];
+  callToAction?: {
+    title?: string;
+    url?: string;
+  };
 }
 
 export interface SanitySlugDocument {

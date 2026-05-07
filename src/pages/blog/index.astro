@@ -12,7 +12,7 @@ const featuredPost = posts[normalizedFeaturedPostIndex];
 const gridPosts = posts.filter((_, index) => index !== normalizedFeaturedPostIndex);
 const hasPosts = posts.length > 0;
 const featuredCoverImageAlt = featuredPost
-  ? featuredPost.coverImage?.alt || `Capa do post ${featuredPost.title}`
+  ? featuredPost.image?.alt || `Capa do post ${featuredPost.title}`
   : "Capa do post";
 
 function createCategoryKey(categoryLabel: string): string {
@@ -140,15 +140,15 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             data-category-key={createCategoryKey(featuredPost.category)}
             data-tag-keys={featuredPost.tags.map(createTagKey).join(",")}
           >
-            <div class={`feat-illo ${featuredPost.coverImage?.url ? "feat-illo-with-image" : ""}`}>
+            <div class={`feat-illo ${featuredPost.image?.url ? "feat-illo-with-image" : ""}`}>
               {
-                featuredPost.coverImage?.url ? (
+                featuredPost.image?.url ? (
                   <img
                     class="feat-cover-image"
-                    src={featuredPost.coverImage.url}
+                    src={featuredPost.image.url}
                     alt={featuredCoverImageAlt}
-                    width={featuredPost.coverImage.width}
-                    height={featuredPost.coverImage.height}
+                    width={featuredPost.image.width}
+                    height={featuredPost.image.height}
                     loading="eager"
                     decoding="async"
                   />
@@ -188,7 +188,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                 </div>
 
                 <h2 class="feat-title">{featuredPost.title}</h2>
-                <p class="feat-excerpt">{featuredPost.excerpt}</p>
+                <p class="feat-excerpt">{featuredPost.description}</p>
               </div>
 
               <span class="feat-cta">
