@@ -486,6 +486,39 @@ const articleJsonLd = JSON.stringify({
         progressBar.style.width = progress + "%";
       };
 
+      const scrollSidebarToActive = (activeIndex) => {
+        const sidebar = document.querySelector(".art-sidebar");
+        if (!sidebar) {
+          return;
+        }
+
+        const activeLink = tocLinks[activeIndex];
+        if (!activeLink) {
+          return;
+        }
+
+        // Get positions relative to viewport
+        const linkRect = activeLink.getBoundingClientRect();
+        const sidebarRect = sidebar.getBoundingClientRect();
+
+        // Calculate the link's position relative to the sidebar's content
+        const linkTopRelativeToSidebar = linkRect.top - sidebarRect.top + sidebar.scrollTop;
+
+        // Position the active link at about 1/4 from the sidebar's top for optimal visibility
+        const desiredTopInViewport = sidebarRect.height / 4;
+        const targetScroll = linkTopRelativeToSidebar - desiredTopInViewport;
+
+        // Clamp to valid range [0, maxScroll]
+        const maxScroll = sidebar.scrollHeight - sidebar.clientHeight;
+        const finalScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+
+        // Smooth scroll to the target position
+        sidebar.scrollTo({
+          top: finalScroll,
+          behavior: 'smooth'
+        });
+      };
+
       const setActive = (activeIndex) => {
         tocLinks.forEach((link, index) => {
           link.classList.toggle("active", index === activeIndex);
@@ -495,6 +528,9 @@ const articleJsonLd = JSON.stringify({
           railNumber.classList.toggle("vis", index <= activeIndex);
           railNumber.classList.toggle("cur", index === activeIndex);
         });
+
+        // Scroll sidebar to show active TOC item
+        scrollSidebarToActive(activeIndex);
       };
 
       const sectionObserver = new IntersectionObserver(
