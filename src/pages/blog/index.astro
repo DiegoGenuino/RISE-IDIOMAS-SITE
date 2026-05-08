@@ -12,7 +12,7 @@ const featuredPost = posts[normalizedFeaturedPostIndex];
 const gridPosts = posts.filter((_, index) => index !== normalizedFeaturedPostIndex);
 const hasPosts = posts.length > 0;
 const featuredCoverImageAlt = featuredPost
-  ? featuredPost.image?.alt || `Capa do post ${featuredPost.title}`
+  ? featuredPost.image?.alt || `Capa do post "${featuredPost.title}"`
   : "Capa do post";
 
 function createCategoryKey(categoryLabel: string): string {
@@ -58,7 +58,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   seo={{
     title: "Blog",
     description:
-      "Insights praticos sobre fluencia, carreira e metodologia para evoluir no ingles com estrategia.",
+      "Insights práticos sobre fluência, carreira e metodologia para evoluir no inglês com estratégia.",
     type: "website",
     image: "/favicon.svg",
   }}

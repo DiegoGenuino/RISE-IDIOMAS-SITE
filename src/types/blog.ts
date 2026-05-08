@@ -1,4 +1,4 @@
-import type {SanityPortableBodyNode} from "../lib/sanity.types";
+import type { SanityPortableBodyNode } from "../lib/sanity.types";
 
 export interface BlogAuthor {
   name: string;
