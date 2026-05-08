@@ -604,24 +604,28 @@ const articleJsonLd = JSON.stringify({
     --mid: #8a8a9e;
     --rule: rgba(17, 17, 32, 0.1);
     --rule-strong: rgba(17, 17, 32, 0.2);
+    --blog-side-top: 74px;
+    --blog-side-max-height: calc(100dvh - 96px);
+    --blog-side-padding-block: 52px;
+    --blog-side-padding-inline: 26px;
   }
 
   :global(html),
   :global(body) {
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .blog-shell {
     background: var(--cream);
     color: var(--ink);
     width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   article {
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .blog-alert {
@@ -971,6 +975,8 @@ const articleJsonLd = JSON.stringify({
   .art-body-wrap-no-sections {
     grid-template-columns: minmax(0, 760px) minmax(260px, 320px);
     justify-content: center;
+    min-height: calc(100dvh - var(--blog-side-top));
+    align-items: stretch;
   }
 
   .summary-points {
@@ -1237,13 +1243,12 @@ const articleJsonLd = JSON.stringify({
 
   .art-sidebar {
     border-left: 1px solid var(--rule);
-    padding: 52px 40px;
+    padding: var(--blog-side-padding-block) 40px;
     position: -webkit-sticky;
     position: sticky;
-    top: 74px;
+    top: var(--blog-side-top);
     align-self: start;
-    max-height: calc(100vh - 96px);
-    max-height: calc(100dvh - 96px);
+    max-height: var(--blog-side-max-height);
     overflow-y: auto;
     overscroll-behavior: contain;
   }
@@ -1407,12 +1412,13 @@ const articleJsonLd = JSON.stringify({
 
   .author-bio {
     display: grid;
-    grid-template-columns: 1fr 1px 36%;
+    grid-template-columns: minmax(0, 760px) 1px minmax(260px, 320px);
+    justify-content: center;
     border-bottom: 1px solid var(--rule);
   }
 
   .bio-left {
-    padding: 44px 52px;
+    padding: var(--blog-side-padding-block) 52px;
     display: flex;
     align-items: flex-start;
     gap: 28px;
@@ -1469,16 +1475,14 @@ const articleJsonLd = JSON.stringify({
     color: var(--mid);
   }
 
-  .bio-vr {
-    background: var(--rule);
-  }
-
   .bio-right {
-    padding: 44px 48px;
+    border-left: 1px solid var(--rule);
+    padding: var(--blog-side-padding-block) 40px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 12px;
+    min-height: var(--blog-side-max-height);
   }
 
   .bio-cta-label {
@@ -1608,7 +1612,15 @@ const articleJsonLd = JSON.stringify({
     }
 
     .art-sidebar {
-      padding: 52px 26px;
+      padding: var(--blog-side-padding-block) var(--blog-side-padding-inline);
+    }
+
+    .author-bio {
+      grid-template-columns: minmax(0, 700px) 1px 290px;
+    }
+
+    .bio-right {
+      padding: var(--blog-side-padding-block) var(--blog-side-padding-inline);
     }
   }
 
@@ -1684,6 +1696,7 @@ const articleJsonLd = JSON.stringify({
 
     .bio-right {
       padding: 0 30px 30px;
+      min-height: auto;
     }
 
     .foot-bar {
