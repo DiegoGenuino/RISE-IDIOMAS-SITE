@@ -1251,6 +1251,12 @@ const articleJsonLd = JSON.stringify({
     max-height: var(--blog-side-max-height);
     overflow-y: auto;
     overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .art-sidebar::-webkit-scrollbar {
+    display: none;
   }
 
   .toc-label,
