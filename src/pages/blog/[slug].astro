@@ -94,6 +94,11 @@ const {
       errorMessage: null,
     };
 
+// Log API errors as exceptions for better debugging visibility
+if (blogErrorMessage) {
+  console.error(new Error(`[Sanity Blog API] ${blogErrorMessage}`));
+}
+
 if (!post) {
   return Astro.redirect("/404");
 }
@@ -203,9 +208,18 @@ const articleJsonLd = JSON.stringify({
     <article>
       {
         blogErrorMessage && (
-          <p class="blog-alert" role="status">
-            {blogErrorMessage} Verifique a configuração do Sanity e tente novamente.
-          </p>
+          <div class="blog-error-fallback" role="status" aria-live="polite">
+            <div class="error-icon" aria-hidden="true">⚠</div>
+            <div class="error-content">
+              <h2 class="error-title">Conteúdo indisponível no momento</h2>
+              <p class="error-desc">
+                Desculpe, não conseguimos carregar este artigo agora. Por favor, tente novamente em alguns instantes ou volte para a lista de artigos.
+              </p>
+              <a href="/blog" class="error-cta">
+                Voltar para o Blog
+              </a>
+            </div>
+          </div>
         )
       }
 
@@ -662,6 +676,70 @@ const articleJsonLd = JSON.stringify({
   article {
     max-width: 100%;
     overflow-x: clip;
+  }
+
+  .blog-error-fallback {
+    margin: 32px 52px;
+    padding: 32px;
+    border: 1px solid rgba(43, 43, 168, 0.2);
+    background: linear-gradient(135deg, rgba(43, 43, 168, 0.08) 0%, rgba(43, 43, 168, 0.03) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .error-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+    color: rgba(43, 43, 168, 0.6);
+  }
+
+  .error-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .error-title {
+    margin: 0 0 10px 0;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    color: #111120;
+  }
+
+  .error-desc {
+    margin: 0 0 16px 0;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #8a8a9e;
+  }
+
+  .error-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid #2b2ba8;
+    background: #2b2ba8;
+    color: #f6f4ef;
+    text-decoration: none;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: opacity 280ms ease, transform 280ms ease;
+  }
+
+  .error-cta:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
   }
 
   .blog-alert {
@@ -1532,6 +1610,43 @@ const articleJsonLd = JSON.stringify({
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--mid);
+  }
+
+  @media (max-width: 1200px) {
+    .blog-error-fallback {
+      margin-left: 44px;
+      margin-right: 44px;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .blog-error-fallback {
+      margin-left: 36px;
+      margin-right: 36px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .blog-error-fallback {
+      margin: 24px 20px;
+      padding: 20px;
+      gap: 12px;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 24px;
+    }
+
+    .error-title {
+      font-size: 18px;
+    }
+
+    .error-desc {
+      font-size: 13px;
+    }
   }
 
   .bio-cta-hl {
