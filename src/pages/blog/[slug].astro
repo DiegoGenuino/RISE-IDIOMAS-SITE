@@ -1454,7 +1454,7 @@ const articleJsonLd = JSON.stringify({
 
   .author-bio {
     display: grid;
-    grid-template-columns: minmax(0, 760px) 1px minmax(260px, 320px);
+    grid-template-columns: 1fr 1px 35.5%;
     justify-content: center;
     border-bottom: 1px solid var(--rule);
   }
@@ -1519,12 +1519,10 @@ const articleJsonLd = JSON.stringify({
 
   .bio-right {
     border-left: 1px solid var(--rule);
-    padding: var(--blog-side-padding-block) 40px;
+    padding: 44px 40px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     gap: 12px;
-    min-height: var(--blog-side-max-height);
   }
 
   .bio-cta-label {
@@ -1662,7 +1660,7 @@ const articleJsonLd = JSON.stringify({
     }
 
     .bio-right {
-      padding: var(--blog-side-padding-block) var(--blog-side-padding-inline);
+      padding: 0 30px 30px;
     }
   }
 
@@ -1737,8 +1735,7 @@ const articleJsonLd = JSON.stringify({
     }
 
     .bio-right {
-      padding: 0 30px 30px;
-      min-height: auto;
+      padding: 0 18px 24px;
     }
 
     .foot-bar {
