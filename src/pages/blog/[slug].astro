@@ -183,7 +183,7 @@ const articleJsonLd = JSON.stringify({
     <div id="blog-progress" aria-hidden="true"></div>
 
     <header class="topbar">
-      <a href="/" class="t-logo" aria-label="Ir para pagina inicial">
+      <a href="/" class="t-logo" aria-label="Ir para página inicial">
         <img src={RiseLogo.src} alt="Rise Idiomas" width="82" height="40" />
       </a>
       <a href="/blog" class="t-back">
@@ -204,7 +204,7 @@ const articleJsonLd = JSON.stringify({
       {
         blogErrorMessage && (
           <p class="blog-alert" role="status">
-            {blogErrorMessage} Verifique a configuracao do Sanity e tente novamente.
+            {blogErrorMessage} Verifique a configuração do Sanity e tente novamente.
           </p>
         )
       }
@@ -308,7 +308,7 @@ const articleJsonLd = JSON.stringify({
           ) : (
             <>
               <div class="art-hero-ghost" aria-hidden="true">{"RISE IDIOMAS"}</div>
-              <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao sobre speaking e fluencia">
+              <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustração sobre speaking e fluência">
                 <path d="M100 140 C100 80 148 40 200 40 C220 40 238 48 252 62 L252 218 C238 232 220 240 200 240 C148 240 100 200 100 140Z" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></path>
                 <path d="M130 100 C138 90 152 92 158 102" stroke="rgba(17,17,32,.12)" stroke-width="1.2" fill="none"></path>
                 <path d="M120 130 C132 118 148 122 152 134" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
@@ -342,7 +342,7 @@ const articleJsonLd = JSON.stringify({
             hasPortableBody ? (
               <PortableRichContent body={currentPost.portableBody || []} />
             ) : (
-              <p>O conteúdo deste artigo não está disponível de forma portátil.</p>
+              <p>O conteúdo deste artigo não está disponível em formato portátil.</p>
             )
           }
 
@@ -386,7 +386,7 @@ const articleJsonLd = JSON.stringify({
              </div>
           )}
 
-          <div class="sb-rel-label">Leia tambem</div>
+          <div class="sb-rel-label">Leia também</div>
           {
             relatedPosts.map((relatedPost) => (
               <a class="sb-rel-item" href={`/blog/${relatedPost.slug}`}>
@@ -427,9 +427,9 @@ const articleJsonLd = JSON.stringify({
         <div class="bio-vr" aria-hidden="true"></div>
 
         <div class="bio-right">
-          <div class="bio-cta-label">Pronto para o proximo nivel?</div>
+          <div class="bio-cta-label">Pronto para o próximo nível?</div>
           <div class="bio-cta-hl">
-            De o <span class="a">salto</span> que voce merece.
+            Dê o <span class="a">salto</span> que você merece.
           </div>
           <a href="https://wa.me/5511948606841" class="bio-btn" target="_blank" rel="noopener noreferrer">
             Fale conosco
@@ -617,10 +617,10 @@ const articleJsonLd = JSON.stringify({
               return;
             }
             window.prompt("Copie o link do artigo:", window.location.href);
-            showCopyFeedback("Link pronto para copia.");
+            showCopyFeedback("Link pronto para cópia.");
           } catch {
             window.prompt("Copie o link do artigo:", window.location.href);
-            showCopyFeedback("Nao foi possivel copiar automaticamente.");
+            showCopyFeedback("Não foi possível copiar automaticamente.");
           }
         });
       }
