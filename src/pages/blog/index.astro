@@ -6,6 +6,12 @@ import Footer from "../../sections/footer/Footer.astro";
 import { getBlogList } from "../../lib/sanity.blog";
 
 const { posts, categoryFilters, errorMessage: blogErrorMessage } = await getBlogList();
+
+// Log API errors as exceptions for better debugging visibility
+if (blogErrorMessage) {
+  console.error(new Error(`[Sanity Blog API] ${blogErrorMessage}`));
+}
+
 const featuredPostIndex = posts.findIndex((post) => post.featured);
 const normalizedFeaturedPostIndex = featuredPostIndex >= 0 ? featuredPostIndex : 0;
 const featuredPost = posts[normalizedFeaturedPostIndex];
@@ -74,7 +80,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   <div class="blog-page">
     <header class="topbar">
-      <a href="/" class="t-logo" aria-label="Ir para pagina inicial">
+      <a href="/" class="t-logo" aria-label="Ir para página inicial">
         <img src={RiseLogo.src} alt="Rise Idiomas" width="88" height="42" />
       </a>
       <div class="t-right" aria-label="Status comercial">
@@ -84,7 +90,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     </header>
 
     <main>
-      <section class="page-header" aria-label="Cabecalho do blog">
+      <section class="page-header" aria-label="Cabeçalho do blog">
         <div class="ph-left">
           <div class="ph-eyebrow"><span class="ph-eline"></span>Artigos e Insights</div>
           <h1 class="ph-hl">
@@ -96,8 +102,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
         <div class="ph-right">
           <p class="ph-desc">
-            Dicas de fluencia, estrategias de aprendizado e <strong>conteudo pratico</strong> para
-            quem quer ir alem do basico no ingles.
+            Dicas de fluência, estratégias de aprendizado e <strong>conteúdo prático</strong> para
+            quem quer ir além do básico no inglês.
           </p>
           <div class="filters" role="group" aria-label="Filtros de categoria">
             {
@@ -118,16 +124,21 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
       {
         blogErrorMessage && (
-          <p class="blog-alert" role="status">
-            {blogErrorMessage} Verifique a configuracao do Sanity e tente novamente.
-          </p>
+          <div class="blog-error-fallback" role="status" aria-live="polite">
+            <div class="error-content">
+              <h2 class="error-title">Conteúdo indisponível no momento</h2>
+              <p class="error-desc">
+                Desculpe, não conseguimos carregar os artigos do blog agora. Por favor, tente novamente em alguns instantes ou entre em contato conosco.
+              </p>
+            </div>
+          </div>
         )
       }
 
       {
         !hasPosts && (
           <p class="blog-alert blog-alert-empty" role="status">
-            Nenhum post publicado foi encontrado no momento.
+            Nenhum artigo publicado foi encontrado no momento.
           </p>
         )
       }
@@ -235,7 +246,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       <section class="nl-strip" aria-label="Inscricao em newsletter">
         <div class="nl-left">
           <div class="nl-label"><span></span>Newsletter</div>
-          <div class="nl-hl">Conteudo direto<br />no seu <span class="a">e-mail.</span></div>
+          <div class="nl-hl">Conteúdo direto<br />no seu <span class="a">e-mail.</span></div>
         </div>
         <div class="nl-vr" aria-hidden="true"></div>
         <form class="nl-right" onsubmit="return false;">
@@ -329,7 +340,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
         if (emptyState) {
           emptyState.textContent = activeTag
-            ? "Nenhum artigo encontrado para esta combinacao de categoria e tag."
+            ? "Nenhum artigo encontrado para esta combinação de categoria e tag."
             : "Nenhum artigo encontrado para esta categoria.";
           emptyState.hidden = visibleArticleCount > 0;
         }
@@ -427,6 +438,47 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   .blog-alert-empty {
     margin-bottom: 8px;
+  }
+
+  .blog-error-fallback {
+    margin: 32px 52px;
+    padding: 32px;
+    border: 1px solid rgba(43, 43, 168, 0.2);
+    background: linear-gradient(135deg, rgba(43, 43, 168, 0.08) 0%, rgba(43, 43, 168, 0.03) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .error-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+    color: rgba(43, 43, 168, 0.6);
+  }
+
+  .error-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .error-title {
+    margin: 0 0 10px 0;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    color: #111120;
+  }
+
+  .error-desc {
+    margin: 0 0 16px 0;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #8a8a9e;
   }
 
   .topbar {
@@ -996,6 +1048,11 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       padding-left: 44px;
       padding-right: 44px;
     }
+
+    .blog-error-fallback {
+      margin-left: 44px;
+      margin-right: 44px;
+    }
   }
 
   @media (max-width: 960px) {
@@ -1073,6 +1130,11 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       padding-left: 36px;
       padding-right: 36px;
     }
+
+    .blog-error-fallback {
+      margin-left: 36px;
+      margin-right: 36px;
+    }
   }
 
   @media (max-width: 600px) {
@@ -1118,6 +1180,27 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
     .articles-empty {
       padding: 20px;
+    }
+
+    .blog-error-fallback {
+      margin: 24px 20px;
+      padding: 20px;
+      gap: 12px;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 24px;
+    }
+
+    .error-title {
+      font-size: 18px;
+    }
+
+    .error-desc {
+      font-size: 13px;
     }
 
     .nl-left {
