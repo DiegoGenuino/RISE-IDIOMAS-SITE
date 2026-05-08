@@ -1,3 +1,5 @@
+import { defineQuery } from "groq";
+
 const BLOG_CARD_PROJECTION = `
   _id,
   title,
@@ -30,7 +32,7 @@ const BLOG_CARD_PROJECTION = `
   "tags": tags[]->title
 `;
 
-export const BLOG_POST_SLUGS_QUERY = `
+export const BLOG_POST_SLUGS_QUERY = defineQuery(`
   *[
     _type == "post" &&
     defined(slug.current) &&
@@ -40,9 +42,9 @@ export const BLOG_POST_SLUGS_QUERY = `
   {
     "slug": slug.current
   }
-`;
+`);
 
-export const BLOG_CATEGORY_FILTERS_QUERY = `
+export const BLOG_CATEGORY_FILTERS_QUERY = defineQuery(`
   *[
     _type == "category" &&
     defined(title) &&
@@ -61,9 +63,9 @@ export const BLOG_CATEGORY_FILTERS_QUERY = `
     title,
     "slug": slug.current
   }
-`;
+`);
 
-export const BLOG_POST_LIST_QUERY = `
+export const BLOG_POST_LIST_QUERY = defineQuery(`
   *[
     _type == "post" &&
     defined(slug.current) &&
@@ -73,9 +75,9 @@ export const BLOG_POST_LIST_QUERY = `
   {
     ${BLOG_CARD_PROJECTION}
   }
-`;
+`);
 
-export const BLOG_POST_BY_SLUG_QUERY = `
+export const BLOG_POST_BY_SLUG_QUERY = defineQuery(`
   *[
     _type == "post" &&
     slug.current == $slug &&
@@ -124,9 +126,9 @@ export const BLOG_POST_BY_SLUG_QUERY = `
       }
     }
   }
-`;
+`);
 
-export const BLOG_RELATED_POSTS_QUERY = `
+export const BLOG_RELATED_POSTS_QUERY = defineQuery(`
   *[
     _type == "post" &&
     defined(slug.current) &&
@@ -142,9 +144,9 @@ export const BLOG_RELATED_POSTS_QUERY = `
   {
     ${BLOG_CARD_PROJECTION}
   }
-`;
+`);
 
-export const BLOG_RECENT_POSTS_QUERY = `
+export const BLOG_RECENT_POSTS_QUERY = defineQuery(`
   *[
     _type == "post" &&
     defined(slug.current) &&
@@ -156,4 +158,4 @@ export const BLOG_RECENT_POSTS_QUERY = `
   {
     ${BLOG_CARD_PROJECTION}
   }
-`;
+`);
