@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import type { BlogPost } from "../../types/blog";
 import type { SanityPortableBodyNode, SanityPortableTextBlock } from "../../lib/sanity.types";
@@ -309,40 +310,20 @@ const articleJsonLd = JSON.stringify({
 
       <div class="art-hero">
         {
-          hasHeroImage ? (
-            <img
+         currentPost.image?.url ? (
+            <Image
               class="art-hero-image"
-              src={currentPost.image?.url}
+              src={currentPost.image.url}
               alt={heroImageAlt}
-              width={currentPost.image?.width}
-              height={currentPost.image?.height}
+              width={currentPost.image.width!}
+              height={currentPost.image.height!}
               loading="eager"
               decoding="async"
             />
           ) : (
             <>
-              <div class="art-hero-ghost" aria-hidden="true">{"RISE IDIOMAS"}</div>
-              <svg viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustração sobre speaking e fluência">
-                <path d="M100 140 C100 80 148 40 200 40 C220 40 238 48 252 62 L252 218 C238 232 220 240 200 240 C148 240 100 200 100 140Z" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></path>
-                <path d="M130 100 C138 90 152 92 158 102" stroke="rgba(17,17,32,.12)" stroke-width="1.2" fill="none"></path>
-                <path d="M120 130 C132 118 148 122 152 134" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
-                <path d="M132 162 C144 150 162 154 164 168" stroke="rgba(17,17,32,.1)" stroke-width="1.2" fill="none"></path>
-                <path d="M140 192 C154 180 172 184 172 198" stroke="rgba(17,17,32,.08)" stroke-width="1.2" fill="none"></path>
-                <path d="M252 62 C266 48 284 40 304 40 C356 40 404 80 404 140 C404 200 356 240 304 240 C284 240 266 232 252 218 Z" fill="#2B2BA8" opacity=".12" stroke="rgba(43,43,168,.25)" stroke-width="1"></path>
-                <path d="M280 100 C288 90 302 92 308 102" stroke="rgba(43,43,168,.3)" stroke-width="1.2" fill="none"></path>
-                <path d="M300 128 C312 116 328 120 332 132" stroke="rgba(43,43,168,.25)" stroke-width="1.2" fill="none"></path>
-                <path d="M290 162 C302 150 320 154 322 168" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
-                <line x1="252" y1="32" x2="252" y2="248" stroke="rgba(17,17,32,.3)" stroke-width="1.5" stroke-dasharray="5 4"></line>
-                <text x="176" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#8A8A9E" letter-spacing="2">ENTENDE</text>
-                <text x="328" y="268" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" fill="#2B2BA8" letter-spacing="2">PRODUZ?</text>
-                <rect x="239" y="120" width="26" height="20" rx="3" fill="white" stroke="rgba(17,17,32,.2)" stroke-width="1"></rect>
-                <path d="M244 120 C244 111 260 111 260 120" stroke="rgba(17,17,32,.2)" stroke-width="1.2" fill="none"></path>
-                <circle cx="252" cy="130" r="3" fill="rgba(17,17,32,.25)"></circle>
-                <path d="M420 110 C432 124 432 156 420 170" stroke="rgba(43,43,168,.3)" stroke-width="1.5" fill="none"></path>
-                <path d="M428 98 C446 116 446 164 428 182" stroke="rgba(43,43,168,.2)" stroke-width="1.2" fill="none"></path>
-                <path d="M80 136 C80 128 88 128 88 136 C88 144 80 144 80 136Z" stroke="rgba(17,17,32,.2)" stroke-width="1" fill="none"></path>
-                <line x1="76" y1="132" x2="92" y2="140" stroke="rgba(17,17,32,.25)" stroke-width="1.2"></line>
-              </svg>
+              <div class="art-hero-ghost" aria-hidden="true">{"CONTEUDO"}</div>
+            
             </>
           )
         }
@@ -1702,7 +1683,7 @@ const articleJsonLd = JSON.stringify({
 
   .foot-bar {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .fb {
