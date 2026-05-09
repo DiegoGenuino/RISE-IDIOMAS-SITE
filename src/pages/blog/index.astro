@@ -1,4 +1,6 @@
 ---
+export const prerender = false; // habilita ssr
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import BlogCard from "../../components/blog/BlogCard.astro";
@@ -253,10 +255,10 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
           <input
             class="nl-input"
             type="email"
-            placeholder="seu@email.com"
+            placeholder="riseidiomas@email.com"
             aria-label="Seu e-mail"
           />
-          <button class="nl-btn" type="submit"><span>Inscrever -></span></button>
+          <button class="nl-btn" type="submit"><span>Inscrever-se</span></button>
         </form>
       </section>
     </main>
