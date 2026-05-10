@@ -14,10 +14,16 @@ export const POST: APIRoute = async ({ request }) => {
 
         const resend = new Resend(resendApiKey);
         const data = await request.formData();
-        const email = data.get('email')?.toString();
+        const rawEmail = data.get('email');
+        const email = rawEmail?.toString().trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!email) {
             return new Response(JSON.stringify({ error: 'E-mail é obrigatório' }), { status: 400 });
+        }
+
+        if (!emailRegex.test(email)) {
+            return new Response(JSON.stringify({ error: 'E-mail inválido' }), { status: 400 });
         }
 
         const { data: resendData, error } = await resend.emails.send({
