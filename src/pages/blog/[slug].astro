@@ -8,14 +8,7 @@ import { getBlogPostBySlug, getBlogSlugs } from "../../lib/sanity.blog";
 import PortableRichContent from "../../components/blog/portable/PortableRichContent.astro";
 
 export const prerender = false;
-  
-export async function getStaticPaths() {
-  const slugs = await getBlogSlugs();
 
-  return slugs.map((slug) => ({
-    params: { slug },
-  }));
-}
 
 type TocLevel = "h2" | "h3" | "h4";
 
