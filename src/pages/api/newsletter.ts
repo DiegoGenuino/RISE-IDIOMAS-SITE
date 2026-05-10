@@ -4,11 +4,15 @@ import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 
 
-const resend = new Resend(import.meta.env.RESEND_API_KEY);
-console.log('[API KEY]', import.meta.env.RESEND_API_KEY?.slice(0, 8))
+const resendApiKey = import.meta.env.RESEND_API_KEY;
 
 export const POST: APIRoute = async ({ request }) => {
     try {
+        if (typeof resendApiKey !== 'string' || resendApiKey.trim() === '') {
+            return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+        }
+
+        const resend = new Resend(resendApiKey);
         const data = await request.formData();
         const email = data.get('email')?.toString();
 
