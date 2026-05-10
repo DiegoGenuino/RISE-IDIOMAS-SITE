@@ -1,11 +1,17 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import BlogCard from "../../components/blog/BlogCard.astro";
 import Footer from "../../sections/footer/Footer.astro";
 import { getBlogList } from "../../lib/sanity.blog";
 
-const { posts, categoryFilters, errorMessage: blogErrorMessage } = await getBlogList();
+const {
+  posts,
+  categoryFilters,
+  errorMessage: blogErrorMessage,
+} = await getBlogList();
 
 // Log API errors as exceptions for better debugging visibility
 if (blogErrorMessage) {
@@ -13,9 +19,12 @@ if (blogErrorMessage) {
 }
 
 const featuredPostIndex = posts.findIndex((post) => post.featured);
-const normalizedFeaturedPostIndex = featuredPostIndex >= 0 ? featuredPostIndex : 0;
+const normalizedFeaturedPostIndex =
+  featuredPostIndex >= 0 ? featuredPostIndex : 0;
 const featuredPost = posts[normalizedFeaturedPostIndex];
-const gridPosts = posts.filter((_, index) => index !== normalizedFeaturedPostIndex);
+const gridPosts = posts.filter(
+  (_, index) => index !== normalizedFeaturedPostIndex,
+);
 const hasPosts = posts.length > 0;
 const featuredCoverImageAlt = featuredPost
   ? featuredPost.image?.alt || `Capa do post "${featuredPost.title}"`
@@ -34,7 +43,9 @@ function createTagKey(tagLabel: string): string {
   return createCategoryKey(tagLabel);
 }
 
-const categoriesFromPosts = Array.from(new Set(posts.map((post) => post.category)));
+const categoriesFromPosts = Array.from(
+  new Set(posts.map((post) => post.category)),
+);
 const categoryLabels =
   categoryFilters.length > 0
     ? Array.from(new Set(categoryFilters))
@@ -76,6 +87,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
       rel="stylesheet"
     />
+    <script
+      src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"
+      is:inline></script>
   </Fragment>
 
   <div class="blog-page">
@@ -92,7 +106,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     <main>
       <section class="page-header" aria-label="Cabeçalho do blog">
         <div class="ph-left">
-          <div class="ph-eyebrow"><span class="ph-eline"></span>Artigos e Insights</div>
+          <div class="ph-eyebrow">
+            <span class="ph-eline"></span>Artigos e Insights
+          </div>
           <h1 class="ph-hl">
             <span class="ph-hl-inner">Blog<span class="em">.</span></span>
           </h1>
@@ -102,8 +118,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
         <div class="ph-right">
           <p class="ph-desc">
-            Dicas de fluência, estratégias de aprendizado e <strong>conteúdo prático</strong> para
-            quem quer ir além do básico no inglês.
+            Dicas de fluência, estratégias de aprendizado e <strong
+              >conteúdo prático</strong
+            > para quem quer ir além do básico no inglês.
           </p>
           <div class="filters" role="group" aria-label="Filtros de categoria">
             {
@@ -128,7 +145,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             <div class="error-content">
               <h2 class="error-title">Conteúdo indisponível no momento</h2>
               <p class="error-desc">
-                Desculpe, não conseguimos carregar os artigos do blog agora. Por favor, tente novamente em alguns instantes ou entre em contato conosco.
+                Desculpe, não conseguimos carregar os artigos do blog agora. Por
+                favor, tente novamente em alguns instantes ou entre em contato
+                conosco.
               </p>
             </div>
           </div>
@@ -151,43 +170,142 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             data-category-key={createCategoryKey(featuredPost.category)}
             data-tag-keys={featuredPost.tags.map(createTagKey).join(",")}
           >
-            <div class={`feat-illo ${featuredPost.image?.url ? "feat-illo-with-image" : ""}`}>
-              {
-                featuredPost.image?.url ? (
-                  <img
-                    class="feat-cover-image"
-                    src={featuredPost.image.url}
-                    alt={featuredCoverImageAlt}
-                    width={featuredPost.image.width}
-                    height={featuredPost.image.height}
-                    loading="eager"
-                    decoding="async"
-                  />
-                ) : (
-                  <>
-                    <div class="feat-ghost" aria-hidden="true">01</div>
-                    <svg viewBox="0 0 280 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <rect x="20" y="30" width="160" height="110" rx="14" fill="#2B2BA8"></rect>
-                      <path d="M48 140 L36 162 L72 140Z" fill="#2B2BA8"></path>
-                      <rect x="32" y="52" width="90" height="8" rx="4" fill="rgba(255,255,255,.35)"></rect>
-                      <rect x="32" y="70" width="130" height="6" rx="3" fill="rgba(255,255,255,.2)"></rect>
-                      <rect x="32" y="84" width="108" height="6" rx="3" fill="rgba(255,255,255,.2)"></rect>
-                      <rect x="32" y="98" width="80" height="6" rx="3" fill="rgba(255,255,255,.15)"></rect>
-                      <rect x="98" y="148" width="158" height="90" rx="14" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"></rect>
-                      <path d="M232 238 L244 256 L212 238Z" fill="#E8E6DF" stroke="rgba(17,17,32,.08)" stroke-width="1"></path>
-                      <rect x="112" y="164" width="70" height="7" rx="3.5" fill="rgba(17,17,32,.2)"></rect>
-                      <rect x="112" y="180" width="120" height="5" rx="2.5" fill="rgba(17,17,32,.1)"></rect>
-                      <rect x="112" y="192" width="96" height="5" rx="2.5" fill="rgba(17,17,32,.1)"></rect>
-                      <rect x="112" y="204" width="60" height="5" rx="2.5" fill="rgba(17,17,32,.08)"></rect>
-                      <rect x="60" y="220" width="2" height="20" rx="1" fill="#2B2BA8" opacity=".6"></rect>
-                      <rect x="20" y="220" width="36" height="5" rx="2.5" fill="rgba(17,17,32,.15)"></rect>
-                    </svg>
-                  </>
-                )
-              }
+            <div
+              class={`feat-illo ${featuredPost.image?.url ? "feat-illo-with-image" : ""}`}
+            >
+              {featuredPost.image?.url ? (
+                <img
+                  class="feat-cover-image"
+                  src={featuredPost.image.url}
+                  alt={featuredCoverImageAlt}
+                  width={featuredPost.image.width}
+                  height={featuredPost.image.height}
+                  loading="eager"
+                  decoding="async"
+                />
+              ) : (
+                <>
+                  <div class="feat-ghost" aria-hidden="true">
+                    01
+                  </div>
+                  <svg
+                    viewBox="0 0 280 260"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      x="20"
+                      y="30"
+                      width="160"
+                      height="110"
+                      rx="14"
+                      fill="#2B2BA8"
+                    />
+                    <path d="M48 140 L36 162 L72 140Z" fill="#2B2BA8" />
+                    <rect
+                      x="32"
+                      y="52"
+                      width="90"
+                      height="8"
+                      rx="4"
+                      fill="rgba(255,255,255,.35)"
+                    />
+                    <rect
+                      x="32"
+                      y="70"
+                      width="130"
+                      height="6"
+                      rx="3"
+                      fill="rgba(255,255,255,.2)"
+                    />
+                    <rect
+                      x="32"
+                      y="84"
+                      width="108"
+                      height="6"
+                      rx="3"
+                      fill="rgba(255,255,255,.2)"
+                    />
+                    <rect
+                      x="32"
+                      y="98"
+                      width="80"
+                      height="6"
+                      rx="3"
+                      fill="rgba(255,255,255,.15)"
+                    />
+                    <rect
+                      x="98"
+                      y="148"
+                      width="158"
+                      height="90"
+                      rx="14"
+                      fill="#E8E6DF"
+                      stroke="rgba(17,17,32,.1)"
+                      stroke-width="1"
+                    />
+                    <path
+                      d="M232 238 L244 256 L212 238Z"
+                      fill="#E8E6DF"
+                      stroke="rgba(17,17,32,.08)"
+                      stroke-width="1"
+                    />
+                    <rect
+                      x="112"
+                      y="164"
+                      width="70"
+                      height="7"
+                      rx="3.5"
+                      fill="rgba(17,17,32,.2)"
+                    />
+                    <rect
+                      x="112"
+                      y="180"
+                      width="120"
+                      height="5"
+                      rx="2.5"
+                      fill="rgba(17,17,32,.1)"
+                    />
+                    <rect
+                      x="112"
+                      y="192"
+                      width="96"
+                      height="5"
+                      rx="2.5"
+                      fill="rgba(17,17,32,.1)"
+                    />
+                    <rect
+                      x="112"
+                      y="204"
+                      width="60"
+                      height="5"
+                      rx="2.5"
+                      fill="rgba(17,17,32,.08)"
+                    />
+                    <rect
+                      x="60"
+                      y="220"
+                      width="2"
+                      height="20"
+                      rx="1"
+                      fill="#2B2BA8"
+                      opacity=".6"
+                    />
+                    <rect
+                      x="20"
+                      y="220"
+                      width="36"
+                      height="5"
+                      rx="2.5"
+                      fill="rgba(17,17,32,.15)"
+                    />
+                  </svg>
+                </>
+              )}
             </div>
 
-            <div class="feat-vr" aria-hidden="true"></div>
+            <div class="feat-vr" aria-hidden="true" />
 
             <a href={`/blog/${featuredPost.slug}`} class="feat-body">
               <div>
@@ -195,7 +313,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                   <span class="feat-tag">{featuredPost.category}</span>
                   <span class="feat-date">{featuredPost.publishDateLabel}</span>
                   <span class="feat-dot">·</span>
-                  <span class="feat-read">{featuredPost.readingTimeMinutes} min de leitura</span>
+                  <span class="feat-read">
+                    {featuredPost.readingTimeMinutes} min de leitura
+                  </span>
                 </div>
 
                 <h2 class="feat-title">{featuredPost.title}</h2>
@@ -205,14 +325,20 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
               <span class="feat-cta">
                 Ler artigo
                 <span class="farr">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    aria-hidden="true"
+                  >
                     <path
                       d="M2 10L10 2M10 2H4.5M10 2V7.5"
                       stroke="white"
                       stroke-width="1.4"
                       stroke-linecap="round"
                       stroke-linejoin="round"
-                    ></path>
+                    />
                   </svg>
                 </span>
               </span>
@@ -222,8 +348,12 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       }
 
       <div class="grid-header">
-        <div class="gh-label"><span class="gh-line"></span>Artigos recentes</div>
-        <span class="gh-count"><span id="articles-count">{totalCountFormatted}</span> / artigos</span>
+        <div class="gh-label">
+          <span class="gh-line"></span>Artigos recentes
+        </div>
+        <span class="gh-count"
+          ><span id="articles-count">{totalCountFormatted}</span> / artigos</span
+        >
       </div>
 
       <div class="articles" role="list" id="blog-articles">
@@ -240,25 +370,131 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       </div>
 
       <p id="articles-empty" class="articles-empty" hidden={hasPosts}>
-        Nenhum artigo encontrado para os filtros selecionados.
+        Nenhum post encontrado para os filtros selecionados.
       </p>
 
       <section class="nl-strip" aria-label="Inscricao em newsletter">
         <div class="nl-left">
           <div class="nl-label"><span></span>Newsletter</div>
-          <div class="nl-hl">Conteúdo direto<br />no seu <span class="a">e-mail.</span></div>
+          <div class="nl-hl">
+            Conteúdo direto<br />no seu <span class="a">e-mail.</span>
+          </div>
         </div>
         <div class="nl-vr" aria-hidden="true"></div>
-        <form class="nl-right" onsubmit="return false;">
+        <form class="nl-right" id="newsletter-form">
           <input
             class="nl-input"
             type="email"
-            placeholder="seu@email.com"
+            name="email"
+            placeholder="riseidiomas@email.com"
             aria-label="Seu e-mail"
+            required
           />
-          <button class="nl-btn" type="submit"><span>Inscrever -></span></button>
+          <button class="nl-btn" type="submit" id="newsletter-submit"
+            ><span>Inscrever se</span></button
+          >
         </form>
       </section>
+      <!-- Pop up de feedback -->
+      <div
+        id="nl-popup"
+        class="fixed bottom-8 right-8 z-50 hidden animate-slideup"
+      >
+        <div
+          class="flex items-center gap-4 bg-[#000000] border-b-[4px] border-[#00ff7b] px-6 py-[18px] max-w-sm"
+        >
+          <lottie-player
+            id="nl-lottie"
+            src="/icons/envelope-send.json"
+            style="width: 40px; height: 40px;"
+            class="shrink-0"
+            y
+          >
+          </lottie-player>
+
+          <div>
+            <strong
+              class="block font-['Barlow_Condensed'] text-sm font-semibold tracking-widest uppercase text-[#f6f4ef] mb-1"
+            >
+              Inscrição confirmada!
+            </strong>
+            <p
+              class="font-['DM_Sans'] text-xs font-light text-[#8a8a9e] leading-relaxed"
+            >
+              Você receberá nossos conteúdos em breve.
+            </p>
+          </div>
+
+          <button
+            id="nl-popup-close"
+            aria-label="Fechar"
+            class="self-start shrink-0 bg-transparent border-none text-[#8a8a9e] hover:text-[#f6f4ef] transition-colors duration-200 cursor-pointer text-sm p-1"
+            >✕</button
+          >
+        </div>
+      </div>
+
+      <script is:inline>
+        const form = document.getElementById("newsletter-form");
+        const submitBtn = document.getElementById("newsletter-submit");
+        const popup = document.getElementById("nl-popup");
+        const popupClose = document.getElementById("nl-popup-close");
+        let popupTimer;
+
+        function hidePopup() {
+          popup.classList.remove("animate-slideup");
+          popup.classList.add("animate-slidedown");
+
+          popup.addEventListener(
+            "animationend",
+            () => {
+              popup.classList.add("hidden");
+              popup.classList.remove("animate-slidedown");
+              popup.classList.add("animate-slideup"); // restaura para próxima vez
+            },
+            { once: true },
+          );
+        }
+
+        function showPopup() {
+          popup.classList.remove("hidden");
+
+          const lottie = document.getElementById("nl-lottie");
+          lottie?.stop();
+          lottie?.play();
+
+          clearTimeout(popupTimer);
+          popupTimer = setTimeout(() => popup.classList.add("hidden"), 2000);
+        }
+
+        popupClose?.addEventListener("click", () => hidePopup());
+
+        form?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          if (submitBtn) submitBtn.disabled = true;
+
+          const formData = new FormData(form);
+
+          try {
+            const response = await fetch("/api/newsletter", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              form.reset();
+              showPopup();
+            } else {
+              throw new Error("Erro ao assinar newsletter");
+            }
+          } catch (err) {
+            console.error(err);
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        });
+      </script>
     </main>
 
     <Footer />
@@ -266,15 +502,21 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   <script is:inline>
     (() => {
-      const filterPills = Array.from(document.querySelectorAll("[data-filter-pill]"));
+      const filterPills = Array.from(
+        document.querySelectorAll("[data-filter-pill]"),
+      );
       const featuredArticle = document.querySelector("[data-featured]");
-      const articleCards = Array.from(document.querySelectorAll("[data-article-card]"));
+      const articleCards = Array.from(
+        document.querySelectorAll("[data-article-card]"),
+      );
       const countElement = document.getElementById("articles-count");
       const emptyState = document.getElementById("articles-empty");
 
       const resolveFiltersFromUrl = () => {
         const searchParams = new URLSearchParams(window.location.search);
-        const requestedCategory = (searchParams.get("category") || "all").toLowerCase();
+        const requestedCategory = (
+          searchParams.get("category") || "all"
+        ).toLowerCase();
         const requestedTag = (searchParams.get("tag") || "").toLowerCase();
 
         const hasCategory = filterPills.some((filterPill) => {
@@ -316,8 +558,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
           const hasFeaturedCategory =
             activeCategory === "all" || featuredCategory === activeCategory;
           const hasFeaturedTag = hasTagMatch(featuredTagKeys, activeTag);
-          const shouldShowFeatured =
-            hasFeaturedCategory && hasFeaturedTag;
+          const shouldShowFeatured = hasFeaturedCategory && hasFeaturedTag;
           featuredArticle.hidden = !shouldShowFeatured;
 
           if (shouldShowFeatured) {
@@ -328,7 +569,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         articleCards.forEach((articleCard) => {
           const cardCategory = articleCard.dataset.categoryKey || "";
           const cardTagKeys = articleCard.dataset.tagKeys || "";
-          const hasCardCategory = activeCategory === "all" || cardCategory === activeCategory;
+          const hasCardCategory =
+            activeCategory === "all" || cardCategory === activeCategory;
           const hasCardTag = hasTagMatch(cardTagKeys, activeTag);
           const shouldShowCard = hasCardCategory && hasCardTag;
           articleCard.hidden = !shouldShowCard;
@@ -346,7 +588,10 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         }
 
         if (countElement) {
-          countElement.textContent = String(visibleArticleCount).padStart(3, "0");
+          countElement.textContent = String(visibleArticleCount).padStart(
+            3,
+            "0",
+          );
         }
 
         setActivePill(activeCategory);
@@ -418,8 +663,16 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   .blog-page {
     min-height: 100vh;
     background:
-      radial-gradient(circle at 12% 18%, rgba(43, 43, 168, 0.09), transparent 42%),
-      radial-gradient(circle at 86% 82%, rgba(17, 17, 32, 0.08), transparent 40%),
+      radial-gradient(
+        circle at 12% 18%,
+        rgba(43, 43, 168, 0.09),
+        transparent 42%
+      ),
+      radial-gradient(
+        circle at 86% 82%,
+        rgba(17, 17, 32, 0.08),
+        transparent 40%
+      ),
       #f6f4ef;
     color: #111120;
   }
@@ -444,7 +697,11 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     margin: 32px 52px;
     padding: 32px;
     border: 1px solid rgba(43, 43, 168, 0.2);
-    background: linear-gradient(135deg, rgba(43, 43, 168, 0.08) 0%, rgba(43, 43, 168, 0.03) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(43, 43, 168, 0.08) 0%,
+      rgba(43, 43, 168, 0.03) 100%
+    );
     border-radius: 8px;
     display: flex;
     align-items: flex-start;
