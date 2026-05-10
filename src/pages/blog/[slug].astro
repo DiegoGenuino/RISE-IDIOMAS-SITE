@@ -4,7 +4,7 @@ import { Image } from "astro:assets";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import type { BlogPost } from "../../types/blog";
 import type { SanityPortableBodyNode, SanityPortableTextBlock } from "../../lib/sanity.types";
-import { getBlogPostBySlug, getBlogSlugs } from "../../lib/sanity.blog";
+import { getBlogPostBySlug } from "../../lib/sanity.blog";
 import PortableRichContent from "../../components/blog/portable/PortableRichContent.astro";
 
 export const prerender = false;
@@ -1919,5 +1919,4 @@ const articleJsonLd = JSON.stringify({
     }
   }
 </style>
-
 
