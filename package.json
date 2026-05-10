@@ -22,7 +22,6 @@
     "@fontsource/schoolbell": "^5.2.7",
     "@fontsource/unifrakturcook": "^5.2.8",
     "@iconify-json/akar-icons": "^1.2.7",
-    "@lottiefiles/lottie-player": "^2.0.12",
     "@portabletext/to-html": "^5.0.2",
     "@sanity/client": "^7.11.0",
     "@sanity/preview-url-secret": "^4.0.5",
