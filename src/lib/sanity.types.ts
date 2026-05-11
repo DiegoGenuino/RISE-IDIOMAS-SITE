@@ -1,8 +1,9 @@
 export interface SanityAuthor {
   name?: string;
-  role?: string;
-  initials?: string;
+  position?: string;
+  nickname?: string;
   bio?: string;
+  linkedin?: string;
   avatar?: SanityHeroImage;
 }
 
