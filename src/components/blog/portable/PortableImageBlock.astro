@@ -1,11 +1,11 @@
 ---
-import type {SanityPtImageBlock} from "../../../lib/sanity.types";
+import type { SanityPtImageBlock } from "../../../lib/sanity.types";
 
 interface Props {
   block: SanityPtImageBlock;
 }
 
-const {block} = Astro.props;
+const { block } = Astro.props;
 const image = block.image;
 const layout = image?.layout || "inline";
 const imageUrl = image?.url;
@@ -13,6 +13,7 @@ const alt = image?.alt || "";
 const caption = image?.caption;
 const width = image?.width;
 const height = image?.height;
+import { Image } from "astro:assets";
 
 if (!imageUrl) {
   return null;
@@ -20,13 +21,13 @@ if (!imageUrl) {
 ---
 
 <figure class={`portable-image layout-${layout}`}>
-  <img
+  <Image
     src={imageUrl}
     alt={alt}
     loading="lazy"
     decoding="async"
-    width={width}
-    height={height}
+    width={width ?? 720}
+    height={height ?? 720}
   />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
