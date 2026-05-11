@@ -19,9 +19,10 @@ const BLOG_CARD_PROJECTION = `
   status,
   "author": author->{
     name,
-    role,
-    initials,
+    position,
+    nickname,
     bio,
+    linkedin,
     "avatar": avatar{
       alt,
       "url": asset->url,
