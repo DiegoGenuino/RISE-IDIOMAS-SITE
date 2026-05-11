@@ -29,9 +29,10 @@ const DATE_MONTH_LABELS = [
 
 const defaultAuthor: BlogAuthor = {
   name: "Equipe Rise Idiomas",
-  role: "Time editorial",
-  initials: "RI",
+  position: "Editores Rise",
+  nickname: "RI",
   bio: "Conteudo produzido pelo time da Rise Idiomas.",
+  linkedin: "https://www.linkedin.com/company/riseidiomas/",
 };
 
 function formatPublishDate(isoDate?: string): { date: string; label: string } {
@@ -61,15 +62,16 @@ function formatPublishDate(isoDate?: string): { date: string; label: string } {
 }
 
 function mapAuthor(author?: SanityAuthor): BlogAuthor {
-  if (!author?.name || !author.role || !author.initials || !author.bio) {
+  if (!author?.name || !author.position || !author.nickname || !author.bio) {
     return defaultAuthor;
   }
 
   return {
     name: author.name,
-    role: author.role,
-    initials: author.initials,
+    position: author.position,
+    nickname: author.nickname,
     bio: author.bio,
+    linkedin: author.linkedin,
     avatar: mapHeroImage(author.avatar, `Foto de ${author.name}`),
   };
 }
