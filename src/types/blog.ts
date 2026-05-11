@@ -2,9 +2,10 @@ import type { SanityPortableBodyNode } from "../lib/sanity.types";
 
 export interface BlogAuthor {
   name: string;
-  role: string;
-  initials: string;
+  position: string;
+  nickname: string;
   bio: string;
+  linkedin?: string;
   avatar?: BlogPostHeroImage;
 }
 
