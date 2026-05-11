@@ -6,6 +6,7 @@ import RiseLogo from "../../assets/shared/rise-logo.svg";
 import BlogCard from "../../components/blog/BlogCard.astro";
 import Footer from "../../sections/footer/Footer.astro";
 import { getBlogList } from "../../lib/sanity.blog";
+import { Image } from "astro:assets";
 
 const {
   posts,
@@ -175,12 +176,12 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
               class={`feat-illo ${featuredPost.image?.url ? "feat-illo-with-image" : ""}`}
             >
               {featuredPost.image?.url ? (
-                <img
+                <Image
                   class="feat-cover-image"
                   src={featuredPost.image.url}
                   alt={featuredCoverImageAlt}
-                  width={featuredPost.image.width}
-                  height={featuredPost.image.height}
+                  width={featuredPost.image.width ?? 720}
+                  height={featuredPost.image.height ?? 720}
                   loading="eager"
                   decoding="async"
                 />
@@ -1049,11 +1050,11 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .feat-excerpt {
-    max-width: 560px;
-    font-size: 14px;
+    max-width: 760px;
+    font-size: 18px;
     font-weight: 300;
     line-height: 1.75;
-    color: #8a8a9e;
+    color: #2f2f2f;
   }
 
   .feat-cta {
@@ -1061,10 +1062,10 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    border-bottom: 3px solid #111120;
+    border-bottom: 2px solid #111120;
     padding-bottom: 16px;
     font-family: "Barlow Condensed", sans-serif;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -1078,8 +1079,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     background: #111120;
     transition:
       background 300ms ease,
