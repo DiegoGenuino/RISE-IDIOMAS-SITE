@@ -3,7 +3,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import RiseLogo from "../../assets/shared/rise-logo.svg";
 import type { BlogPost } from "../../types/blog";
-import type { SanityPortableBodyNode, SanityPortableTextBlock } from "../../lib/sanity.types";
+import type {
+  SanityPortableBodyNode,
+  SanityPortableTextBlock,
+} from "../../lib/sanity.types";
 import { getBlogPostBySlug } from "../../lib/sanity.blog";
 import PortableRichContent from "../../components/blog/portable/PortableRichContent.astro";
 
@@ -35,7 +38,10 @@ function extractPortableHeadingLabel(block: SanityPortableTextBlock): string {
     .trim();
 }
 
-function resolvePortableHeadingId(block: SanityPortableTextBlock, label: string): string {
+function resolvePortableHeadingId(
+  block: SanityPortableTextBlock,
+  label: string,
+): string {
   const normalizedKey = block._key ? slugifyHeadingValue(block._key) : "";
   if (normalizedKey) {
     return `pt-h-${normalizedKey}`;
@@ -45,7 +51,9 @@ function resolvePortableHeadingId(block: SanityPortableTextBlock, label: string)
   return normalizedLabel || "pt-heading";
 }
 
-function buildBodyTocItems(body: SanityPortableBodyNode[] | undefined): ArticleTocItem[] {
+function buildBodyTocItems(
+  body: SanityPortableBodyNode[] | undefined,
+): ArticleTocItem[] {
   if (!Array.isArray(body) || body.length === 0) {
     return [];
   }
@@ -67,13 +75,14 @@ function buildBodyTocItems(body: SanityPortableBodyNode[] | undefined): ArticleT
       return [];
     }
 
-    const id = resolvePortableHeadingId(node, label) || `pt-heading-${++fallbackIndex}`;
+    const id =
+      resolvePortableHeadingId(node, label) || `pt-heading-${++fallbackIndex}`;
     return [{ id, label, level } satisfies ArticleTocItem];
   });
 }
 
 const { slug } = Astro.params;
-const isPreview = Astro.cookies.get('sanity-preview')?.value === '1';
+const isPreview = Astro.cookies.get("sanity-preview")?.value === "1";
 
 const {
   post,
@@ -98,23 +107,28 @@ if (!post) {
 
 const currentPost: BlogPost = post;
 const titleLines = currentPost.title ? [currentPost.title] : [];
-const hasPortableBody = Boolean(currentPost.portableBody && currentPost.portableBody.length > 0);
+const hasPortableBody = Boolean(
+  currentPost.portableBody && currentPost.portableBody.length > 0,
+);
 const tocItems: ArticleTocItem[] = buildBodyTocItems(currentPost.portableBody);
 const hasToc = tocItems.length > 0;
-const hasSectionNavigation = false; // We don't have sections anymore
 const defaultStats = [
   { label: "Publicado em", valueHtml: currentPost.publishDate },
   { label: "Leitura", valueHtml: `${currentPost.readingTimeMinutes} min` },
   { label: "Categoria", valueHtml: currentPost.category },
 ];
 const hasHeroImage = Boolean(currentPost.image?.url);
-const heroImageAlt = currentPost.image?.alt || `Imagem do post ${currentPost.title}`;
+const heroImageAlt =
+  currentPost.image?.alt || `Imagem do post ${currentPost.title}`;
 const hasAuthorAvatar = Boolean(currentPost.author.avatar?.url);
-const authorAvatarAlt = currentPost.author.avatar?.alt || `Foto de ${currentPost.author.name}`;
+const authorAvatarAlt =
+  currentPost.author.avatar?.alt || currentPost.author.name;
 const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
   Astro.url.href,
 )}`;
-const articleImageUrl = currentPost.image?.url ? new URL(currentPost.image.url, Astro.url).toString() : new URL("/favicon.svg", Astro.url).toString();
+const articleImageUrl = currentPost.image?.url
+  ? new URL(currentPost.image.url, Astro.url).toString()
+  : new URL("/favicon.svg", Astro.url).toString();
 const articleTags = currentPost.tags.slice(0, 6);
 const articlePublishedIso = `${currentPost.publishDate}T00:00:00.000Z`;
 const articleJsonLd = JSON.stringify({
@@ -173,8 +187,8 @@ const articleJsonLd = JSON.stringify({
         </Fragment>
       ))
     }
-    
-    <script type="application/ld+json" set:html={articleJsonLd}></script>
+
+    <script type="application/ld+json" set:html={articleJsonLd} />
   </Fragment>
 
   <div class="blog-shell">
@@ -182,17 +196,28 @@ const articleJsonLd = JSON.stringify({
 
     <header class="topbar">
       <a href="/" class="t-logo" aria-label="Ir para página inicial">
-        <img src={RiseLogo.src} alt="Rise Idiomas" width="82" height="40" />
+        <img
+          src={RiseLogo.src}
+          alt="Rise Idiomas"
+          width="82"
+          height="40"
+          loading="eager"
+        />
       </a>
       <a href="/blog" class="t-back">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          aria-hidden="true"
+        >
           <path
             d="M12 7H2M2 7L6 3M2 7L6 11"
             stroke="currentColor"
             stroke-width="1.3"
             stroke-linecap="round"
-            stroke-linejoin="round"
-          ></path>
+            stroke-linejoin="round"></path>
         </svg>
         Blog
       </a>
@@ -202,11 +227,15 @@ const articleJsonLd = JSON.stringify({
       {
         blogErrorMessage && (
           <div class="blog-error-fallback" role="status" aria-live="polite">
-            <div class="error-icon" aria-hidden="true">⚠</div>
+            <div class="error-icon" aria-hidden="true">
+              ⚠
+            </div>
             <div class="error-content">
               <h2 class="error-title">Conteúdo indisponível no momento</h2>
               <p class="error-desc">
-                Desculpe, não conseguimos carregar este artigo agora. Por favor, tente novamente em alguns instantes ou volte para a lista de artigos.
+                Desculpe, não conseguimos carregar este artigo agora. Por favor,
+                tente novamente em alguns instantes ou volte para a lista de
+                artigos.
               </p>
               <a href="/blog" class="error-cta">
                 Voltar para o Blog
@@ -222,13 +251,19 @@ const articleJsonLd = JSON.stringify({
             <span class="ah-tag">{currentPost.category}</span>
             <span class="ah-date">{currentPost.publishDateLabel}</span>
             <span class="ah-dot">·</span>
-            <span class="ah-read">{currentPost.readingTimeMinutes} min de leitura</span>
+            <span class="ah-read"
+              >{currentPost.readingTimeMinutes} min de leitura</span
+            >
           </div>
 
           <h1 class="ah-title">
-            {titleLines.map((line) => (
-              <span class="ah-title-row"><span class="ah-title-inner">{line}</span></span>
-            ))}
+            {
+              titleLines.map((line) => (
+                <span class="ah-title-row">
+                  <span class="ah-title-inner">{line}</span>
+                </span>
+              ))
+            }
           </h1>
         </div>
 
@@ -245,17 +280,40 @@ const articleJsonLd = JSON.stringify({
                     alt={authorAvatarAlt}
                     width={currentPost.author.avatar?.width}
                     height={currentPost.author.avatar?.height}
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                   />
                 ) : (
-                  currentPost.author.initials
+                  currentPost.author.nickname
                 )
               }
             </div>
             <div class="ah-author-info">
               <div class="ah-author-name">{currentPost.author.name}</div>
-              <div class="ah-author-role">{currentPost.author.role}</div>
+              <div class="ah-author-role">{currentPost.author.position}</div>
+              {
+                currentPost.author.linkedin && (
+                  <a
+                    href={currentPost.author.linkedin}
+                    class="ah-author-linkedin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`LinkedIn do ${currentPost.author.name}`}
+                  >
+                    <svg
+                      class="w-8 h-auto block"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="100 0 640 640"
+                    >
+                      <path
+                        fill="rgb(0, 0, 0)"
+                        d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"
+                      />
+                    </svg>
+                  </a>
+                )
+              }
             </div>
           </div>
 
@@ -268,41 +326,40 @@ const articleJsonLd = JSON.stringify({
               class="share-btn"
               aria-label="Compartilhar no LinkedIn"
             >
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <rect x="1" y="1" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"></rect>
-                <path d="M4 9V6M4 4.5V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
-                <path
-                  d="M7 9V7a1.5 1.5 0 013 0v2M7 6v3"
-                  stroke="currentColor"
-                  stroke-width="1.1"
-                  stroke-linecap="round"
-                ></path>
-              </svg>
+              <svg
+                class="w-6 h-6 shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+                ><path
+                  fill="rgb(0, 0, 0)"
+                  d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"
+                ></path></svg
+              >
             </a>
-            <button id="copy-link-button" class="share-btn" aria-label="Copiar link do artigo">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <path
-                  d="M5 7.5a3 3 0 004.243.243l1.5-1.5a3 3 0 00-4.243-4.243L5.5 3"
-                  stroke="currentColor"
-                  stroke-width="1.1"
-                  stroke-linecap="round"
-                ></path>
-                <path
-                  d="M8 5.5a3 3 0 00-4.243-.243L2.257 6.757a3 3 0 004.243 4.243L7.5 10"
-                  stroke="currentColor"
-                  stroke-width="1.1"
-                  stroke-linecap="round"
-                ></path>
-              </svg>
+            <button
+              id="copy-link-button"
+              class="share-btn"
+              aria-label="Copiar link do post"
+            >
+              <svg
+                class="w-6 h-6 shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+                ><path
+                  fill="rgb(0, 0, 0)"
+                  d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"
+                ></path></svg
+              >
             </button>
           </div>
-          <p id="copy-link-feedback" class="copy-feedback" aria-live="polite"></p>
+          <p id="copy-link-feedback" class="copy-feedback" aria-live="polite">
+          </p>
         </div>
       </header>
 
       <div class="art-hero">
         {
-         currentPost.image?.url ? (
+          currentPost.image?.url ? (
             <Image
               class="art-hero-image"
               src={currentPost.image.url}
@@ -314,28 +371,35 @@ const articleJsonLd = JSON.stringify({
             />
           ) : (
             <>
-              <div class="art-hero-ghost" aria-hidden="true">{"CONTEUDO"}</div>
-            
+              <div class="art-hero-ghost" aria-hidden="true">
+                {"CONTEUDO"}
+              </div>
             </>
           )
         }
       </div>
 
       <div class={`art-body-wrap art-body-wrap-no-sections`}>
-
         <div class="art-prose" id="prose">
-          
           {
             hasPortableBody ? (
               <PortableRichContent body={currentPost.portableBody || []} />
             ) : (
-              <p>O conteúdo deste artigo não está disponível em formato portátil.</p>
+              <p>
+                O conteúdo deste artigo não está disponível em formato portátil.
+              </p>
             )
           }
 
           <div class="art-tags">
             <span class="art-tags-label">Tags</span>
-            {currentPost.tags.map((tag) => <a class="atag" href={`/blog?tag=${encodeURIComponent(tag)}`}>{tag}</a>)}
+            {
+              currentPost.tags.map((tag) => (
+                <a class="atag" href={`/blog?tag=${encodeURIComponent(tag)}`}>
+                  {tag}
+                </a>
+              ))
+            }
           </div>
         </div>
 
@@ -345,33 +409,35 @@ const articleJsonLd = JSON.stringify({
               <>
                 <div class="toc-label">Neste artigo</div>
                 <ul class="toc-list">
-                  {
-                    tocItems.map((item, index) => (
-                      <li class="toc-item">
-                        <a
-                          href={`#${item.id}`}
-                          class={`toc-link toc-level-${item.level} ${index === 0 ? "active" : ""}`}
-                        >
-                          <span class="toc-n">{String(index + 1).padStart(2, "0")}</span>
-                          {item.label}
-                        </a>
-                      </li>
-                    ))
-                  }
+                  {tocItems.map((item, index) => (
+                    <li class="toc-item">
+                      <a
+                        href={`#${item.id}`}
+                        class={`toc-link toc-level-${item.level} ${index === 0 ? "active" : ""}`}
+                      >
+                        <span class="toc-n">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </>
             )
           }
 
-          {currentPost.callToAction && (
-             <div class="sb-cta">
-               <div class="sb-cta-label">Veja mais</div>
-               <p class="sb-cta-text">{currentPost.callToAction.title}</p>
-               <a href={currentPost.callToAction.url} class="sb-cta-btn">
-                 <span>Acessar -></span>
-               </a>
-             </div>
-          )}
+          {
+            currentPost.callToAction && (
+              <div class="sb-cta">
+                <div class="sb-cta-label">Veja mais</div>
+                <p class="sb-cta-text">{currentPost.callToAction.title}</p>
+                <a href={currentPost.callToAction.url} class="sb-cta-btn">
+                  <span>Acessar</span>
+                </a>
+              </div>
+            )
+          }
 
           <div class="sb-rel-label">Leia também</div>
           {
@@ -400,13 +466,36 @@ const articleJsonLd = JSON.stringify({
                   decoding="async"
                 />
               ) : (
-                currentPost.author.initials
+                currentPost.author.nickname
               )
             }
           </div>
           <div>
             <div class="bio-name">{currentPost.author.name}</div>
-            <div class="bio-role">{currentPost.author.role}</div>
+            <div class="bio-role">{currentPost.author.position}</div>
+            {
+              currentPost.author.linkedin && (
+                <a
+                  href={currentPost.author.linkedin}
+                  class="bio-linkedin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`LinkedIn de ${currentPost.author.name}`}
+                >
+                  <svg
+                      class="w-8 h-auto block"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="100 0 640 640"
+                    >
+                      <path
+                        fill="rgb(0, 0, 0)"
+                        d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"
+                      />
+                    </svg>
+                </a>
+              )
+            }
             <p class="bio-text">{currentPost.author.bio}</p>
           </div>
         </div>
@@ -418,17 +507,27 @@ const articleJsonLd = JSON.stringify({
           <div class="bio-cta-hl">
             Dê o <span class="a">salto</span> que você merece.
           </div>
-          <a href="https://wa.me/5511948606841" class="bio-btn" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://wa.me/5511948606841"
+            class="bio-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Fale conosco
             <span class="bio-arr">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                aria-hidden="true"
+              >
                 <path
                   d="M2 10L10 2M10 2H4.5M10 2V7.5"
                   stroke="white"
                   stroke-width="1.4"
                   stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></path>
+                  stroke-linejoin="round"></path>
               </svg>
             </span>
           </a>
@@ -440,7 +539,7 @@ const articleJsonLd = JSON.stringify({
           defaultStats.map((stat) => (
             <div class="fb">
               <span class="fb-l">{stat.label}</span>
-              <span class="fb-v" set:html={stat.valueHtml}></span>
+              <span class="fb-v" set:html={stat.valueHtml} />
             </div>
           ))
         }
@@ -468,8 +567,10 @@ const articleJsonLd = JSON.stringify({
         if (!progressBar) {
           return;
         }
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
+        const scrollHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const progress =
+          scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
         progressBar.style.width = progress + "%";
       };
 
@@ -489,7 +590,8 @@ const articleJsonLd = JSON.stringify({
         const sidebarRect = sidebar.getBoundingClientRect();
 
         // Calculate the link's position relative to the sidebar's content
-        const linkTopRelativeToSidebar = linkRect.top - sidebarRect.top + sidebar.scrollTop;
+        const linkTopRelativeToSidebar =
+          linkRect.top - sidebarRect.top + sidebar.scrollTop;
 
         // Position the active link at about 1/4 from the sidebar's top for optimal visibility
         const desiredTopInViewport = sidebarRect.height / 4;
@@ -502,7 +604,7 @@ const articleJsonLd = JSON.stringify({
         // Smooth scroll to the target position
         sidebar.scrollTo({
           top: finalScroll,
-          behavior: 'smooth'
+          behavior: "smooth",
         });
       };
 
@@ -655,7 +757,11 @@ const articleJsonLd = JSON.stringify({
     margin: 32px 52px;
     padding: 32px;
     border: 1px solid rgba(43, 43, 168, 0.2);
-    background: linear-gradient(135deg, rgba(43, 43, 168, 0.08) 0%, rgba(43, 43, 168, 0.03) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(43, 43, 168, 0.08) 0%,
+      rgba(43, 43, 168, 0.03) 100%
+    );
     border-radius: 8px;
     display: flex;
     align-items: flex-start;
@@ -707,7 +813,9 @@ const articleJsonLd = JSON.stringify({
     letter-spacing: 0.18em;
     text-transform: uppercase;
     border-radius: 4px;
-    transition: opacity 280ms ease, transform 280ms ease;
+    transition:
+      opacity 280ms ease,
+      transform 280ms ease;
   }
 
   .error-cta:hover {
@@ -775,7 +883,9 @@ const articleJsonLd = JSON.stringify({
     text-decoration: none;
     border-bottom: 1px solid transparent;
     padding-bottom: 1px;
-    transition: color 260ms ease, border-color 260ms ease;
+    transition:
+      color 260ms ease,
+      border-color 260ms ease;
   }
 
   .t-back:hover {
@@ -822,7 +932,7 @@ const articleJsonLd = JSON.stringify({
     font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--cream);
+    color: var(--color-white);
     background: var(--blue);
     padding: 5px 12px;
   }
@@ -834,11 +944,11 @@ const articleJsonLd = JSON.stringify({
     font-weight: 400;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--mid);
+    color: black;
   }
 
   .ah-dot {
-    color: var(--rule-strong);
+    color: var(--color-black);
   }
 
   .ah-title {
@@ -894,13 +1004,13 @@ const articleJsonLd = JSON.stringify({
 
   .ah-author {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 14px;
   }
 
   .ah-avatar {
-    width: 44px;
-    height: 44px;
+    width: 94px;
+    height: 94px;
     border-radius: 50%;
     background: var(--blue);
     display: flex;
@@ -908,7 +1018,7 @@ const articleJsonLd = JSON.stringify({
     justify-content: center;
     color: #fff;
     font-family: "Barlow Condensed", sans-serif;
-    font-size: 15px;
+    font-size: 30px;
     font-weight: 600;
     letter-spacing: 0.04em;
     flex-shrink: 0;
@@ -924,30 +1034,29 @@ const articleJsonLd = JSON.stringify({
   }
 
   .ah-author-name {
-    font-size: 13px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 32px;
     color: var(--ink);
-    line-height: 1.3;
   }
 
   .ah-author-role {
-    margin-top: 3px;
     font-family: "Barlow Condensed", sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.16em;
+    font-size: 16px;
     text-transform: uppercase;
     color: var(--mid);
   }
 
   .ah-share {
     display: flex;
-    align-items: center;
+    align-items: start;
+    flex-direction: column;
     gap: 14px;
     flex-wrap: wrap;
   }
 
   .ah-share-label {
     font-family: "Barlow Condensed", sans-serif;
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -958,19 +1067,21 @@ const articleJsonLd = JSON.stringify({
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     border: 1px solid var(--rule);
     color: var(--ink);
     background: transparent;
-    transition: border-color 220ms ease, background 220ms ease;
+    transition:
+      border-color 220ms ease,
+      background 220ms ease;
     cursor: pointer;
     text-decoration: none;
   }
 
   .share-btn:hover {
     border-color: var(--rule-strong);
-    background: rgba(17, 17, 32, 0.04);
+    background: #2b2ba820;
   }
 
   .copy-feedback {
@@ -1048,7 +1159,9 @@ const articleJsonLd = JSON.stringify({
     writing-mode: vertical-lr;
     padding: 0 18px 28px;
     opacity: 0;
-    transition: opacity 320ms ease, color 320ms ease;
+    transition:
+      opacity 320ms ease,
+      color 320ms ease;
   }
 
   .rail-num.vis {
@@ -1320,7 +1433,9 @@ const articleJsonLd = JSON.stringify({
     border: 1px solid var(--rule);
     padding: 6px 14px;
     text-decoration: none;
-    transition: color 220ms ease, border-color 220ms ease;
+    transition:
+      color 220ms ease,
+      border-color 220ms ease;
   }
 
   .atag:hover {
@@ -1518,8 +1633,8 @@ const articleJsonLd = JSON.stringify({
   }
 
   .bio-avatar {
-    width: 64px;
-    height: 64px;
+    width: 74px;
+    height: 74px;
     border-radius: 50%;
     flex-shrink: 0;
     background: var(--blue);
@@ -1543,20 +1658,16 @@ const articleJsonLd = JSON.stringify({
   }
 
   .bio-name {
-    margin-bottom: 6px;
     font-family: "Bebas Neue", sans-serif;
     font-size: 30px;
-    letter-spacing: 0.03em;
     line-height: 1;
     color: var(--ink);
   }
 
   .bio-role {
-    margin-bottom: 14px;
     font-family: "Barlow Condensed", sans-serif;
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 500;
-    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--blue);
   }
@@ -1649,7 +1760,9 @@ const articleJsonLd = JSON.stringify({
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    transition: color 240ms ease, border-color 240ms ease;
+    transition:
+      color 240ms ease,
+      border-color 240ms ease;
   }
 
   .bio-btn:hover {
@@ -1660,12 +1773,13 @@ const articleJsonLd = JSON.stringify({
   .bio-arr {
     width: 26px;
     height: 26px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--ink);
-    transition: transform 240ms ease, background 240ms ease;
+    transition:
+      transform 240ms ease,
+      background 240ms ease;
   }
 
   .bio-btn:hover .bio-arr {
@@ -1714,7 +1828,9 @@ const articleJsonLd = JSON.stringify({
   .reveal-item {
     opacity: 0;
     transform: translateY(16px);
-    transition: opacity 500ms ease, transform 500ms cubic-bezier(0.76, 0, 0.24, 1);
+    transition:
+      opacity 500ms ease,
+      transform 500ms cubic-bezier(0.76, 0, 0.24, 1);
   }
 
   .reveal-item.is-visible {
@@ -1918,4 +2034,3 @@ const articleJsonLd = JSON.stringify({
     }
   }
 </style>
-
