@@ -1,29 +1,29 @@
 ---
-import type {SanityPortableTextBlock, SanityPortableTextMarkDef} from "../../../lib/sanity.types";
+import type { SanityPortableTextBlock, SanityPortableTextMarkDef } from '../../../lib/sanity.types';
 
 interface Props {
   block: SanityPortableTextBlock;
   compact?: boolean;
 }
 
-const {block, compact = false} = Astro.props;
+const { block, compact = false } = Astro.props;
 
 function escapeHtml(value: string): string {
   return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function slugifyValue(value: string): string {
   return value
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
     .slice(0, 96);
 }
 
@@ -32,13 +32,13 @@ function sanitizeHref(href?: string): string | null {
     return null;
   }
 
-  if (href.startsWith("/") || href.startsWith("#")) {
+  if (href.startsWith('/') || href.startsWith('#')) {
     return href;
   }
 
   try {
     const parsed = new URL(href);
-    if (["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol)) {
+    if (['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol)) {
       return href;
     }
   } catch {
@@ -50,41 +50,41 @@ function sanitizeHref(href?: string): string | null {
 
 function applyDecorator(mark: string, html: string): string {
   switch (mark) {
-    case "strong":
+    case 'strong':
       return `<strong>${html}</strong>`;
-    case "em":
+    case 'em':
       return `<em>${html}</em>`;
-    case "underline":
-      return `<span class=\"portable-underline\">${html}</span>`;
-    case "strike-through":
-      return `<span class=\"portable-strike\">${html}</span>`;
-    case "code":
-      return `<code class=\"portable-inline-code\">${html}</code>`;
-    case "highlight":
-      return `<mark class=\"portable-highlight\">${html}</mark>`;
+    case 'underline':
+      return `<span class="portable-underline">${html}</span>`;
+    case 'strike-through':
+      return `<span class="portable-strike">${html}</span>`;
+    case 'code':
+      return `<code class="portable-inline-code">${html}</code>`;
+    case 'highlight':
+      return `<mark class="portable-highlight">${html}</mark>`;
     default:
       return html;
   }
 }
 
 function applyMarkDef(markDef: SanityPortableTextMarkDef, html: string): string {
-  if (markDef._type === "link") {
+  if (markDef._type === 'link') {
     const safeHref = sanitizeHref(markDef.href);
     if (!safeHref) {
       return html;
     }
 
     const openInNewTab = Boolean(markDef.openInNewTab);
-    const attrs = openInNewTab ? " target=\"_blank\" rel=\"noopener noreferrer\"" : "";
-    return `<a href=\"${escapeHtml(safeHref)}\"${attrs}>${html}</a>`;
+    const attrs = openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
+    return `<a href="${escapeHtml(safeHref)}"${attrs}>${html}</a>`;
   }
 
-  if (markDef._type === "internalLink") {
+  if (markDef._type === 'internalLink') {
     if (!markDef.slug) {
       return html;
     }
 
-    return `<a href=\"/blog/${escapeHtml(markDef.slug)}\">${html}</a>`;
+    return `<a href="/blog/${escapeHtml(markDef.slug)}">${html}</a>`;
   }
 
   return html;
@@ -98,7 +98,7 @@ function renderSpans(portableBlock: SanityPortableTextBlock): string {
 
   return (portableBlock.children || [])
     .map((span) => {
-      let html = escapeHtml(span.text || "");
+      let html = escapeHtml(span.text || '');
 
       for (const mark of span.marks || []) {
         const markDef = markDefs.get(mark);
@@ -111,42 +111,42 @@ function renderSpans(portableBlock: SanityPortableTextBlock): string {
 
       return html;
     })
-    .join("");
+    .join('');
 }
 
 function resolveHeadingId(portableBlock: SanityPortableTextBlock, contentHtml: string): string {
-  const normalizedKey = portableBlock._key ? slugifyValue(portableBlock._key) : "";
+  const normalizedKey = portableBlock._key ? slugifyValue(portableBlock._key) : '';
   if (normalizedKey) {
     return `pt-h-${normalizedKey}`;
   }
 
-  const normalizedText = slugifyValue(contentHtml.replace(/<[^>]+>/g, ""));
-  return normalizedText || "pt-heading";
+  const normalizedText = slugifyValue(contentHtml.replace(/<[^>]+>/g, ''));
+  return normalizedText || 'pt-heading';
 }
 
 function buildBlockHtml(portableBlock: SanityPortableTextBlock): string {
   const contentHtml = renderSpans(portableBlock);
-  const compactClass = compact ? " portable-compact" : "";
+  const compactClass = compact ? ' portable-compact' : '';
 
-  if (portableBlock.listItem === "number") {
-    return `<ol class=\"portable-list-number${compactClass}\"><li>${contentHtml}</li></ol>`;
+  if (portableBlock.listItem === 'number') {
+    return `<ol class="portable-list-number${compactClass}"><li>${contentHtml}</li></ol>`;
   }
 
-  if (portableBlock.listItem === "bullet") {
-    return `<ul class=\"portable-list-bullet${compactClass}\"><li>${contentHtml}</li></ul>`;
+  if (portableBlock.listItem === 'bullet') {
+    return `<ul class="portable-list-bullet${compactClass}"><li>${contentHtml}</li></ul>`;
   }
 
-  const style = portableBlock.style || "normal";
-  if (style === "h2" || style === "h3" || style === "h4") {
+  const style = portableBlock.style || 'normal';
+  if (style === 'h2' || style === 'h3' || style === 'h4') {
     const headingId = resolveHeadingId(portableBlock, contentHtml);
-    return `<${style} id=\"${headingId}\" class=\"portable-heading portable-${style}${compactClass}\">${contentHtml}</${style}>`;
+    return `<${style} id="${headingId}" class="portable-heading portable-${style}${compactClass}">${contentHtml}</${style}>`;
   }
 
-  if (style === "blockquote") {
-    return `<blockquote class=\"portable-blockquote${compactClass}\">${contentHtml}</blockquote>`;
+  if (style === 'blockquote') {
+    return `<blockquote class="portable-blockquote${compactClass}">${contentHtml}</blockquote>`;
   }
 
-  return `<p class=\"portable-paragraph${compactClass}\">${contentHtml}</p>`;
+  return `<p class="portable-paragraph${compactClass}">${contentHtml}</p>`;
 }
 
 const renderedHtml = buildBlockHtml(block);
@@ -169,7 +169,7 @@ const renderedHtml = buildBlockHtml(block);
 
   :global(.portable-h2) {
     margin: 56px 0 24px;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 4.5vw, 56px);
     font-weight: 400;
     letter-spacing: 0.03em;
@@ -178,7 +178,7 @@ const renderedHtml = buildBlockHtml(block);
 
   :global(.portable-h3) {
     margin: 36px 0 14px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.16em;
@@ -187,7 +187,7 @@ const renderedHtml = buildBlockHtml(block);
 
   :global(.portable-h4) {
     margin: 28px 0 12px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -222,7 +222,7 @@ const renderedHtml = buildBlockHtml(block);
     border: 1px solid rgba(17, 17, 32, 0.14);
     background: rgba(17, 17, 32, 0.05);
     padding: 1px 6px;
-    font-family: "Geist Mono", monospace;
+    font-family: 'Geist Mono', monospace;
     font-size: 0.92em;
     border-radius: 3px;
     color: #111120;
