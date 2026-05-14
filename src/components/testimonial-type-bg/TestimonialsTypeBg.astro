@@ -1,77 +1,67 @@
 ---
-import NossosAlunosType from "../../assets/icons/nossosalunos-type-gradient.svg";
+import NossosAlunosType from '../../assets/icons/nossosalunos-type-gradient.svg';
 ---
 
- <div id="nossos-alunos-type-container">
-        <img src={NossosAlunosType.src} class="bg-text"></img>    
-        <img src={NossosAlunosType.src} class="bg-text"></img>    
-        <img src={NossosAlunosType.src} class="bg-text"></img>    
-        <img src={NossosAlunosType.src} class="bg-text"></img>    
-        <img src={NossosAlunosType.src} class="bg-text"></img>    
+<div id="nossos-alunos-type-container">
+  <img src={NossosAlunosType.src} class="bg-text" />
 </div>
+<img src={NossosAlunosType.src} class="bg-text" />
+<img src={NossosAlunosType.src} class="bg-text" />
+<img src={NossosAlunosType.src} class="bg-text" />
+<img src={NossosAlunosType.src} class="bg-text" />
 
 <style>
-     #nossos-alunos-type-container{
-        display: flex;
-        flex-direction: column;
-        margin-left: -4%;
-        width: calc(100vw + 10%);
-        transform: rotate(-12.883deg);
-        justify-content: start;
-        align-items: start;
-        /* position: absolute;  */
-    }
-    
-    .bg-text{
-        padding: 0.6rem;
-        user-select: none;
-        filter: blur(0.3rem);
-    }
+  #nossos-alunos-type-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: -4%;
+    width: calc(100vw + 10%);
+    transform: rotate(-12.883deg);
+    justify-content: start;
+    align-items: start;
+    /* position: absolute;  */
+  }
 
-    @media screen and (max-width: 1024px) {
-        #nossos-alunos-type-container{
-        transform: rotate(-14.203deg);
-        position: relative;
-        margin-left: -15%;
-        }
+  .bg-text {
+    padding: 0.6rem;
+    user-select: none;
+    filter: blur(0.3rem);
+  }
 
-        #nossos-alunos-type-container::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        backdrop-filter: blur(0.2rem);
-        -webkit-backdrop-filter: blur(0.2rem);
-
-        mask-size: 120%;        
-        mask-position: left top;   
-        mask-repeat: no-repeat;
-        -webkit-mask-size: 120%;
-        -webkit-mask-position: right top;
-        -webkit-mask-repeat: no-repeat;
-
-        mask-image: linear-gradient(
-            to top,
-            black 0%,
-            black 40%,
-            transparent 100%
-        );
-
-        -webkit-mask-image: linear-gradient(
-            to top,
-            black 0%,
-            black 40%,
-            transparent 100%
-        );
-
-        pointer-events: none;
+  @media screen and (max-width: 1024px) {
+    #nossos-alunos-type-container {
+      transform: rotate(-14.203deg);
+      position: relative;
+      margin-left: -15%;
     }
 
-        .bg-text{
-            margin-left: -16%;
-            width: 180%;
-            height: auto;
-            max-width: 200%;
-            filter: blur(1px);
-            }
-        }
+    #nossos-alunos-type-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(0.2rem);
+      -webkit-backdrop-filter: blur(0.2rem);
+
+      mask-size: 120%;
+      mask-position: left top;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 120%;
+      -webkit-mask-position: right top;
+      -webkit-mask-repeat: no-repeat;
+
+      mask-image: linear-gradient(to top, black 0%, black 40%, transparent 100%);
+
+      -webkit-mask-image: linear-gradient(to top, black 0%, black 40%, transparent 100%);
+
+      pointer-events: none;
+    }
+
+    .bg-text {
+      margin-left: -16%;
+      width: 180%;
+      height: auto;
+      max-width: 200%;
+      filter: blur(1px);
+    }
+  }
 </style>

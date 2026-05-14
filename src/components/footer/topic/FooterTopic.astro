@@ -12,24 +12,26 @@ interface Props {
 const { title, links } = Astro.props;
 ---
 
-<div class="w-fit h-fit">
-  <h4 class="text-lg font-semibold text-[#1a1a2e] mb-4">{title}</h4>
+<div class="h-fit w-fit">
+  <h4 class="mb-4 text-lg font-semibold text-[#1a1a2e]">{title}</h4>
   <div class="flex gap-8">
-    {links.map((column) => (
-      <ul class="list-none p-0 m-0 flex flex-col gap-2">
-        {column.map((item) => (
-          <li>
-            <a
-              href={item.url}
-              class="no-underline text-[#555] text-[0.95rem] transition-colors duration-200 hover:text-[#4a4a9e]"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    ))}
+    {
+      links.map((column) => (
+        <ul class="m-0 flex list-none flex-col gap-2 p-0">
+          {column.map((item) => (
+            <li>
+              <a
+                href={item.url}
+                class="text-[0.95rem] text-[#555] no-underline transition-colors duration-200 hover:text-[#4a4a9e]"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ))
+    }
   </div>
 </div>

@@ -1,40 +1,40 @@
 ---
-import type {SanityPtEmbedBlock} from "../../../lib/sanity.types";
+import type { SanityPtEmbedBlock } from '../../../lib/sanity.types';
 
 interface Props {
   block: SanityPtEmbedBlock;
 }
 
-const {block} = Astro.props;
+const { block } = Astro.props;
 
 const allowedIframeHosts = [
-  "youtube.com",
-  "www.youtube.com",
-  "youtu.be",
-  "player.vimeo.com",
-  "vimeo.com",
+  'youtube.com',
+  'www.youtube.com',
+  'youtu.be',
+  'player.vimeo.com',
+  'vimeo.com',
 ];
 
 function getYoutubeEmbedUrl(sourceUrl: URL): string | null {
   const host = sourceUrl.hostname.toLowerCase();
 
-  if (host === "youtu.be") {
-    const id = sourceUrl.pathname.replace(/^\//, "");
+  if (host === 'youtu.be') {
+    const id = sourceUrl.pathname.replace(/^\//, '');
     return id ? `https://www.youtube.com/embed/${id}` : null;
   }
 
-  if (host.includes("youtube.com")) {
-    if (sourceUrl.pathname.startsWith("/embed/")) {
+  if (host.includes('youtube.com')) {
+    if (sourceUrl.pathname.startsWith('/embed/')) {
       return `https://www.youtube.com${sourceUrl.pathname}`;
     }
 
-    if (sourceUrl.pathname === "/watch") {
-      const id = sourceUrl.searchParams.get("v");
+    if (sourceUrl.pathname === '/watch') {
+      const id = sourceUrl.searchParams.get('v');
       return id ? `https://www.youtube.com/embed/${id}` : null;
     }
 
-    if (sourceUrl.pathname.startsWith("/shorts/")) {
-      const id = sourceUrl.pathname.split("/").filter(Boolean)[1];
+    if (sourceUrl.pathname.startsWith('/shorts/')) {
+      const id = sourceUrl.pathname.split('/').filter(Boolean)[1];
       return id ? `https://www.youtube.com/embed/${id}` : null;
     }
   }
@@ -44,11 +44,11 @@ function getYoutubeEmbedUrl(sourceUrl: URL): string | null {
 
 function getVimeoEmbedUrl(sourceUrl: URL): string | null {
   const host = sourceUrl.hostname.toLowerCase();
-  if (!host.includes("vimeo.com")) {
+  if (!host.includes('vimeo.com')) {
     return null;
   }
 
-  const id = sourceUrl.pathname.split("/").filter(Boolean).pop();
+  const id = sourceUrl.pathname.split('/').filter(Boolean).pop();
   if (!id) {
     return null;
   }
@@ -63,17 +63,17 @@ function resolveEmbedUrl(embed: SanityPtEmbedBlock): string | null {
 
   try {
     const sourceUrl = new URL(embed.url);
-    const provider = embed.provider || "youtube";
+    const provider = embed.provider || 'youtube';
 
-    if (provider === "youtube") {
+    if (provider === 'youtube') {
       return getYoutubeEmbedUrl(sourceUrl);
     }
 
-    if (provider === "vimeo") {
+    if (provider === 'vimeo') {
       return getVimeoEmbedUrl(sourceUrl);
     }
 
-    if (provider === "iframe") {
+    if (provider === 'iframe') {
       const host = sourceUrl.hostname.toLowerCase();
       const allowed = allowedIframeHosts.some((allowedHost) => host.includes(allowedHost));
       return allowed ? sourceUrl.toString() : null;
@@ -90,15 +90,14 @@ if (!embedUrl) {
   return null;
 }
 
-const aspectRatioMap: Record<string, {paddingTop: string; aspectRatio: string}> = {
-  "16:9": {paddingTop: "56.25%", aspectRatio: "16 / 9"},
-  "4:3": {paddingTop: "75%", aspectRatio: "4 / 3"},
-  "1:1": {paddingTop: "100%", aspectRatio: "1 / 1"},
+const aspectRatioMap: Record<string, { paddingTop: string; aspectRatio: string }> = {
+  '16:9': { paddingTop: '56.25%', aspectRatio: '16 / 9' },
+  '4:3': { paddingTop: '75%', aspectRatio: '4 / 3' },
+  '1:1': { paddingTop: '100%', aspectRatio: '1 / 1' },
 };
 
-const resolvedAspectRatio =
-  aspectRatioMap[block.aspectRatio || "16:9"] || aspectRatioMap["16:9"];
-const title = block.title || "Conteudo incorporado";
+const resolvedAspectRatio = aspectRatioMap[block.aspectRatio || '16:9'] || aspectRatioMap['16:9'];
+const title = block.title || 'Conteudo incorporado';
 ---
 
 <div
@@ -111,8 +110,7 @@ const title = block.title || "Conteudo incorporado";
     loading="lazy"
     referrerpolicy="strict-origin-when-cross-origin"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-  ></iframe>
+    allowfullscreen></iframe>
 </div>
 
 <style>

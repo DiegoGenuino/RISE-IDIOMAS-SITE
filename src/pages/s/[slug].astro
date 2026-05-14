@@ -1,16 +1,16 @@
 ---
-import SplashScreen from "../../components/splash-screen/Splash"
-import { shareRoutes } from "../../data/shareRoutes"
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import SplashScreen from '../../components/splash-screen/Splash';
+import { shareRoutes } from '../../data/shareRoutes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // preload splash screen fonts so the animation doesn't lag
-import pixelifySans from "@fontsource/pixelify-sans/files/pixelify-sans-latin-400-normal.woff2";
-import handlee from "@fontsource/handlee/files/handlee-latin-400-normal.woff2";
-import geistMono from "@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2";
-import playfairDisplay from "@fontsource/playfair-display/files/playfair-display-latin-400-normal.woff2";
-import salsa from "@fontsource/salsa/files/salsa-latin-400-normal.woff2";
-import caladea from "@fontsource/caladea/files/caladea-latin-400-normal.woff2";
-import schoolbell from "@fontsource/schoolbell/files/schoolbell-latin-400-normal.woff2";
+import pixelifySans from '@fontsource/pixelify-sans/files/pixelify-sans-latin-400-normal.woff2';
+import handlee from '@fontsource/handlee/files/handlee-latin-400-normal.woff2';
+import geistMono from '@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2';
+import playfairDisplay from '@fontsource/playfair-display/files/playfair-display-latin-400-normal.woff2';
+import salsa from '@fontsource/salsa/files/salsa-latin-400-normal.woff2';
+import caladea from '@fontsource/caladea/files/caladea-latin-400-normal.woff2';
+import schoolbell from '@fontsource/schoolbell/files/schoolbell-latin-400-normal.woff2';
 
 const fonts = [pixelifySans, handlee, geistMono, playfairDisplay, salsa, caladea, schoolbell];
 
@@ -21,20 +21,22 @@ export function getStaticPaths() {
   }));
 }
 
-const { slug } = Astro.params // get slug at url
-const target = shareRoutes[slug ?? null]  // if doesn't find it at shareRoutes, assign a null value
-if (!target) return Astro.redirect("/404")  // if it's null redirects to 404
+const { slug } = Astro.params; // get slug at url
+const target = shareRoutes[slug ?? null]; // if doesn't find it at shareRoutes, assign a null value
+if (!target) return Astro.redirect('/404'); // if it's null redirects to 404
 ---
 
-<BaseLayout 
-seo={{
-  title: ""
-}}
+<BaseLayout
+  seo={{
+    title: '',
+  }}
 >
   <Fragment slot="head">
-    {fonts.map((href) => (
-      <link rel="preload" as="font" type="font/woff2" crossorigin href={href} />
-    ))}
+    {
+      fonts.map((href) => (
+        <link rel="preload" as="font" type="font/woff2" crossorigin href={href} />
+      ))
+    }
   </Fragment>
   <SplashScreen client:load to={target.to} />
 </BaseLayout>

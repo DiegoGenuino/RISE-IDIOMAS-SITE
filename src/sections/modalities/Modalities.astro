@@ -1,40 +1,40 @@
 ---
-import "@fontsource/schoolbell";
-import "@fontsource/playfair-display";
-import "@fontsource/unifrakturcook";
-import "@fontsource/geist-mono";
+import '@fontsource/schoolbell';
+import '@fontsource/playfair-display';
+import '@fontsource/unifrakturcook';
+import '@fontsource/geist-mono';
 
-import ModalityNavbar from "../../components/modality-navbar/ModalityNavbar.astro";
-import ModalityPanel from "../../components/modality-panel/ModalityPanel.astro";
+import ModalityNavbar from '../../components/modality-navbar/ModalityNavbar.astro';
+import ModalityPanel from '../../components/modality-panel/ModalityPanel.astro';
 
 //  Executivo panel assets
-import execKeyboard from "../../assets/images/modalities-section/exec-panel-element.png";
+import execKeyboard from '../../assets/images/modalities-section/exec-panel-element.png';
 
 //  Acadêmico panel assets
-import acadStudent from "../../assets/images/modalities-section/acad-panel-student-element.png";
-import acadGlobeCollage from "../../assets/images/modalities-section/acad-panel-globe-collage-element.png";
+import acadStudent from '../../assets/images/modalities-section/acad-panel-student-element.png';
+import acadGlobeCollage from '../../assets/images/modalities-section/acad-panel-globe-collage-element.png';
 
 //  Jurídico panel assets
-import juridicoElement from "../../assets/images/modalities-section/juridico-panel-element.png";
+import juridicoElement from '../../assets/images/modalities-section/juridico-panel-element.png';
 
 // Preparatório panel assets
-import prepStudent from "../../assets/images/modalities-section/prep-panel-boy-element.png";
-import prepCambridgeBadge from "../../assets/images/modalities-section/prep-panel-cambridge-element.png";
-import prepMichiganBadge from "../../assets/images/modalities-section/prep-panel-michigan-element.png";
+import prepStudent from '../../assets/images/modalities-section/prep-panel-boy-element.png';
+import prepCambridgeBadge from '../../assets/images/modalities-section/prep-panel-cambridge-element.png';
+import prepMichiganBadge from '../../assets/images/modalities-section/prep-panel-michigan-element.png';
 
 //  Teens panel assets
-import teensGirlOpen from "../../assets/images/modalities-section/teens-panel-girl-element-f1.png";
-import teensGirlBlink from "../../assets/images/modalities-section/teens-panel-girl-element-f2.png";
-import teensBook from "../../assets/images/modalities-section/teens-panel-book-element.png";
-import teensCamera from "../../assets/images/modalities-section/teens-panel-camera-element.png";
-import teensMegaphone from "../../assets/images/modalities-section/teens-panel-megaphone-element.png";
+import teensGirlOpen from '../../assets/images/modalities-section/teens-panel-girl-element-f1.png';
+import teensGirlBlink from '../../assets/images/modalities-section/teens-panel-girl-element-f2.png';
+import teensBook from '../../assets/images/modalities-section/teens-panel-book-element.png';
+import teensCamera from '../../assets/images/modalities-section/teens-panel-camera-element.png';
+import teensMegaphone from '../../assets/images/modalities-section/teens-panel-megaphone-element.png';
 //  Kids panel assets
-import kidsFrame1 from "../../assets/images/modalities-section/kids-panel-kid-element-f1.png";
-import kidsFrame2 from "../../assets/images/modalities-section/kids-panel-kid-element-f2.png";
-import kidsFrame3 from "../../assets/images/modalities-section/kids-panel-kid-element-f3.png";
-import kidsFrame4 from "../../assets/images/modalities-section/kids-panel-kid-element-f4.png";
-import kidsFrame5 from "../../assets/images/modalities-section/kids-panel-kid-element-f5.png";
-import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-element.png";
+import kidsFrame1 from '../../assets/images/modalities-section/kids-panel-kid-element-f1.png';
+import kidsFrame2 from '../../assets/images/modalities-section/kids-panel-kid-element-f2.png';
+import kidsFrame3 from '../../assets/images/modalities-section/kids-panel-kid-element-f3.png';
+import kidsFrame4 from '../../assets/images/modalities-section/kids-panel-kid-element-f4.png';
+import kidsFrame5 from '../../assets/images/modalities-section/kids-panel-kid-element-f5.png';
+import kidsSun from '../../assets/images/modalities-section/kids-panel-sun-element.png';
 ---
 
 <style>
@@ -67,35 +67,35 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
 
   /* Custom Title Fonts (global scope to avoid specificity issues) */
   :global(#executivo-panel .title) {
-    font-family: "Geist Mono", cursive;
+    font-family: 'Geist Mono', cursive;
   }
   :global(#juridico-panel .title) {
-    font-family: "Playfair Display", cursive;
+    font-family: 'Playfair Display', cursive;
   }
   :global(#preparatorio-panel .title) {
-    font-family: "Playfair Display", cursive;
+    font-family: 'Playfair Display', cursive;
   }
   :global(#teens-panel .title) {
-    font-family: "UnifrakturCook", cursive;
+    font-family: 'UnifrakturCook', cursive;
   }
   :global(#kids-panel .title) {
-    font-family: "Schoolbell", cursive;
+    font-family: 'Schoolbell', cursive;
   }
 </style>
 
 <section
   id="modalities"
-  class="background relative min-h-[100svh] lg:h-screen lg:min-h-0 flex flex-col z-10"
+  class="background relative z-10 flex min-h-[100svh] flex-col lg:h-screen lg:min-h-0"
   aria-labelledby="modalities-title"
 >
   <div
-    class="max-w-7xl mx-auto w-full h-full flex flex-col gap-2 px-8 py-8 sm:px-12 md:px-16 lg:px-20 lg:gap-12"
+    class="mx-auto flex h-full w-full max-w-7xl flex-col gap-2 px-8 py-8 sm:px-12 md:px-16 lg:gap-12 lg:px-20"
   >
     <!-- Tab Navigation -->
     <ModalityNavbar />
 
     <!-- Tab Panels Container -->
-    <div class="relative flex-1 w-full tab-panels-wrapper">
+    <div class="tab-panels-wrapper relative w-full flex-1">
       <!-- Executivo Panel -->
       <div
         class="tab-panel active"
@@ -112,24 +112,22 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           modalityId="executivo"
           overlayDescription="Esse curso foi desenvolvido para líderes e profissionais que precisam de total confiança em negociações globais. Domine o inglês com foco em nuances culturais e técnicas de persuasão para se destacar no mercado internacional."
           overlayFeatures={[
-            "Nuances culturais e diplomacia corporativa",
-            "Técnicas de persuasão em inglês avançado",
-            "Preparação para reuniões e apresentações internacionais",
-            "Vocabulário especializado para negócios",
+            'Nuances culturais e diplomacia corporativa',
+            'Técnicas de persuasão em inglês avançado',
+            'Preparação para reuniões e apresentações internacionais',
+            'Vocabulário especializado para negócios',
           ]}
           customStyles={`
               .exec-element { cursor: pointer; }
             `}
           images={[
             {
-              class:
-                "exec-element w-full h-full object-contain drop-shadow-2xl",
+              class: 'exec-element w-full h-full object-contain drop-shadow-2xl',
               src: execKeyboard,
-              alt: "Teclado representando ensino executivo tecnológico",
-              data: { "exec-keyboard": "true" },
+              alt: 'Teclado representando ensino executivo tecnológico',
+              data: { 'exec-keyboard': 'true' },
               widths: [400, 600, 800],
-              sizes:
-                "(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px",
+              sizes: '(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px',
             },
           ]}
         />
@@ -150,10 +148,10 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           modalityId="academico"
           overlayDescription="Pensado exclusivamente para quem busca brilhar no exterior. Esse programa prepara você para a vida internacional, desenvolvendo o domínio da linguagem técnica, produção de artigos e leitura crítica em nível de excelência."
           overlayFeatures={[
-            "Linguagem técnica para fins escolares e universitários",
-            "Produção e compreensão de textos acadêmicos",
-            "Preparação para intercâmbios e estudos no exterior",
-            "Conversação e fluência para o dia a dia acadêmico",
+            'Linguagem técnica para fins escolares e universitários',
+            'Produção e compreensão de textos acadêmicos',
+            'Preparação para intercâmbios e estudos no exterior',
+            'Conversação e fluência para o dia a dia acadêmico',
           ]}
           customStyles={`
             .acad-mask { -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
@@ -161,21 +159,19 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           images={[
             {
               src: acadStudent,
-              alt: "Garoto representando ensino acadêmico",
+              alt: 'Garoto representando ensino acadêmico',
               class:
-                "absolute z-100 -bottom-[5%] lg:-bottom-[10%] right-0 lg:-right-[5%] h-[110%] lg:h-[130%] w-auto object-contain z-10 drop-shadow-2xl acad-mask",
+                'absolute z-100 -bottom-[5%] lg:-bottom-[10%] right-0 lg:-right-[5%] h-[110%] lg:h-[130%] w-auto object-contain z-10 drop-shadow-2xl acad-mask',
               widths: [400, 600, 800],
-              sizes:
-                "(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px",
+              sizes: '(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px',
             },
             {
               src: acadGlobeCollage,
-              alt: "Colagem com globo representando ensino acadêmico",
+              alt: 'Colagem com globo representando ensino acadêmico',
               class:
-                "absolute -top-[15%] lg:-top-[30%] right-40 lg:right-70 w-[70%] lg:w-[55%] xl:w-[80%] h-auto object-contain z-20 drop-shadow-xl",
+                'absolute -top-[15%] lg:-top-[30%] right-40 lg:right-70 w-[70%] lg:w-[55%] xl:w-[80%] h-auto object-contain z-20 drop-shadow-xl',
               widths: [400, 600, 800],
-              sizes:
-                "(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px",
+              sizes: '(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px',
             },
           ]}
         />
@@ -196,10 +192,10 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           modalityId="juridico"
           overlayDescription="Criado sob medida para advogados e estudantes de Direito. Aqui você domina a terminologia jurídica essencial, a interpretação de contratos complexos e a comunicação assertiva para atuar com segurança no Direito Internacional."
           overlayFeatures={[
-            "Terminologia jurídica em inglês",
-            "Interpretação de contratos internacionais",
-            "Comunicação profissional para direito internacional",
-            "Redação de documentos jurídicos em inglês",
+            'Terminologia jurídica em inglês',
+            'Interpretação de contratos internacionais',
+            'Comunicação profissional para direito internacional',
+            'Redação de documentos jurídicos em inglês',
           ]}
           customStyles={`
             .juridico-mask { -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%); mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
@@ -207,10 +203,10 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           images={[
             {
               src: juridicoElement,
-              alt: "Ensino jurídico",
+              alt: 'Ensino jurídico',
               class:
-                "w-[120%] h-[120%] -top-[10%] object-contain drop-shadow-2xl relative z-10 juridico-mask origin-bottom",
-              loading: "eager",
+                'w-[120%] h-[120%] -top-[10%] object-contain drop-shadow-2xl relative z-10 juridico-mask origin-bottom',
+              loading: 'eager',
             },
           ]}
         />
@@ -231,37 +227,37 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           modalityId="preparatorio"
           overlayDescription="Projetado para quem precisa certificar seu nível de inglês. Preparamos você com técnicas precisas e simulações reais para garantir sua proficiência nas provas de Cambridge e Michigan, abrindo grandes portas pelo mundo todo."
           overlayFeatures={[
-            "Preparação para Cambridge e Michigan",
-            "Proficiência comprovada internacionalmente",
-            "Simulados e técnicas de prova avançadas",
-            "Material didático oficial das certificadoras",
+            'Preparação para Cambridge e Michigan',
+            'Proficiência comprovada internacionalmente',
+            'Simulados e técnicas de prova avançadas',
+            'Material didático oficial das certificadoras',
           ]}
           images={[
             {
               src: prepStudent,
-              alt: "Garoto representando preparatório",
+              alt: 'Garoto representando preparatório',
               class:
-                "absolute -bottom-[5%] lg:-bottom-[10%] right-0 lg:-right-[5%] h-[120%] lg:h-[135%] w-auto object-contain z-10 drop-shadow-2xl",
+                'absolute -bottom-[5%] lg:-bottom-[10%] right-0 lg:-right-[5%] h-[120%] lg:h-[135%] w-auto object-contain z-10 drop-shadow-2xl',
             },
             {
               src: prepStudent,
-              alt: "Garoto Blur",
+              alt: 'Garoto Blur',
               class:
-                "absolute -bottom-[5%] lg:-bottom-[10%] right-0 lg:-right-[5%] h-[120%] lg:h-[135%] w-auto object-contain z-[15] pointer-events-none",
+                'absolute -bottom-[5%] lg:-bottom-[10%] right-0 lg:-right-[5%] h-[120%] lg:h-[135%] w-auto object-contain z-[15] pointer-events-none',
               style:
-                "filter: blur(10px); mask-image: linear-gradient(to bottom, transparent 50%, black 80%); -webkit-mask-image: linear-gradient(to bottom, transparent 50%, black 80%);",
+                'filter: blur(10px); mask-image: linear-gradient(to bottom, transparent 50%, black 80%); -webkit-mask-image: linear-gradient(to bottom, transparent 50%, black 80%);',
             },
             {
               src: prepCambridgeBadge,
-              alt: "Cambridge University",
+              alt: 'Cambridge University',
               class:
-                "absolute bottom-[18%] lg:bottom-[22%] right-[25%] lg:right-[32%] w-[55%] lg:w-[65%] h-auto object-contain z-20 hover:-translate-x-2 transition-transform duration-300 drop-shadow-xl",
+                'absolute bottom-[18%] lg:bottom-[22%] right-[25%] lg:right-[32%] w-[55%] lg:w-[65%] h-auto object-contain z-20 hover:-translate-x-2 transition-transform duration-300 drop-shadow-xl',
             },
             {
               src: prepMichiganBadge,
-              alt: "Michigan University",
+              alt: 'Michigan University',
               class:
-                "absolute -bottom-[5%] lg:-bottom-[8%] right-[25%] lg:right-[32%] w-[55%] lg:w-[65%] h-auto object-contain z-20 hover:-translate-x-2 transition-transform duration-300 drop-shadow-lg",
+                'absolute -bottom-[5%] lg:-bottom-[8%] right-[25%] lg:right-[32%] w-[55%] lg:w-[65%] h-auto object-contain z-20 hover:-translate-x-2 transition-transform duration-300 drop-shadow-lg',
             },
           ]}
         />
@@ -283,10 +279,10 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           modalityId="teens"
           overlayDescription="Esse programa foi feito para adolescentes que querem se conectar com o mundo de maneira envolvente. Desenvolvemos a fluência explorando cultura pop, tecnologia e temas globais de um jeito dinâmico."
           overlayFeatures={[
-            "Inglês dinâmico com cultura pop e tecnologia",
-            "Preparação para o mundo globalizado",
-            "Atividades interativas e engajantes",
-            "Desenvolvimento de confiança na comunicação",
+            'Inglês dinâmico com cultura pop e tecnologia',
+            'Preparação para o mundo globalizado',
+            'Atividades interativas e engajantes',
+            'Desenvolvimento de confiança na comunicação',
           ]}
           customStyles={`
             @keyframes teensBlink { 0%, 95% { opacity: 0; } 95.01%, 98% { opacity: 1; } 98.01%, 100% { opacity: 0; } }
@@ -299,43 +295,43 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           images={[
             {
               src: teensGirlOpen,
-              alt: "Teens - Garota",
+              alt: 'Teens - Garota',
               class:
-                "w-full h-full object-contain drop-shadow-2xl relative z-20 scale-[1.25] lg:scale-[1.15] xl:scale-[1.3] origin-bottom girl-mask",
-              style: "animation: teensBlinkHide 4.5s infinite running;",
-              loading: "eager",
+                'w-full h-full object-contain drop-shadow-2xl relative z-20 scale-[1.25] lg:scale-[1.15] xl:scale-[1.3] origin-bottom girl-mask',
+              style: 'animation: teensBlinkHide 4.5s infinite running;',
+              loading: 'eager',
             },
             {
               src: teensGirlBlink,
-              alt: "Teens - Garota Piscando",
+              alt: 'Teens - Garota Piscando',
               class:
-                "absolute inset-0 w-full h-full object-contain drop-shadow-2xl z-30 pointer-events-none opacity-0 scale-[1.25] lg:scale-[1.15] xl:scale-[1.3] origin-bottom girl-mask",
-              style: "animation: teensBlink 4.5s infinite running;",
-              loading: "eager",
+                'absolute inset-0 w-full h-full object-contain drop-shadow-2xl z-30 pointer-events-none opacity-0 scale-[1.25] lg:scale-[1.15] xl:scale-[1.3] origin-bottom girl-mask',
+              style: 'animation: teensBlink 4.5s infinite running;',
+              loading: 'eager',
             },
             {
               src: teensBook,
-              alt: "Livro voando",
+              alt: 'Livro voando',
               class:
-                "absolute top-[5%] -left-[10%] lg:-left-[5%] w-[35%] lg:w-[30%] object-contain z-10 hover:scale-[1.15] transition-transform duration-300 cursor-pointer pointer-events-auto",
-              style: "animation: teensFloat1 6s infinite ease-in-out;",
-              loading: "eager",
+                'absolute top-[5%] -left-[10%] lg:-left-[5%] w-[35%] lg:w-[30%] object-contain z-10 hover:scale-[1.15] transition-transform duration-300 cursor-pointer pointer-events-auto',
+              style: 'animation: teensFloat1 6s infinite ease-in-out;',
+              loading: 'eager',
             },
             {
               src: teensCamera,
-              alt: "Câmera",
+              alt: 'Câmera',
               class:
-                "absolute bottom-[-5%] origin-bottom-left -left-[5%] lg:-left-[10%] w-[40%] lg:w-[35%] object-contain z-40 hover:scale-[1.1] hover:-rotate-6 transition-transform duration-300 cursor-pointer pointer-events-auto",
-              style: "animation: teensFloat2 5.5s infinite ease-in-out;",
-              loading: "eager",
+                'absolute bottom-[-5%] origin-bottom-left -left-[5%] lg:-left-[10%] w-[40%] lg:w-[35%] object-contain z-40 hover:scale-[1.1] hover:-rotate-6 transition-transform duration-300 cursor-pointer pointer-events-auto',
+              style: 'animation: teensFloat2 5.5s infinite ease-in-out;',
+              loading: 'eager',
             },
             {
               src: teensMegaphone,
-              alt: "Megafone",
+              alt: 'Megafone',
               class:
-                "absolute bottom-[10%] origin-bottom-right right-0 lg:-right-[15%] w-[45%] lg:w-[45%] object-contain z-40 hover:-translate-y-2 hover:rotate-6 hover:scale-[1.1] transition-transform duration-300 cursor-pointer pointer-events-auto",
-              style: "animation: teensFloat3 7s infinite ease-in-out;",
-              loading: "eager",
+                'absolute bottom-[10%] origin-bottom-right right-0 lg:-right-[15%] w-[45%] lg:w-[45%] object-contain z-40 hover:-translate-y-2 hover:rotate-6 hover:scale-[1.1] transition-transform duration-300 cursor-pointer pointer-events-auto',
+              style: 'animation: teensFloat3 7s infinite ease-in-out;',
+              loading: 'eager',
             },
           ]}
         />
@@ -358,53 +354,53 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
           modalityId="kids"
           overlayDescription="Desenvolvido com carinho para os pequenos, nosso ensino foca na descoberta. Através de uma abordagem lúdica e 100% interativa, as crianças constroem a fluência de maneira natural, leve e extremamente divertida."
           overlayFeatures={[
-            "Metodologia lúdica e interativa",
-            "Fluência desenvolvida de forma natural",
-            "Atividades divertidas e educativas",
-            "Acompanhamento individualizado do progresso",
+            'Metodologia lúdica e interativa',
+            'Fluência desenvolvida de forma natural',
+            'Atividades divertidas e educativas',
+            'Acompanhamento individualizado do progresso',
           ]}
           images={[
             {
               src: kidsFrame1,
-              alt: "Criança aprendendo inglês",
-              class: "hidden w-full h-full object-contain drop-shadow-2xl",
-              data: { "kid-frame": true },
-              loading: "eager",
+              alt: 'Criança aprendendo inglês',
+              class: 'hidden w-full h-full object-contain drop-shadow-2xl',
+              data: { 'kid-frame': true },
+              loading: 'eager',
             },
             {
               src: kidsFrame2,
-              alt: "Criança aprendendo inglês",
-              class: "hidden w-full h-full object-contain drop-shadow-2xl",
-              data: { "kid-frame": true },
-              loading: "eager",
+              alt: 'Criança aprendendo inglês',
+              class: 'hidden w-full h-full object-contain drop-shadow-2xl',
+              data: { 'kid-frame': true },
+              loading: 'eager',
             },
             {
               src: kidsFrame3,
-              alt: "Criança aprendendo inglês",
-              class: "hidden w-full h-full object-contain drop-shadow-2xl",
-              data: { "kid-frame": true },
-              loading: "eager",
+              alt: 'Criança aprendendo inglês',
+              class: 'hidden w-full h-full object-contain drop-shadow-2xl',
+              data: { 'kid-frame': true },
+              loading: 'eager',
             },
             {
               src: kidsFrame4,
-              alt: "Criança aprendendo inglês",
-              class: "hidden w-full h-full object-contain drop-shadow-2xl",
-              data: { "kid-frame": true },
-              loading: "eager",
+              alt: 'Criança aprendendo inglês',
+              class: 'hidden w-full h-full object-contain drop-shadow-2xl',
+              data: { 'kid-frame': true },
+              loading: 'eager',
             },
             {
               src: kidsFrame5,
-              alt: "Criança aprendendo inglês",
-              class: "hidden w-full h-full object-contain drop-shadow-2xl",
-              data: { "kid-frame": true },
-              loading: "eager",
+              alt: 'Criança aprendendo inglês',
+              class: 'hidden w-full h-full object-contain drop-shadow-2xl',
+              data: { 'kid-frame': true },
+              loading: 'eager',
             },
             {
               src: kidsSun,
-              alt: "Sol decorativo",
+              alt: 'Sol decorativo',
               class:
-                "sun-element absolute -top-50 right-0 w-[190px] min-[640px]:-right-20 min-[640px]:-top-60 lg:w-[380px] lg:-left-90 lg:-top-10 -z-10 pointer-events-none opacity-40 max-[500px]:-top-[330px]",
-              loading: "eager",
+                'sun-element absolute -top-50 right-0 w-[190px] min-[640px]:-right-20 min-[640px]:-top-60 lg:w-[380px] lg:-left-90 lg:-top-10 -z-10 pointer-events-none opacity-40 max-[500px]:-top-[330px]',
+              loading: 'eager',
             },
           ]}
           customStyles=""
@@ -415,11 +411,11 @@ import kidsSun from "../../assets/images/modalities-section/kids-panel-sun-eleme
 </section>
 
 <script>
-  import { initModalitiesTabs } from "../../scripts/modalitiesTabs";
-  import { initKidExpressions } from "../../scripts/kidsAnimations.js";
-  import { initExecAnimations } from "../../scripts/execAnimations.js";
+  import { initModalitiesTabs } from '../../scripts/modalitiesTabs';
+  import { initKidExpressions } from '../../scripts/kidsAnimations.js';
+  import { initExecAnimations } from '../../scripts/execAnimations.js';
 
-  import { initModalityOverlay } from "../../scripts/modalityOverlay.js";
+  import { initModalityOverlay } from '../../scripts/modalityOverlay.js';
 
   initModalitiesTabs();
   initKidExpressions();

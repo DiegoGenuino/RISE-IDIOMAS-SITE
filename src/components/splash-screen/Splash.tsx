@@ -1,13 +1,12 @@
-import { useEffect, useRef } from "react";
-import RiseLogo from "../../assets/shared/rise-logo.svg";
-import "./Splash.css";
+import { useEffect, useRef } from 'react';
+import RiseLogo from '../../assets/shared/rise-logo.svg';
+import './Splash.css';
 
 type SplashProps = {
   to: string;
 };
 
 export default function Splash({ to }: SplashProps) {
-  const fade = 400;
   const splashRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLImageElement>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
@@ -20,17 +19,17 @@ export default function Splash({ to }: SplashProps) {
     const mask = maskRef.current;
 
     const onLoad = () => {
-      logo?.classList.add("run-expand");
+      logo?.classList.add('run-expand');
     };
 
     const onLogoAnimationEnd = (event: AnimationEvent) => {
-      if (event.animationName === "expand") {
-        mask?.classList.add("slide-out");
+      if (event.animationName === 'expand') {
+        mask?.classList.add('slide-out');
       }
     };
 
     const onMaskAnimationEnd = (event: AnimationEvent) => {
-      if (event.animationName === "slide-out") {
+      if (event.animationName === 'slide-out') {
         setTimeout(() => {
           // ensure all animation fonts are fully loaded before starting
           Promise.all([
@@ -42,21 +41,21 @@ export default function Splash({ to }: SplashProps) {
             document.fonts.load("400 1em 'Caladea'"),
             document.fonts.load("400 1em 'Schoolbell'"),
           ]).then(() => {
-            span?.classList.add("run-typography-animation");
+            span?.classList.add('run-typography-animation');
           });
         }, 500);
       }
     };
 
     const onSpanAnimationEnd = (event: AnimationEvent) => {
-      if (event.animationName === "typography-animation") {
+      if (event.animationName === 'typography-animation') {
         // keeps the font bold after animation
         if (spanRef.current) {
-          spanRef.current.style.fontWeight = "bold";
+          spanRef.current.style.fontWeight = 'bold';
         }
 
         setTimeout(() => {
-          splash?.classList.add("hide");
+          splash?.classList.add('hide');
         }, 900);
 
         setTimeout(() => {
@@ -65,20 +64,20 @@ export default function Splash({ to }: SplashProps) {
       }
     };
 
-    window.addEventListener("load", onLoad);
-    logo?.addEventListener("animationend", onLogoAnimationEnd);
-    mask?.addEventListener("animationend", onMaskAnimationEnd);
-    span?.addEventListener("animationend", onSpanAnimationEnd);
+    window.addEventListener('load', onLoad);
+    logo?.addEventListener('animationend', onLogoAnimationEnd);
+    mask?.addEventListener('animationend', onMaskAnimationEnd);
+    span?.addEventListener('animationend', onSpanAnimationEnd);
 
-    if (document.readyState === "complete") {
+    if (document.readyState === 'complete') {
       onLoad();
     }
 
     return () => {
-      window.removeEventListener("load", onLoad);
-      logo?.removeEventListener("animationend", onLogoAnimationEnd);
-      mask?.removeEventListener("animationend", onMaskAnimationEnd);
-      span?.removeEventListener("animationend", onSpanAnimationEnd);
+      window.removeEventListener('load', onLoad);
+      logo?.removeEventListener('animationend', onLogoAnimationEnd);
+      mask?.removeEventListener('animationend', onMaskAnimationEnd);
+      span?.removeEventListener('animationend', onSpanAnimationEnd);
     };
   }, [to]);
 

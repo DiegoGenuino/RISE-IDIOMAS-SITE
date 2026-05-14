@@ -1,4 +1,4 @@
-import { defineQuery } from "groq";
+import { defineQuery } from 'groq';
 
 const BLOG_CARD_PROJECTION = `
   _id,

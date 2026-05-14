@@ -1,4 +1,4 @@
-import type { SanityPortableBodyNode } from "../lib/sanity.types";
+import type { SanityPortableBodyNode } from '../lib/sanity.types';
 
 export interface BlogAuthor {
   name: string;
@@ -35,29 +35,29 @@ export interface NumberedListItem {
 
 export type BlogBlock =
   | {
-      type: "paragraph";
+      type: 'paragraph';
       content: string;
     }
   | {
-      type: "subheading";
+      type: 'subheading';
       content: string;
     }
   | {
-      type: "callout";
+      type: 'callout';
       label: string;
       content: string;
     }
   | {
-      type: "pullquote";
+      type: 'pullquote';
       quote: string;
       attribution: string;
     }
   | {
-      type: "numbered-list";
+      type: 'numbered-list';
       items: NumberedListItem[];
     }
   | {
-      type: "divider";
+      type: 'divider';
     };
 
 export interface BlogSection {

@@ -15,7 +15,7 @@ export interface SanityHeroImage {
 }
 
 export interface SanityPortableTextSpan {
-  _type: "span";
+  _type: 'span';
   _key?: string;
   text?: string;
   marks?: string[];
@@ -23,14 +23,14 @@ export interface SanityPortableTextSpan {
 
 export interface SanityPortableTextMarkDefLink {
   _key: string;
-  _type: "link";
+  _type: 'link';
   href?: string;
   openInNewTab?: boolean;
 }
 
 export interface SanityPortableTextMarkDefInternalLink {
   _key: string;
-  _type: "internalLink";
+  _type: 'internalLink';
   slug?: string;
 }
 
@@ -39,10 +39,10 @@ export type SanityPortableTextMarkDef =
   | SanityPortableTextMarkDefInternalLink;
 
 export interface SanityPortableTextBlock {
-  _type: "block";
+  _type: 'block';
   _key?: string;
   style?: string;
-  listItem?: "bullet" | "number";
+  listItem?: 'bullet' | 'number';
   level?: number;
   markDefs?: SanityPortableTextMarkDef[];
   children?: SanityPortableTextSpan[];
@@ -53,22 +53,22 @@ export type SanityPortableText = SanityPortableTextBlock[];
 export interface SanityPortableImageValue {
   alt?: string;
   caption?: string;
-  layout?: "inline" | "wide" | "full";
+  layout?: 'inline' | 'wide' | 'full';
   url?: string;
   width?: number;
   height?: number;
 }
 
 export interface SanityPtCalloutBlock {
-  _type: "ptCalloutBlock";
+  _type: 'ptCalloutBlock';
   _key?: string;
-  tone?: "info" | "warning" | "success" | "neutral";
+  tone?: 'info' | 'warning' | 'success' | 'neutral';
   title?: string;
   content?: SanityPortableText;
 }
 
 export interface SanityPtCodeBlock {
-  _type: "ptCodeBlock";
+  _type: 'ptCodeBlock';
   _key?: string;
   language?: string;
   filename?: string;
@@ -77,7 +77,7 @@ export interface SanityPtCodeBlock {
 }
 
 export interface SanityPtImageBlock {
-  _type: "ptImageBlock";
+  _type: 'ptImageBlock';
   _key?: string;
   image?: SanityPortableImageValue;
 }
@@ -88,7 +88,7 @@ export interface SanityPtTableRow {
 }
 
 export interface SanityPtTableBlock {
-  _type: "ptTableBlock";
+  _type: 'ptTableBlock';
   _key?: string;
   caption?: string;
   headers?: string[];
@@ -96,16 +96,16 @@ export interface SanityPtTableBlock {
 }
 
 export interface SanityPtEmbedBlock {
-  _type: "ptEmbedBlock";
+  _type: 'ptEmbedBlock';
   _key?: string;
-  provider?: "youtube" | "vimeo" | "iframe";
+  provider?: 'youtube' | 'vimeo' | 'iframe';
   url?: string;
   title?: string;
-  aspectRatio?: "16:9" | "4:3" | "1:1";
+  aspectRatio?: '16:9' | '4:3' | '1:1';
 }
 
 export interface SanityPtDividerBlock {
-  _type: "ptDividerBlock";
+  _type: 'ptDividerBlock';
   _key?: string;
 }
 
@@ -124,34 +124,34 @@ export interface SanityNumberedListItem {
 }
 
 export interface SanityParagraphBlock {
-  _type: "paragraphBlock";
+  _type: 'paragraphBlock';
   content?: SanityPortableText;
 }
 
 export interface SanitySubheadingBlock {
-  _type: "subheadingBlock";
+  _type: 'subheadingBlock';
   content?: string;
 }
 
 export interface SanityCalloutBlock {
-  _type: "calloutBlock";
+  _type: 'calloutBlock';
   label?: string;
   content?: SanityPortableText;
 }
 
 export interface SanityPullquoteBlock {
-  _type: "pullquoteBlock";
+  _type: 'pullquoteBlock';
   quote?: string;
   attribution?: string;
 }
 
 export interface SanityNumberedListBlock {
-  _type: "numberedListBlock";
+  _type: 'numberedListBlock';
   items?: SanityNumberedListItem[];
 }
 
 export interface SanityDividerBlock {
-  _type: "dividerBlock";
+  _type: 'dividerBlock';
 }
 
 export type SanitySectionBlock =

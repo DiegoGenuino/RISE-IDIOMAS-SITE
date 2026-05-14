@@ -1,22 +1,19 @@
 ---
-import RiseLogo from "../../assets/shared/rise-logo.svg";
-import TopbarOutline from "../../assets/icons/topbar-outline.svg?raw";
-import Hamburguer from "./hamburguer/Hamburguer.astro";
-import Menu from "./menu/Menu.astro";
-import Glass from "../glass/Glass.astro";
+import RiseLogo from '../../assets/shared/rise-logo.svg';
+import TopbarOutline from '../../assets/icons/topbar-outline.svg?raw';
+import Hamburguer from './hamburguer/Hamburguer.astro';
+import Menu from './menu/Menu.astro';
+import Glass from '../glass/Glass.astro';
 ---
 
 <div class="sticky top-0 z-[50] w-full max-w-[100vw] overflow-x-clip">
   <!-- Topbar outline SVG wrapper -->
-  <div
-    class="topbar-outline-wrapper absolute inset-0 pointer-events-none z-10"
-    aria-hidden="true"
-  >
+  <div class="topbar-outline-wrapper pointer-events-none absolute inset-0 z-10" aria-hidden="true">
     <Fragment set:html={TopbarOutline} />
   </div>
 
   <header
-    class="w-full min-h-[50px] md:min-h-[60px] flex items-center justify-between py-3 px-4 md:py-4 md:px-12 relative bg-transparent"
+    class="relative flex min-h-[50px] w-full items-center justify-between bg-transparent px-4 py-3 md:min-h-[60px] md:px-12 md:py-4"
   >
     <Glass intensity="low" />
     <!-- Logo -->
@@ -27,7 +24,7 @@ import Glass from "../glass/Glass.astro";
         width={70}
         loading="eager"
         draggable="false"
-        class="pointer-events-none select-none w-[50px] md:w-[70px]"
+        class="pointer-events-none w-[50px] select-none md:w-[70px]"
       />
     </div>
 
@@ -36,17 +33,14 @@ import Glass from "../glass/Glass.astro";
       <!-- Desktop Menu -->
       <nav class="hidden md:block">
         <ul class="flex items-center gap-10">
-          <li class="text-[#4242A5] font-semibold flex gap-10">
-            <button data-scroll-to="modalities" class="p-2 cursor-pointer"
-              >Modalidades</button
-            >
-            <button data-scroll-to="testimonials" class="p-2 cursor-pointer"
-              >Depoimentos</button
-            >
-            <a href="/blog" class="p-2 cursor-pointer">Blog</a>
+          <li class="flex gap-10 font-semibold text-[#4242A5]">
+            <button data-scroll-to="modalities" class="cursor-pointer p-2">Modalidades</button>
+            <button data-scroll-to="testimonials" class="cursor-pointer p-2">Depoimentos</button>
+            <a href="/blog" class="cursor-pointer p-2">Blog</a>
           </li>
-          <li class="bg-[#4242A5] py-2.5 px-6 rounded-[6px] text-white">
-            <button data-scroll-to="contact" class="cursor-pointer"><a href="https://wa.me/5511948606841">Contato</a></button
+          <li class="rounded-[6px] bg-[#4242A5] px-6 py-2.5 text-white">
+            <button data-scroll-to="contact" class="cursor-pointer"
+              ><a href="https://wa.me/5511948606841">Contato</a></button
             >
           </li>
         </ul>
@@ -73,51 +67,51 @@ import Glass from "../glass/Glass.astro";
 </style>
 
 <script>
-  const menuToggle = document.getElementById("menu-toggle");
-  const menuClose = document.getElementById("menu-close");
-  const menuOverlay = document.getElementById("menu-overlay");
-  const menuLinks = document.querySelectorAll(".menu-link");
+  const menuToggle = document.getElementById('menu-toggle');
+  const menuClose = document.getElementById('menu-close');
+  const menuOverlay = document.getElementById('menu-overlay');
+  const menuLinks = document.querySelectorAll('.menu-link');
   let isMenuOpen = false;
 
   function openMenu() {
     isMenuOpen = true;
-    menuOverlay?.classList.add("active");
-    document.body.classList.add("menu-open");
+    menuOverlay?.classList.add('active');
+    document.body.classList.add('menu-open');
   }
 
   function closeMenu() {
     isMenuOpen = false;
-    menuOverlay?.classList.remove("active");
-    document.body.classList.remove("menu-open");
+    menuOverlay?.classList.remove('active');
+    document.body.classList.remove('menu-open');
   }
 
   // Open menu on hamburger click
   if (menuToggle) {
-    menuToggle.addEventListener("click", () => {
+    menuToggle.addEventListener('click', () => {
       if (!isMenuOpen) openMenu();
     });
   }
 
   // Close menu on X click
   if (menuClose) {
-    menuClose.addEventListener("click", closeMenu);
+    menuClose.addEventListener('click', closeMenu);
   }
 
   // Close when clicking a nav link
   menuLinks.forEach((link) => {
-    link.addEventListener("click", closeMenu);
+    link.addEventListener('click', closeMenu);
   });
 
   // Close on ESC
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && isMenuOpen) {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isMenuOpen) {
       closeMenu();
     }
   });
 
   // Close when clicking overlay background
   if (menuOverlay) {
-    menuOverlay.addEventListener("click", (e) => {
+    menuOverlay.addEventListener('click', (e) => {
       if (e.target === menuOverlay) {
         closeMenu();
       }
@@ -125,17 +119,13 @@ import Glass from "../glass/Glass.astro";
   }
 
   // Smooth scroll for nav buttons (desktop + mobile menu)
-  document
-    .querySelectorAll<HTMLButtonElement>("[data-scroll-to]")
-    .forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const targetId = btn.dataset.scrollTo;
-        if (targetId) {
-          closeMenu();
-          document
-            .getElementById(targetId)
-            ?.scrollIntoView({ behavior: "smooth" });
-        }
-      });
+  document.querySelectorAll<HTMLButtonElement>('[data-scroll-to]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.scrollTo;
+      if (targetId) {
+        closeMenu();
+        document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+      }
     });
+  });
 </script>

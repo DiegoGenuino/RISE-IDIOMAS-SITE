@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import openLetter from "../../assets/icons/enrollment-letter/open-letter.png";
-import closedLetter from "../../assets/icons/enrollment-letter/closed-letter.png";
+import { useState, useEffect, useRef } from 'react';
+import openLetter from '../../assets/icons/enrollment-letter/open-letter.png';
+import closedLetter from '../../assets/icons/enrollment-letter/closed-letter.png';
 
 export default function EnrollmentLetter() {
   const [isOpen, setIsOpen] = useState(true);
@@ -27,7 +27,7 @@ export default function EnrollmentLetter() {
           }
         });
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (containerRef.current) observer.observe(containerRef.current);
@@ -41,20 +41,20 @@ export default function EnrollmentLetter() {
   return (
     <div
       ref={containerRef}
-      className="absolute w-[14rem] sm:w-[16rem] md:w-[20rem] lg:w-[25rem] h-max z-[10] pointer-events-none select-none rotate-[-5deg] shrink-0 justify-self-center -translate-y-35 md:-translate-y-70"
+      className="pointer-events-none absolute z-[10] h-max w-[14rem] shrink-0 -translate-y-35 rotate-[-5deg] justify-self-center select-none sm:w-[16rem] md:w-[20rem] md:-translate-y-70 lg:w-[25rem]"
     >
       <img
         src={openLetter.src}
         alt="open letter"
-        className={`relative w-full h-auto top-0 left-0 -translate-y-[8rem] sm:-translate-y-[9.2rem] md:-translate-y-[11.5rem] lg:-translate-y-[14.2rem] transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0"
+        className={`relative top-0 left-0 h-auto w-full -translate-y-[8rem] transition-opacity duration-300 sm:-translate-y-[9.2rem] md:-translate-y-[11.5rem] lg:-translate-y-[14.2rem] ${
+          isOpen ? 'opacity-100' : 'opacity-0'
         }`}
       />
       <img
         src={closedLetter.src}
         alt="closed letter"
-        className={`absolute w-full h-auto top-0 left-0 transition-opacity duration-300 ${
-          isOpen ? "opacity-0" : "opacity-100"
+        className={`absolute top-0 left-0 h-auto w-full transition-opacity duration-300 ${
+          isOpen ? 'opacity-0' : 'opacity-100'
         }`}
       />
     </div>

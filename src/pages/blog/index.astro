@@ -1,52 +1,44 @@
 ---
 export const prerender = false; // habilita ssr
 
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import RiseLogo from "../../assets/shared/rise-logo.svg";
-import BlogCard from "../../components/blog/BlogCard.astro";
-import Footer from "../../sections/footer/Footer.astro";
-import { getBlogList } from "../../lib/sanity.blog";
-import { Image } from "astro:assets";
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RiseLogo from '../../assets/shared/rise-logo.svg';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import Footer from '../../sections/footer/Footer.astro';
+import { getBlogList } from '../../lib/sanity.blog';
+import { Image } from 'astro:assets';
 
-const {
-  posts,
-  categoryFilters,
-  errorMessage: blogErrorMessage,
-} = await getBlogList();
+const { posts, categoryFilters, errorMessage: blogErrorMessage } = await getBlogList();
 
 // Log API errors as exceptions for better debugging visibility
 if (blogErrorMessage) {
+  // eslint-disable-next-line no-console
   console.error(new Error(`[Sanity Blog API] ${blogErrorMessage}`));
 }
 
 const featuredPostIndex = posts.findIndex((post) => post.featured);
-const normalizedFeaturedPostIndex =
-  featuredPostIndex >= 0 ? featuredPostIndex : 0;
+const normalizedFeaturedPostIndex = featuredPostIndex >= 0 ? featuredPostIndex : 0;
 const featuredPost = posts[normalizedFeaturedPostIndex];
-const gridPosts = posts.filter(
-  (_, index) => index !== normalizedFeaturedPostIndex,
-);
+const gridPosts = posts.filter((_, index) => index !== normalizedFeaturedPostIndex);
 const hasPosts = posts.length > 0;
 const featuredCoverImageAlt = featuredPost
   ? featuredPost.image?.alt || `Capa do post "${featuredPost.title}"`
-  : "Capa do post";
+  : 'Capa do post';
 
 function createCategoryKey(categoryLabel: string): string {
   return categoryLabel
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 }
 
 function createTagKey(tagLabel: string): string {
   return createCategoryKey(tagLabel);
 }
 
-const categoriesFromPosts = Array.from(
-  new Set(posts.map((post) => post.category)),
-);
+const categoriesFromPosts = Array.from(new Set(posts.map((post) => post.category)));
 const categoryLabels =
   categoryFilters.length > 0
     ? Array.from(new Set(categoryFilters))
@@ -54,9 +46,9 @@ const categoryLabels =
 
 const filterPills = [
   {
-    label: "Todos",
-    key: "all",
-    href: "/blog",
+    label: 'Todos',
+    key: 'all',
+    href: '/blog',
   },
   ...categoryLabels.map((categoryLabel) => {
     const key = createCategoryKey(categoryLabel);
@@ -69,16 +61,16 @@ const filterPills = [
   }),
 ];
 
-const totalCountFormatted = String(posts.length).padStart(3, "0");
+const totalCountFormatted = String(posts.length).padStart(3, '0');
 ---
 
 <BaseLayout
   seo={{
-    title: "Blog",
+    title: 'Blog',
     description:
-      "Insights práticos sobre fluência, carreira e metodologia para evoluir no inglês com estratégia.",
-    type: "website",
-    image: "/favicon.svg",
+      'Insights práticos sobre fluência, carreira e metodologia para evoluir no inglês com estratégia.',
+    type: 'website',
+    image: '/favicon.svg',
   }}
 >
   <Fragment slot="head">
@@ -120,16 +112,15 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
         <div class="ph-right">
           <p class="ph-desc">
-            Dicas de fluência, estratégias de aprendizado e <strong
-              >conteúdo prático</strong
-            > para quem quer ir além do básico no inglês.
+            Dicas de fluência, estratégias de aprendizado e <strong>conteúdo prático</strong> para quem
+            quer ir além do básico no inglês.
           </p>
           <div class="filters" role="group" aria-label="Filtros de categoria">
             {
               filterPills.map((pill, pillIndex) => (
                 <a
                   href={pill.href}
-                  class={`fpill ${pillIndex === 0 ? "active" : ""}`}
+                  class={`fpill ${pillIndex === 0 ? 'active' : ''}`}
                   data-filter-pill
                   data-filter-key={pill.key}
                 >
@@ -147,9 +138,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             <div class="error-content">
               <h2 class="error-title">Conteúdo indisponível no momento</h2>
               <p class="error-desc">
-                Desculpe, não conseguimos carregar os artigos do blog agora. Por
-                favor, tente novamente em alguns instantes ou entre em contato
-                conosco.
+                Desculpe, não conseguimos carregar os artigos do blog agora. Por favor, tente
+                novamente em alguns instantes ou entre em contato conosco.
               </p>
             </div>
           </div>
@@ -170,11 +160,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
             class="featured"
             data-featured
             data-category-key={createCategoryKey(featuredPost.category)}
-            data-tag-keys={featuredPost.tags.map(createTagKey).join(",")}
+            data-tag-keys={featuredPost.tags.map(createTagKey).join(',')}
           >
-            <div
-              class={`feat-illo ${featuredPost.image?.url ? "feat-illo-with-image" : ""}`}
-            >
+            <div class={`feat-illo ${featuredPost.image?.url ? 'feat-illo-with-image' : ''}`}>
               {featuredPost.image?.url ? (
                 <Image
                   class="feat-cover-image"
@@ -196,47 +184,12 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
                   >
-                    <rect
-                      x="20"
-                      y="30"
-                      width="160"
-                      height="110"
-                      rx="14"
-                      fill="#2B2BA8"
-                    />
+                    <rect x="20" y="30" width="160" height="110" rx="14" fill="#2B2BA8" />
                     <path d="M48 140 L36 162 L72 140Z" fill="#2B2BA8" />
-                    <rect
-                      x="32"
-                      y="52"
-                      width="90"
-                      height="8"
-                      rx="4"
-                      fill="rgba(255,255,255,.35)"
-                    />
-                    <rect
-                      x="32"
-                      y="70"
-                      width="130"
-                      height="6"
-                      rx="3"
-                      fill="rgba(255,255,255,.2)"
-                    />
-                    <rect
-                      x="32"
-                      y="84"
-                      width="108"
-                      height="6"
-                      rx="3"
-                      fill="rgba(255,255,255,.2)"
-                    />
-                    <rect
-                      x="32"
-                      y="98"
-                      width="80"
-                      height="6"
-                      rx="3"
-                      fill="rgba(255,255,255,.15)"
-                    />
+                    <rect x="32" y="52" width="90" height="8" rx="4" fill="rgba(255,255,255,.35)" />
+                    <rect x="32" y="70" width="130" height="6" rx="3" fill="rgba(255,255,255,.2)" />
+                    <rect x="32" y="84" width="108" height="6" rx="3" fill="rgba(255,255,255,.2)" />
+                    <rect x="32" y="98" width="80" height="6" rx="3" fill="rgba(255,255,255,.15)" />
                     <rect
                       x="98"
                       y="148"
@@ -253,14 +206,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                       stroke="rgba(17,17,32,.08)"
                       stroke-width="1"
                     />
-                    <rect
-                      x="112"
-                      y="164"
-                      width="70"
-                      height="7"
-                      rx="3.5"
-                      fill="rgba(17,17,32,.2)"
-                    />
+                    <rect x="112" y="164" width="70" height="7" rx="3.5" fill="rgba(17,17,32,.2)" />
                     <rect
                       x="112"
                       y="180"
@@ -269,14 +215,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                       rx="2.5"
                       fill="rgba(17,17,32,.1)"
                     />
-                    <rect
-                      x="112"
-                      y="192"
-                      width="96"
-                      height="5"
-                      rx="2.5"
-                      fill="rgba(17,17,32,.1)"
-                    />
+                    <rect x="112" y="192" width="96" height="5" rx="2.5" fill="rgba(17,17,32,.1)" />
                     <rect
                       x="112"
                       y="204"
@@ -285,23 +224,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                       rx="2.5"
                       fill="rgba(17,17,32,.08)"
                     />
-                    <rect
-                      x="60"
-                      y="220"
-                      width="2"
-                      height="20"
-                      rx="1"
-                      fill="#2B2BA8"
-                      opacity=".6"
-                    />
-                    <rect
-                      x="20"
-                      y="220"
-                      width="36"
-                      height="5"
-                      rx="2.5"
-                      fill="rgba(17,17,32,.15)"
-                    />
+                    <rect x="60" y="220" width="2" height="20" rx="1" fill="#2B2BA8" opacity=".6" />
+                    <rect x="20" y="220" width="36" height="5" rx="2.5" fill="rgba(17,17,32,.15)" />
                   </svg>
                 </>
               )}
@@ -315,9 +239,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
                   <span class="feat-tag">{featuredPost.category}</span>
                   <span class="feat-date">{featuredPost.publishDateLabel}</span>
                   <span class="feat-dot">·</span>
-                  <span class="feat-read">
-                    {featuredPost.readingTimeMinutes} min de leitura
-                  </span>
+                  <span class="feat-read">{featuredPost.readingTimeMinutes} min de leitura</span>
                 </div>
 
                 <h2 class="feat-title">{featuredPost.title}</h2>
@@ -327,13 +249,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
               <span class="feat-cta">
                 Ler artigo
                 <span class="farr">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    aria-hidden="true"
-                  >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                     <path
                       d="M2 10L10 2M10 2H4.5M10 2V7.5"
                       stroke="white"
@@ -398,12 +314,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         </form>
       </section>
       <!-- Pop up de feedback -->
-      <div
-        id="nl-popup"
-        class="fixed bottom-8 right-8 z-50 hidden animate-slideup"
-      >
+      <div id="nl-popup" class="animate-slideup fixed right-8 bottom-8 z-50 hidden">
         <div
-          class="flex items-center gap-4 bg-[#000000] border-b-[4px] border-[#00ff7b] px-6 py-[18px] max-w-sm"
+          class="flex max-w-sm items-center gap-4 border-b-[4px] border-[#00ff7b] bg-[#000000] px-6 py-[18px]"
         >
           <lottie-player
             id="nl-lottie"
@@ -415,13 +328,11 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
           <div>
             <strong
-              class="block font-['Barlow_Condensed'] text-sm font-semibold tracking-widest uppercase text-[#f6f4ef] mb-1"
+              class="mb-1 block font-['Barlow_Condensed'] text-sm font-semibold tracking-widest text-[#f6f4ef] uppercase"
             >
               Inscrição confirmada!
             </strong>
-            <p
-              class="font-['DM_Sans'] text-xs font-light text-[#8a8a9e] leading-relaxed"
-            >
+            <p class="font-['DM_Sans'] text-xs leading-relaxed font-light text-[#8a8a9e]">
               Você receberá nossos conteúdos em breve.
             </p>
           </div>
@@ -429,48 +340,48 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
           <button
             id="nl-popup-close"
             aria-label="Fechar"
-            class="self-start shrink-0 bg-transparent border-none text-[#8a8a9e] hover:text-[#f6f4ef] transition-colors duration-200 cursor-pointer text-sm p-1"
+            class="shrink-0 cursor-pointer self-start border-none bg-transparent p-1 text-sm text-[#8a8a9e] transition-colors duration-200 hover:text-[#f6f4ef]"
             >✕</button
           >
         </div>
       </div>
 
       <script is:inline>
-        const form = document.getElementById("newsletter-form");
-        const submitBtn = document.getElementById("newsletter-submit");
-        const popup = document.getElementById("nl-popup");
-        const popupClose = document.getElementById("nl-popup-close");
+        const form = document.getElementById('newsletter-form');
+        const submitBtn = document.getElementById('newsletter-submit');
+        const popup = document.getElementById('nl-popup');
+        const popupClose = document.getElementById('nl-popup-close');
         let popupTimer;
 
         function hidePopup() {
-          popup.classList.remove("animate-slideup");
-          popup.classList.add("animate-slidedown");
+          popup.classList.remove('animate-slideup');
+          popup.classList.add('animate-slidedown');
 
           popup.addEventListener(
-            "animationend",
+            'animationend',
             () => {
-              popup.classList.add("hidden");
-              popup.classList.remove("animate-slidedown");
-              popup.classList.add("animate-slideup"); // restaura para próxima vez
+              popup.classList.add('hidden');
+              popup.classList.remove('animate-slidedown');
+              popup.classList.add('animate-slideup'); // restaura para próxima vez
             },
-            { once: true },
+            { once: true }
           );
         }
 
         function showPopup() {
-          popup.classList.remove("hidden");
+          popup.classList.remove('hidden');
 
-          const lottie = document.getElementById("nl-lottie");
+          const lottie = document.getElementById('nl-lottie');
           lottie?.stop();
           lottie?.play();
 
           clearTimeout(popupTimer);
-          popupTimer = setTimeout(() => popup.classList.add("hidden"), 2000);
+          popupTimer = setTimeout(() => popup.classList.add('hidden'), 2000);
         }
 
-        popupClose?.addEventListener("click", () => hidePopup());
+        popupClose?.addEventListener('click', () => hidePopup());
 
-        form?.addEventListener("submit", async (e) => {
+        form?.addEventListener('submit', async (e) => {
           e.preventDefault();
 
           if (submitBtn) submitBtn.disabled = true;
@@ -478,8 +389,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
           const formData = new FormData(form);
 
           try {
-            const response = await fetch("/api/newsletter", {
-              method: "POST",
+            const response = await fetch('/api/newsletter', {
+              method: 'POST',
               body: formData,
             });
 
@@ -487,9 +398,10 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
               form.reset();
               showPopup();
             } else {
-              throw new Error("Erro ao assinar newsletter");
+              throw new Error('Erro ao assinar newsletter');
             }
           } catch (err) {
+            // eslint-disable-next-line no-console
             console.error(err);
           } finally {
             if (submitBtn) submitBtn.disabled = false;
@@ -503,37 +415,31 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   <script is:inline>
     (() => {
-      const filterPills = Array.from(
-        document.querySelectorAll("[data-filter-pill]"),
-      );
-      const featuredArticle = document.querySelector("[data-featured]");
-      const articleCards = Array.from(
-        document.querySelectorAll("[data-article-card]"),
-      );
-      const countElement = document.getElementById("articles-count");
-      const emptyState = document.getElementById("articles-empty");
+      const filterPills = Array.from(document.querySelectorAll('[data-filter-pill]'));
+      const featuredArticle = document.querySelector('[data-featured]');
+      const articleCards = Array.from(document.querySelectorAll('[data-article-card]'));
+      const countElement = document.getElementById('articles-count');
+      const emptyState = document.getElementById('articles-empty');
 
       const resolveFiltersFromUrl = () => {
         const searchParams = new URLSearchParams(window.location.search);
-        const requestedCategory = (
-          searchParams.get("category") || "all"
-        ).toLowerCase();
-        const requestedTag = (searchParams.get("tag") || "").toLowerCase();
+        const requestedCategory = (searchParams.get('category') || 'all').toLowerCase();
+        const requestedTag = (searchParams.get('tag') || '').toLowerCase();
 
         const hasCategory = filterPills.some((filterPill) => {
-          return (filterPill.dataset.filterKey || "") === requestedCategory;
+          return (filterPill.dataset.filterKey || '') === requestedCategory;
         });
 
         return {
-          category: hasCategory ? requestedCategory : "all",
+          category: hasCategory ? requestedCategory : 'all',
           tag: requestedTag,
         };
       };
 
       const setActivePill = (activeCategory) => {
         filterPills.forEach((filterPill) => {
-          const categoryKey = filterPill.dataset.filterKey || "all";
-          filterPill.classList.toggle("active", categoryKey === activeCategory);
+          const categoryKey = filterPill.dataset.filterKey || 'all';
+          filterPill.classList.toggle('active', categoryKey === activeCategory);
         });
       };
 
@@ -542,8 +448,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
           return true;
         }
 
-        const tagKeys = (rawTagKeys || "")
-          .split(",")
+        const tagKeys = (rawTagKeys || '')
+          .split(',')
           .map((tagKey) => tagKey.trim())
           .filter(Boolean);
 
@@ -554,10 +460,10 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         let visibleArticleCount = 0;
 
         if (featuredArticle) {
-          const featuredCategory = featuredArticle.dataset.categoryKey || "";
-          const featuredTagKeys = featuredArticle.dataset.tagKeys || "";
+          const featuredCategory = featuredArticle.dataset.categoryKey || '';
+          const featuredTagKeys = featuredArticle.dataset.tagKeys || '';
           const hasFeaturedCategory =
-            activeCategory === "all" || featuredCategory === activeCategory;
+            activeCategory === 'all' || featuredCategory === activeCategory;
           const hasFeaturedTag = hasTagMatch(featuredTagKeys, activeTag);
           const shouldShowFeatured = hasFeaturedCategory && hasFeaturedTag;
           featuredArticle.hidden = !shouldShowFeatured;
@@ -568,10 +474,9 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
         }
 
         articleCards.forEach((articleCard) => {
-          const cardCategory = articleCard.dataset.categoryKey || "";
-          const cardTagKeys = articleCard.dataset.tagKeys || "";
-          const hasCardCategory =
-            activeCategory === "all" || cardCategory === activeCategory;
+          const cardCategory = articleCard.dataset.categoryKey || '';
+          const cardTagKeys = articleCard.dataset.tagKeys || '';
+          const hasCardCategory = activeCategory === 'all' || cardCategory === activeCategory;
           const hasCardTag = hasTagMatch(cardTagKeys, activeTag);
           const shouldShowCard = hasCardCategory && hasCardTag;
           articleCard.hidden = !shouldShowCard;
@@ -583,16 +488,13 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
         if (emptyState) {
           emptyState.textContent = activeTag
-            ? "Nenhum artigo encontrado para esta combinação de categoria e tag."
-            : "Nenhum artigo encontrado para esta categoria.";
+            ? 'Nenhum artigo encontrado para esta combinação de categoria e tag.'
+            : 'Nenhum artigo encontrado para esta categoria.';
           emptyState.hidden = visibleArticleCount > 0;
         }
 
         if (countElement) {
-          countElement.textContent = String(visibleArticleCount).padStart(
-            3,
-            "0",
-          );
+          countElement.textContent = String(visibleArticleCount).padStart(3, '0');
         }
 
         setActivePill(activeCategory);
@@ -601,34 +503,34 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
       const updateUrl = (activeCategory, activeTag) => {
         const currentUrl = new URL(window.location.href);
 
-        if (activeCategory === "all") {
-          currentUrl.searchParams.delete("category");
+        if (activeCategory === 'all') {
+          currentUrl.searchParams.delete('category');
         } else {
-          currentUrl.searchParams.set("category", activeCategory);
+          currentUrl.searchParams.set('category', activeCategory);
         }
 
         if (!activeTag) {
-          currentUrl.searchParams.delete("tag");
+          currentUrl.searchParams.delete('tag');
         } else {
-          currentUrl.searchParams.set("tag", activeTag);
+          currentUrl.searchParams.set('tag', activeTag);
         }
 
         const nextUrl = `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`;
-        window.history.pushState({}, "", nextUrl);
+        window.history.pushState({}, '', nextUrl);
       };
 
       filterPills.forEach((filterPill) => {
-        filterPill.addEventListener("click", (event) => {
+        filterPill.addEventListener('click', (event) => {
           event.preventDefault();
-          const activeCategory = filterPill.dataset.filterKey || "all";
-          const activeTag = "";
+          const activeCategory = filterPill.dataset.filterKey || 'all';
+          const activeTag = '';
 
           updateUrl(activeCategory, activeTag);
           applyFilter(activeCategory, activeTag);
         });
       });
 
-      window.addEventListener("popstate", () => {
+      window.addEventListener('popstate', () => {
         const { category, tag } = resolveFiltersFromUrl();
         applyFilter(category, tag);
       });
@@ -640,17 +542,17 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
               return;
             }
 
-            entry.target.classList.add("is-visible");
+            entry.target.classList.add('is-visible');
             revealObserver.unobserve(entry.target);
           });
         },
         {
           threshold: 0.14,
-        },
+        }
       );
 
       articleCards.forEach((articleCard, articleIndex) => {
-        articleCard.style.setProperty("--card-delay", `${articleIndex * 80}ms`);
+        articleCard.style.setProperty('--card-delay', `${articleIndex * 80}ms`);
         revealObserver.observe(articleCard);
       });
 
@@ -664,17 +566,8 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   .blog-page {
     min-height: 100vh;
     background:
-      radial-gradient(
-        circle at 12% 18%,
-        rgba(43, 43, 168, 0.09),
-        transparent 42%
-      ),
-      radial-gradient(
-        circle at 86% 82%,
-        rgba(17, 17, 32, 0.08),
-        transparent 40%
-      ),
-      #f6f4ef;
+      radial-gradient(circle at 12% 18%, rgba(43, 43, 168, 0.09), transparent 42%),
+      radial-gradient(circle at 86% 82%, rgba(17, 17, 32, 0.08), transparent 40%), #f6f4ef;
     color: #111120;
   }
 
@@ -683,7 +576,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     border: 1px solid rgba(17, 17, 32, 0.16);
     background: rgba(17, 17, 32, 0.04);
     padding: 12px 16px;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     font-weight: 400;
     line-height: 1.6;
@@ -698,11 +591,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     margin: 32px 52px;
     padding: 32px;
     border: 1px solid rgba(43, 43, 168, 0.2);
-    background: linear-gradient(
-      135deg,
-      rgba(43, 43, 168, 0.08) 0%,
-      rgba(43, 43, 168, 0.03) 100%
-    );
+    background: linear-gradient(135deg, rgba(43, 43, 168, 0.08) 0%, rgba(43, 43, 168, 0.03) 100%);
     border-radius: 8px;
     display: flex;
     align-items: flex-start;
@@ -723,7 +612,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   .error-title {
     margin: 0 0 10px 0;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 24px;
     letter-spacing: 0.03em;
     line-height: 1.2;
@@ -732,7 +621,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   .error-desc {
     margin: 0 0 16px 0;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 300;
     line-height: 1.7;
@@ -778,7 +667,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .t-txt {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -815,7 +704,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     display: flex;
     align-items: center;
     gap: 12px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.28em;
@@ -830,7 +719,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .ph-hl {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(72px, 10vw, 140px);
     font-weight: 400;
     letter-spacing: 0.03em;
@@ -894,7 +783,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     background: transparent;
     padding: 7px 16px;
     text-decoration: none;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -955,7 +844,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     position: absolute;
     bottom: -10px;
     right: -10px;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(80px, 12vw, 160px);
     letter-spacing: 0.06em;
     line-height: 1;
@@ -1011,7 +900,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .feat-tag {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.22em;
@@ -1023,7 +912,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   .feat-date,
   .feat-read {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.14em;
@@ -1036,7 +925,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .feat-title {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(44px, 6vw, 84px);
     line-height: 0.9;
     letter-spacing: 0.03em;
@@ -1064,7 +953,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     gap: 12px;
     border-bottom: 2px solid #111120;
     padding-bottom: 16px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 18px;
     font-weight: 600;
     letter-spacing: 0.2em;
@@ -1109,7 +998,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     display: flex;
     align-items: center;
     gap: 12px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.28em;
@@ -1124,7 +1013,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .gh-count {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 13px;
     font-weight: 300;
     letter-spacing: 0.1em;
@@ -1156,7 +1045,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
 
   .articles-empty {
     padding: 24px 52px 32px;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 15px;
     font-weight: 300;
     line-height: 1.7;
@@ -1182,7 +1071,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     align-items: center;
     gap: 10px;
     margin-bottom: 12px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.28em;
@@ -1197,7 +1086,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
   }
 
   .nl-hl {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 4.5vw, 60px);
     letter-spacing: 0.03em;
     line-height: 0.92;
@@ -1227,7 +1116,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     padding: 12px 0;
     background: transparent;
     color: #111120;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 300;
     transition: border-color 280ms ease;
@@ -1247,7 +1136,7 @@ const totalCountFormatted = String(posts.length).padStart(3, "0");
     color: #f6f4ef;
     padding: 14px 28px;
     flex-shrink: 0;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.2em;

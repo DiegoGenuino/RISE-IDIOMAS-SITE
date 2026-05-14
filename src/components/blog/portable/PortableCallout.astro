@@ -1,24 +1,20 @@
 ---
-import type {SanityPtCalloutBlock} from "../../../lib/sanity.types";
-import PortableTextBlock from "./PortableTextBlock.astro";
+import type { SanityPtCalloutBlock } from '../../../lib/sanity.types';
+import PortableTextBlock from './PortableTextBlock.astro';
 
 interface Props {
   block: SanityPtCalloutBlock;
 }
 
-const {block} = Astro.props;
-const tone = block.tone || "info";
+const { block } = Astro.props;
+const tone = block.tone || 'info';
 const contentBlocks = block.content || [];
 ---
 
 <div class={`portable-callout tone-${tone}`}>
   {block.title && <div class="portable-callout-title">{block.title}</div>}
   <div class="portable-callout-content">
-    {
-      contentBlocks.map((contentBlock) => (
-        <PortableTextBlock block={contentBlock} compact />
-      ))
-    }
+    {contentBlocks.map((contentBlock) => <PortableTextBlock block={contentBlock} compact />)}
   </div>
 </div>
 
@@ -32,7 +28,7 @@ const contentBlocks = block.content || [];
 
   .portable-callout-title {
     margin-bottom: 8px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.2em;

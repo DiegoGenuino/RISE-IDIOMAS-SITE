@@ -1,12 +1,12 @@
 ---
-import { Image } from "astro:assets";
+import { Image } from 'astro:assets';
 
-import ExecIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-exec.svg";
-import AcadIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-acad.svg";
-import JuridicoIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-juridico.svg";
-import PrepIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-prep.svg";
-import TeensIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-teens.svg";
-import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.svg";
+import ExecIcon from '../../assets/icons/modality-navbar-kit/navbar-icon-exec.svg';
+import AcadIcon from '../../assets/icons/modality-navbar-kit/navbar-icon-acad.svg';
+import JuridicoIcon from '../../assets/icons/modality-navbar-kit/navbar-icon-juridico.svg';
+import PrepIcon from '../../assets/icons/modality-navbar-kit/navbar-icon-prep.svg';
+import TeensIcon from '../../assets/icons/modality-navbar-kit/navbar-icon-teens.svg';
+import KidsIcon from '../../assets/icons/modality-navbar-kit/navbar-icon-kids.svg';
 ---
 
 <style>
@@ -35,7 +35,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
 
   /* Simulate volumetric liquid highlight */
   .navbar-glass::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -174,7 +174,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
 </style>
 
 <nav
-  class="flex justify-center mb-4 lg:mb-6 shrink-0 w-full py-4 px-4 sm:px-12"
+  class="mb-4 flex w-full shrink-0 justify-center px-4 py-4 sm:px-12 lg:mb-6"
   role="tablist"
   aria-label="Modalidades de ensino"
 >
@@ -191,7 +191,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={ExecIcon}
         alt="Executivo"
-        class="mobile-icon md:hidden object-cover rounded-full"
+        class="mobile-icon rounded-full object-cover md:hidden"
       />
     </button>
     <button
@@ -206,7 +206,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={AcadIcon}
         alt="Acadêmico"
-        class="mobile-icon md:hidden object-cover rounded-full"
+        class="mobile-icon rounded-full object-cover md:hidden"
       />
     </button>
     <button
@@ -221,7 +221,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={JuridicoIcon}
         alt="Jurídico"
-        class="mobile-icon md:hidden object-cover rounded-full"
+        class="mobile-icon rounded-full object-cover md:hidden"
       />
     </button>
     <button
@@ -236,7 +236,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       <Image
         src={PrepIcon}
         alt="Preparatório"
-        class="mobile-icon md:hidden object-cover rounded-full"
+        class="mobile-icon rounded-full object-cover md:hidden"
       />
     </button>
     <button
@@ -248,11 +248,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       data-tab="teens"
     >
       <span class="hidden md:block">teens</span>
-      <Image
-        src={TeensIcon}
-        alt="Teens"
-        class="mobile-icon md:hidden object-cover rounded-full"
-      />
+      <Image src={TeensIcon} alt="Teens" class="mobile-icon rounded-full object-cover md:hidden" />
     </button>
     <button
       class="tab-button"
@@ -263,11 +259,7 @@ import KidsIcon from "../../assets/icons/modality-navbar-kit/navbar-icon-kids.sv
       data-tab="kids"
     >
       <span class="hidden md:block">kids</span>
-      <Image
-        src={KidsIcon}
-        alt="Kids"
-        class="mobile-icon md:hidden object-cover rounded-full"
-      />
+      <Image src={KidsIcon} alt="Kids" class="mobile-icon rounded-full object-cover md:hidden" />
     </button>
   </div>
 </nav>

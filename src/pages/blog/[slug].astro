@@ -1,18 +1,15 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { Image } from "astro:assets";
-import RiseLogo from "../../assets/shared/rise-logo.svg";
-import type { BlogPost } from "../../types/blog";
-import type {
-  SanityPortableBodyNode,
-  SanityPortableTextBlock,
-} from "../../lib/sanity.types";
-import { getBlogPostBySlug } from "../../lib/sanity.blog";
-import PortableRichContent from "../../components/blog/portable/PortableRichContent.astro";
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import RiseLogo from '../../assets/shared/rise-logo.svg';
+import type { BlogPost } from '../../types/blog';
+import type { SanityPortableBodyNode, SanityPortableTextBlock } from '../../lib/sanity.types';
+import { getBlogPostBySlug } from '../../lib/sanity.blog';
+import PortableRichContent from '../../components/blog/portable/PortableRichContent.astro';
 
 export const prerender = false;
 
-type TocLevel = "h2" | "h3" | "h4";
+type TocLevel = 'h2' | 'h3' | 'h4';
 
 interface ArticleTocItem {
   id: string;
@@ -23,37 +20,32 @@ interface ArticleTocItem {
 function slugifyHeadingValue(value: string): string {
   return value
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
     .slice(0, 96);
 }
 
 function extractPortableHeadingLabel(block: SanityPortableTextBlock): string {
   return (block.children || [])
-    .map((child) => child.text || "")
-    .join("")
-    .replace(/\s+/g, " ")
+    .map((child) => child.text || '')
+    .join('')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
-function resolvePortableHeadingId(
-  block: SanityPortableTextBlock,
-  label: string,
-): string {
-  const normalizedKey = block._key ? slugifyHeadingValue(block._key) : "";
+function resolvePortableHeadingId(block: SanityPortableTextBlock, label: string): string {
+  const normalizedKey = block._key ? slugifyHeadingValue(block._key) : '';
   if (normalizedKey) {
     return `pt-h-${normalizedKey}`;
   }
 
   const normalizedLabel = slugifyHeadingValue(label);
-  return normalizedLabel || "pt-heading";
+  return normalizedLabel || 'pt-heading';
 }
 
-function buildBodyTocItems(
-  body: SanityPortableBodyNode[] | undefined,
-): ArticleTocItem[] {
+function buildBodyTocItems(body: SanityPortableBodyNode[] | undefined): ArticleTocItem[] {
   if (!Array.isArray(body) || body.length === 0) {
     return [];
   }
@@ -61,12 +53,12 @@ function buildBodyTocItems(
   let fallbackIndex = 0;
 
   return body.flatMap((node) => {
-    if (node._type !== "block") {
+    if (node._type !== 'block') {
       return [];
     }
 
     const level = node.style;
-    if (level !== "h2" && level !== "h3" && level !== "h4") {
+    if (level !== 'h2' && level !== 'h3' && level !== 'h4') {
       return [];
     }
 
@@ -75,14 +67,13 @@ function buildBodyTocItems(
       return [];
     }
 
-    const id =
-      resolvePortableHeadingId(node, label) || `pt-heading-${++fallbackIndex}`;
+    const id = resolvePortableHeadingId(node, label) || `pt-heading-${++fallbackIndex}`;
     return [{ id, label, level } satisfies ArticleTocItem];
   });
 }
 
 const { slug } = Astro.params;
-const isPreview = Astro.cookies.get("sanity-preview")?.value === "1";
+const isPreview = Astro.cookies.get('sanity-preview')?.value === '1';
 
 const {
   post,
@@ -98,62 +89,58 @@ const {
 
 // Log API errors as exceptions for better debugging visibility
 if (blogErrorMessage) {
+  // eslint-disable-next-line no-console
   console.error(new Error(`[Sanity Blog API] ${blogErrorMessage}`));
 }
 
 if (!post) {
-  return Astro.redirect("/404");
+  return Astro.redirect('/404');
 }
 
 const currentPost: BlogPost = post;
 const titleLines = currentPost.title ? [currentPost.title] : [];
-const hasPortableBody = Boolean(
-  currentPost.portableBody && currentPost.portableBody.length > 0,
-);
+const hasPortableBody = Boolean(currentPost.portableBody && currentPost.portableBody.length > 0);
 const tocItems: ArticleTocItem[] = buildBodyTocItems(currentPost.portableBody);
 const hasToc = tocItems.length > 0;
 const defaultStats = [
-  { label: "Publicado em", valueHtml: currentPost.publishDate },
-  { label: "Leitura", valueHtml: `${currentPost.readingTimeMinutes} min` },
-  { label: "Categoria", valueHtml: currentPost.category },
+  { label: 'Publicado em', valueHtml: currentPost.publishDate },
+  { label: 'Leitura', valueHtml: `${currentPost.readingTimeMinutes} min` },
+  { label: 'Categoria', valueHtml: currentPost.category },
 ];
-const hasHeroImage = Boolean(currentPost.image?.url);
-const heroImageAlt =
-  currentPost.image?.alt || `Imagem do post ${currentPost.title}`;
+const heroImageAlt = currentPost.image?.alt || `Imagem do post ${currentPost.title}`;
 const hasAuthorAvatar = Boolean(currentPost.author.avatar?.url);
-const authorAvatarAlt =
-  currentPost.author.avatar?.alt || currentPost.author.name;
+const authorAvatarAlt = currentPost.author.avatar?.alt || currentPost.author.name;
 const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-  Astro.url.href,
+  Astro.url.href
 )}`;
 const articleImageUrl = currentPost.image?.url
   ? new URL(currentPost.image.url, Astro.url).toString()
-  : new URL("/favicon.svg", Astro.url).toString();
+  : new URL('/favicon.svg', Astro.url).toString();
 const articleTags = currentPost.tags.slice(0, 6);
 const articlePublishedIso = `${currentPost.publishDate}T00:00:00.000Z`;
 const articleJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Article",
+  '@context': 'https://schema.org',
+  '@type': 'Article',
   headline: currentPost.title,
   description: currentPost.description,
   image: [articleImageUrl],
   datePublished: articlePublishedIso,
   dateModified: articlePublishedIso,
   author: {
-    "@type": "Person",
+    '@type': 'Person',
     name: currentPost.author.name,
   },
   publisher: {
-    "@type": "Organization",
-    name: "Rise Idiomas",
+    '@type': 'Organization',
+    name: 'Rise Idiomas',
     logo: {
-      "@type": "ImageObject",
-      url: new URL("/favicon.svg", Astro.url).toString(),
+      '@type': 'ImageObject',
+      url: new URL('/favicon.svg', Astro.url).toString(),
     },
   },
   mainEntityOfPage: Astro.url.href,
   articleSection: currentPost.category,
-  keywords: currentPost.tags.join(", "),
+  keywords: currentPost.tags.join(', '),
   wordCount: Math.max(currentPost.readingTimeMinutes * 200, 200),
 });
 ---
@@ -162,8 +149,8 @@ const articleJsonLd = JSON.stringify({
   seo={{
     title: currentPost.title,
     description: currentPost.description,
-    type: "article",
-    image: currentPost.image?.url || "/favicon.svg",
+    type: 'article',
+    image: currentPost.image?.url || '/favicon.svg',
     canonicalUrl: undefined,
   }}
 >
@@ -196,22 +183,10 @@ const articleJsonLd = JSON.stringify({
 
     <header class="topbar">
       <a href="/" class="t-logo" aria-label="Ir para página inicial">
-        <img
-          src={RiseLogo.src}
-          alt="Rise Idiomas"
-          width="82"
-          height="40"
-          loading="eager"
-        />
+        <img src={RiseLogo.src} alt="Rise Idiomas" width="82" height="40" loading="eager" />
       </a>
       <a href="/blog" class="t-back">
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-          aria-hidden="true"
-        >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path
             d="M12 7H2M2 7L6 3M2 7L6 11"
             stroke="currentColor"
@@ -233,9 +208,8 @@ const articleJsonLd = JSON.stringify({
             <div class="error-content">
               <h2 class="error-title">Conteúdo indisponível no momento</h2>
               <p class="error-desc">
-                Desculpe, não conseguimos carregar este artigo agora. Por favor,
-                tente novamente em alguns instantes ou volte para a lista de
-                artigos.
+                Desculpe, não conseguimos carregar este artigo agora. Por favor, tente novamente em
+                alguns instantes ou volte para a lista de artigos.
               </p>
               <a href="/blog" class="error-cta">
                 Voltar para o Blog
@@ -251,9 +225,7 @@ const articleJsonLd = JSON.stringify({
             <span class="ah-tag">{currentPost.category}</span>
             <span class="ah-date">{currentPost.publishDateLabel}</span>
             <span class="ah-dot">·</span>
-            <span class="ah-read"
-              >{currentPost.readingTimeMinutes} min de leitura</span
-            >
+            <span class="ah-read">{currentPost.readingTimeMinutes} min de leitura</span>
           </div>
 
           <h1 class="ah-title">
@@ -301,7 +273,7 @@ const articleJsonLd = JSON.stringify({
                     aria-label={`LinkedIn do ${currentPost.author.name}`}
                   >
                     <svg
-                      class="w-8 h-auto block"
+                      class="block h-auto w-8"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="100 0 640 640"
@@ -326,25 +298,15 @@ const articleJsonLd = JSON.stringify({
               class="share-btn"
               aria-label="Compartilhar no LinkedIn"
             >
-              <svg
-                class="w-6 h-6 shrink-0"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
+              <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"
                 ><path
                   fill="rgb(0, 0, 0)"
                   d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"
                 ></path></svg
               >
             </a>
-            <button
-              id="copy-link-button"
-              class="share-btn"
-              aria-label="Copiar link do post"
-            >
-              <svg
-                class="w-6 h-6 shrink-0"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
+            <button id="copy-link-button" class="share-btn" aria-label="Copiar link do post">
+              <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"
                 ><path
                   fill="rgb(0, 0, 0)"
                   d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"
@@ -352,8 +314,7 @@ const articleJsonLd = JSON.stringify({
               >
             </button>
           </div>
-          <p id="copy-link-feedback" class="copy-feedback" aria-live="polite">
-          </p>
+          <p id="copy-link-feedback" class="copy-feedback" aria-live="polite"></p>
         </div>
       </header>
 
@@ -372,7 +333,7 @@ const articleJsonLd = JSON.stringify({
           ) : (
             <>
               <div class="art-hero-ghost" aria-hidden="true">
-                {"CONTEUDO"}
+                {'CONTEUDO'}
               </div>
             </>
           )
@@ -385,9 +346,7 @@ const articleJsonLd = JSON.stringify({
             hasPortableBody ? (
               <PortableRichContent body={currentPost.portableBody || []} />
             ) : (
-              <p>
-                O conteúdo deste artigo não está disponível em formato portátil.
-              </p>
+              <p>O conteúdo deste artigo não está disponível em formato portátil.</p>
             )
           }
 
@@ -413,11 +372,9 @@ const articleJsonLd = JSON.stringify({
                     <li class="toc-item">
                       <a
                         href={`#${item.id}`}
-                        class={`toc-link toc-level-${item.level} ${index === 0 ? "active" : ""}`}
+                        class={`toc-link toc-level-${item.level} ${index === 0 ? 'active' : ''}`}
                       >
-                        <span class="toc-n">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
+                        <span class="toc-n">{String(index + 1).padStart(2, '0')}</span>
                         {item.label}
                       </a>
                     </li>
@@ -483,16 +440,16 @@ const articleJsonLd = JSON.stringify({
                   aria-label={`LinkedIn de ${currentPost.author.name}`}
                 >
                   <svg
-                      class="w-8 h-auto block"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="100 0 640 640"
-                    >
-                      <path
-                        fill="rgb(0, 0, 0)"
-                        d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"
-                      />
-                    </svg>
+                    class="block h-auto w-8"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="100 0 640 640"
+                  >
+                    <path
+                      fill="rgb(0, 0, 0)"
+                      d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"
+                    />
+                  </svg>
                 </a>
               )
             }
@@ -515,13 +472,7 @@ const articleJsonLd = JSON.stringify({
           >
             Fale conosco
             <span class="bio-arr">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                aria-hidden="true"
-              >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path
                   d="M2 10L10 2M10 2H4.5M10 2V7.5"
                   stroke="white"
@@ -549,14 +500,14 @@ const articleJsonLd = JSON.stringify({
 
   <script is:inline>
     (() => {
-      const progressBar = document.getElementById("blog-progress");
-      const tocLinks = Array.from(document.querySelectorAll(".toc-link"));
-      const railNumbers = Array.from(document.querySelectorAll(".rail-num"));
+      const progressBar = document.getElementById('blog-progress');
+      const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+      const railNumbers = Array.from(document.querySelectorAll('.rail-num'));
 
       const sectionElements = tocLinks
         .map((link) => {
-          const href = link.getAttribute("href");
-          if (!href || !href.startsWith("#")) {
+          const href = link.getAttribute('href');
+          if (!href || !href.startsWith('#')) {
             return null;
           }
           return document.getElementById(href.slice(1));
@@ -567,15 +518,13 @@ const articleJsonLd = JSON.stringify({
         if (!progressBar) {
           return;
         }
-        const scrollHeight =
-          document.documentElement.scrollHeight - window.innerHeight;
-        const progress =
-          scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
-        progressBar.style.width = progress + "%";
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
+        progressBar.style.width = progress + '%';
       };
 
       const scrollSidebarToActive = (activeIndex) => {
-        const sidebar = document.querySelector(".art-sidebar");
+        const sidebar = document.querySelector('.art-sidebar');
         if (!sidebar) {
           return;
         }
@@ -590,8 +539,7 @@ const articleJsonLd = JSON.stringify({
         const sidebarRect = sidebar.getBoundingClientRect();
 
         // Calculate the link's position relative to the sidebar's content
-        const linkTopRelativeToSidebar =
-          linkRect.top - sidebarRect.top + sidebar.scrollTop;
+        const linkTopRelativeToSidebar = linkRect.top - sidebarRect.top + sidebar.scrollTop;
 
         // Position the active link at about 1/4 from the sidebar's top for optimal visibility
         const desiredTopInViewport = sidebarRect.height / 4;
@@ -604,18 +552,18 @@ const articleJsonLd = JSON.stringify({
         // Smooth scroll to the target position
         sidebar.scrollTo({
           top: finalScroll,
-          behavior: "smooth",
+          behavior: 'smooth',
         });
       };
 
       const setActive = (activeIndex) => {
         tocLinks.forEach((link, index) => {
-          link.classList.toggle("active", index === activeIndex);
+          link.classList.toggle('active', index === activeIndex);
         });
 
         railNumbers.forEach((railNumber, index) => {
-          railNumber.classList.toggle("vis", index <= activeIndex);
-          railNumber.classList.toggle("cur", index === activeIndex);
+          railNumber.classList.toggle('vis', index <= activeIndex);
+          railNumber.classList.toggle('cur', index === activeIndex);
         });
 
         // Scroll sidebar to show active TOC item
@@ -637,8 +585,8 @@ const articleJsonLd = JSON.stringify({
         },
         {
           threshold: 0.3,
-          rootMargin: "-80px 0px -42% 0px",
-        },
+          rootMargin: '-80px 0px -42% 0px',
+        }
       );
 
       sectionElements.forEach((section) => {
@@ -646,21 +594,21 @@ const articleJsonLd = JSON.stringify({
       });
 
       tocLinks.forEach((link, index) => {
-        link.addEventListener("click", (event) => {
+        link.addEventListener('click', (event) => {
           event.preventDefault();
           const target = sectionElements[index];
           if (!target) {
             return;
           }
           target.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
+            behavior: 'smooth',
+            block: 'start',
           });
         });
       });
 
       const revealTargets = document.querySelectorAll(
-        ".art-prose h2, .art-prose h3, .art-prose p, .callout, .pullquote, .art-prose ol, .art-rule, .portable-heading, .portable-paragraph, .portable-callout, .portable-code-block, .portable-table-wrap, .portable-embed, .portable-image, .portable-blockquote, .portable-list-bullet, .portable-list-number",
+        '.art-prose h2, .art-prose h3, .art-prose p, .callout, .pullquote, .art-prose ol, .art-rule, .portable-heading, .portable-paragraph, .portable-callout, .portable-code-block, .portable-table-wrap, .portable-embed, .portable-image, .portable-blockquote, .portable-list-bullet, .portable-list-number'
       );
 
       const revealObserver = new IntersectionObserver(
@@ -669,23 +617,23 @@ const articleJsonLd = JSON.stringify({
             if (!entry.isIntersecting) {
               return;
             }
-            entry.target.classList.add("is-visible");
+            entry.target.classList.add('is-visible');
             revealObserver.unobserve(entry.target);
           });
         },
-        { threshold: 0.1 },
+        { threshold: 0.1 }
       );
 
       revealTargets.forEach((target) => {
-        if (target.classList.contains("lead")) {
+        if (target.classList.contains('lead')) {
           return;
         }
-        target.classList.add("reveal-item");
+        target.classList.add('reveal-item');
         revealObserver.observe(target);
       });
 
-      const copyButton = document.getElementById("copy-link-button");
-      const copyFeedback = document.getElementById("copy-link-feedback");
+      const copyButton = document.getElementById('copy-link-button');
+      const copyFeedback = document.getElementById('copy-link-feedback');
 
       const showCopyFeedback = (message) => {
         if (!copyFeedback) {
@@ -693,30 +641,30 @@ const articleJsonLd = JSON.stringify({
         }
         copyFeedback.textContent = message;
         window.setTimeout(() => {
-          copyFeedback.textContent = "";
+          copyFeedback.textContent = '';
         }, 2000);
       };
 
       if (copyButton) {
-        copyButton.addEventListener("click", async () => {
+        copyButton.addEventListener('click', async () => {
           try {
             if (navigator.clipboard && window.isSecureContext) {
               await navigator.clipboard.writeText(window.location.href);
-              showCopyFeedback("Link copiado.");
+              showCopyFeedback('Link copiado.');
               return;
             }
-            window.prompt("Copie o link do artigo:", window.location.href);
-            showCopyFeedback("Link pronto para cópia.");
+            window.prompt('Copie o link do artigo:', window.location.href);
+            showCopyFeedback('Link pronto para cópia.');
           } catch {
-            window.prompt("Copie o link do artigo:", window.location.href);
-            showCopyFeedback("Não foi possível copiar automaticamente.");
+            window.prompt('Copie o link do artigo:', window.location.href);
+            showCopyFeedback('Não foi possível copiar automaticamente.');
           }
         });
       }
 
       setActive(0);
       updateProgress();
-      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener('scroll', updateProgress, { passive: true });
     })();
   </script>
 </BaseLayout>
@@ -757,11 +705,7 @@ const articleJsonLd = JSON.stringify({
     margin: 32px 52px;
     padding: 32px;
     border: 1px solid rgba(43, 43, 168, 0.2);
-    background: linear-gradient(
-      135deg,
-      rgba(43, 43, 168, 0.08) 0%,
-      rgba(43, 43, 168, 0.03) 100%
-    );
+    background: linear-gradient(135deg, rgba(43, 43, 168, 0.08) 0%, rgba(43, 43, 168, 0.03) 100%);
     border-radius: 8px;
     display: flex;
     align-items: flex-start;
@@ -782,7 +726,7 @@ const articleJsonLd = JSON.stringify({
 
   .error-title {
     margin: 0 0 10px 0;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 24px;
     letter-spacing: 0.03em;
     line-height: 1.2;
@@ -791,7 +735,7 @@ const articleJsonLd = JSON.stringify({
 
   .error-desc {
     margin: 0 0 16px 0;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 300;
     line-height: 1.7;
@@ -807,7 +751,7 @@ const articleJsonLd = JSON.stringify({
     background: #2b2ba8;
     color: #f6f4ef;
     text-decoration: none;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.18em;
@@ -828,7 +772,7 @@ const articleJsonLd = JSON.stringify({
     border: 1px solid var(--rule-strong);
     background: rgba(17, 17, 32, 0.04);
     padding: 12px 14px;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     line-height: 1.6;
     color: var(--mid);
@@ -874,7 +818,7 @@ const articleJsonLd = JSON.stringify({
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -927,7 +871,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .ah-tag {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.22em;
@@ -939,7 +883,7 @@ const articleJsonLd = JSON.stringify({
 
   .ah-date,
   .ah-read {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.14em;
@@ -964,7 +908,7 @@ const articleJsonLd = JSON.stringify({
 
   .ah-title-inner {
     display: block;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(52px, 7.5vw, 110px);
     letter-spacing: 0.03em;
     line-height: 0.88;
@@ -1017,7 +961,7 @@ const articleJsonLd = JSON.stringify({
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 30px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -1034,13 +978,13 @@ const articleJsonLd = JSON.stringify({
   }
 
   .ah-author-name {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 32px;
     color: var(--ink);
   }
 
   .ah-author-role {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 16px;
     text-transform: uppercase;
     color: var(--mid);
@@ -1055,7 +999,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .ah-share-label {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -1086,7 +1030,7 @@ const articleJsonLd = JSON.stringify({
 
   .copy-feedback {
     min-height: 18px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -1108,7 +1052,7 @@ const articleJsonLd = JSON.stringify({
     position: absolute;
     bottom: -8%;
     right: -1%;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(160px, 22vw, 320px);
     letter-spacing: 0.06em;
     line-height: 1;
@@ -1150,7 +1094,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .rail-num {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -1189,7 +1133,7 @@ const articleJsonLd = JSON.stringify({
 
   .summary-points li {
     margin: 8px 0;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     line-height: 1.6;
     color: rgba(17, 17, 32, 0.75);
@@ -1270,7 +1214,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .art-prose h2 {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 4.5vw, 56px);
     font-weight: 400;
     letter-spacing: 0.03em;
@@ -1284,7 +1228,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .art-prose h3 {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.16em;
@@ -1320,7 +1264,7 @@ const articleJsonLd = JSON.stringify({
 
   .callout-label {
     margin-bottom: 10px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.24em;
@@ -1345,7 +1289,7 @@ const articleJsonLd = JSON.stringify({
 
   .pq-text {
     margin-bottom: 16px;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(28px, 3.5vw, 44px);
     letter-spacing: 0.03em;
     line-height: 0.95;
@@ -1353,7 +1297,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .pq-attr {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -1396,7 +1340,7 @@ const articleJsonLd = JSON.stringify({
   .li-num {
     width: 28px;
     flex-shrink: 0;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 22px;
     line-height: 1;
     color: var(--blue);
@@ -1415,7 +1359,7 @@ const articleJsonLd = JSON.stringify({
 
   .art-tags-label {
     margin-right: 4px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -1424,7 +1368,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .atag {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.16em;
@@ -1467,7 +1411,7 @@ const articleJsonLd = JSON.stringify({
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.24em;
@@ -1477,7 +1421,7 @@ const articleJsonLd = JSON.stringify({
 
   .toc-label::before,
   .sb-rel-label::before {
-    content: "";
+    content: '';
     width: 18px;
     height: 1px;
     background: var(--blue);
@@ -1527,7 +1471,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .toc-n {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.1em;
@@ -1548,7 +1492,7 @@ const articleJsonLd = JSON.stringify({
 
   .sb-cta-label {
     margin-bottom: 10px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.24em;
@@ -1571,7 +1515,7 @@ const articleJsonLd = JSON.stringify({
     align-items: center;
     padding: 12px 20px;
     text-decoration: none;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.18em;
@@ -1598,7 +1542,7 @@ const articleJsonLd = JSON.stringify({
 
   .sb-rel-tag {
     margin-bottom: 5px;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -1642,7 +1586,7 @@ const articleJsonLd = JSON.stringify({
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -1658,14 +1602,14 @@ const articleJsonLd = JSON.stringify({
   }
 
   .bio-name {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 30px;
     line-height: 1;
     color: var(--ink);
   }
 
   .bio-role {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 15px;
     font-weight: 500;
     text-transform: uppercase;
@@ -1689,7 +1633,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .bio-cta-label {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.22em;
@@ -1736,7 +1680,7 @@ const articleJsonLd = JSON.stringify({
 
   .bio-cta-hl {
     margin-bottom: 20px;
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(32px, 3.5vw, 48px);
     letter-spacing: 0.03em;
     line-height: 0.92;
@@ -1756,7 +1700,7 @@ const articleJsonLd = JSON.stringify({
     border-bottom: 1px solid var(--ink);
     padding-bottom: 2px;
     color: var(--ink);
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.2em;
@@ -1807,7 +1751,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .fb-l {
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -1816,7 +1760,7 @@ const articleJsonLd = JSON.stringify({
   }
 
   .fb-v {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 20px;
     letter-spacing: 0.04em;
     color: var(--ink);

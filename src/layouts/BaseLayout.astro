@@ -11,18 +11,18 @@ interface Props {
 
 const { seo } = Astro.props;
 
-const defaultTitle = "Rise Idiomas";
+const defaultTitle = 'Rise Idiomas';
 const defaultDescription =
-  "Aprenda inglês de forma estratégica. Cursos e trilhas focadas no seu sucesso.";
-const defaultImage = "/favicon.svg"; // Fallback image for Open Graph
+  'Aprenda inglês de forma estratégica. Cursos e trilhas focadas no seu sucesso.';
+const defaultImage = '/favicon.svg'; // Fallback image for Open Graph
 
 const title = seo?.title ? `${seo.title} | Rise Idiomas` : defaultTitle;
 const description = seo?.description || defaultDescription;
 const canonicalUrl = seo?.canonicalUrl || Astro.url.href;
 const image = seo?.image || defaultImage;
-const type = seo?.type || "website";
+const type = seo?.type || 'website';
 
-import "../styles/global.css";
+import '../styles/global.css';
 ---
 
 <!doctype html>

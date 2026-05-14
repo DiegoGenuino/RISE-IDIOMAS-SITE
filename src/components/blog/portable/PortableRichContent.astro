@@ -1,48 +1,48 @@
 ---
-import type {SanityPortableBodyNode, SanityPortableTextBlock} from "../../../lib/sanity.types";
-import PortableCallout from "./PortableCallout.astro";
-import PortableCodeBlock from "./PortableCodeBlock.astro";
-import PortableEmbedBlock from "./PortableEmbedBlock.astro";
-import PortableImageBlock from "./PortableImageBlock.astro";
-import PortableTableBlock from "./PortableTableBlock.astro";
-import PortableTextBlock from "./PortableTextBlock.astro";
+import type { SanityPortableBodyNode, SanityPortableTextBlock } from '../../../lib/sanity.types';
+import PortableCallout from './PortableCallout.astro';
+import PortableCodeBlock from './PortableCodeBlock.astro';
+import PortableEmbedBlock from './PortableEmbedBlock.astro';
+import PortableImageBlock from './PortableImageBlock.astro';
+import PortableTableBlock from './PortableTableBlock.astro';
+import PortableTextBlock from './PortableTextBlock.astro';
 
 interface Props {
   body: SanityPortableBodyNode[];
 }
 
-const {body} = Astro.props;
+const { body } = Astro.props;
 const nodes = body || [];
 ---
 
 <>
   {
     nodes.map((node) => {
-      if (node._type === "block") {
+      if (node._type === 'block') {
         return <PortableTextBlock block={node as SanityPortableTextBlock} />;
       }
 
-      if (node._type === "ptCalloutBlock") {
+      if (node._type === 'ptCalloutBlock') {
         return <PortableCallout block={node} />;
       }
 
-      if (node._type === "ptCodeBlock") {
+      if (node._type === 'ptCodeBlock') {
         return <PortableCodeBlock block={node} />;
       }
 
-      if (node._type === "ptImageBlock") {
+      if (node._type === 'ptImageBlock') {
         return <PortableImageBlock block={node} />;
       }
 
-      if (node._type === "ptTableBlock") {
+      if (node._type === 'ptTableBlock') {
         return <PortableTableBlock block={node} />;
       }
 
-      if (node._type === "ptEmbedBlock") {
+      if (node._type === 'ptEmbedBlock') {
         return <PortableEmbedBlock block={node} />;
       }
 
-      if (node._type === "ptDividerBlock") {
+      if (node._type === 'ptDividerBlock') {
         return <hr class="portable-divider" />;
       }
 

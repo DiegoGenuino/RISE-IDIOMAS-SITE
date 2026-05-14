@@ -1,86 +1,91 @@
 ---
-import "@fontsource/schoolbell"
-import "@fontsource/fjalla-one"
+import '@fontsource/schoolbell';
+import '@fontsource/fjalla-one';
 ---
+
 <div class="embla">
-    <div class="embla__container">
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-        <p class="embla__slide">RISE</p>
-    </div>
+  <div class="embla__container">
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+    <p class="embla__slide">RISE</p>
+  </div>
 </div>
 
 <script>
-    import EmblaCarousel from "embla-carousel";
-    import AutoScroll from "embla-carousel-auto-scroll";
+  import EmblaCarousel from 'embla-carousel';
+  import AutoScroll from 'embla-carousel-auto-scroll';
 
-    const viewport = document.querySelector<HTMLElement>(".embla")!;
-    EmblaCarousel(
-        viewport,
-        { loop: true, dragFree: true, watchDrag: false },
-        [AutoScroll({ playOnInit: true, speed: 1.5, stopOnInteraction: false })]
-    );
+  const viewport = document.querySelector<HTMLElement>('.embla')!;
+  EmblaCarousel(viewport, { loop: true, dragFree: true, watchDrag: false }, [
+    AutoScroll({ playOnInit: true, speed: 1.5, stopOnInteraction: false }),
+  ]);
 </script>
 
-<div id="about-us" class="flex-col mx-5 text-[#00003A] lg:mx-12">
-    <h1 class="font-[Schoolbell] text-5xl opacity-90 mb-3 lg:text-6xl lg:mb-7">[Quem Somos?]</h1>
-    <p class="font-bold text-xl opacity-80 lg:text-3xl">A Rise Idiomas nasce da proposta de transformar a maneira como você aprende uma segunda língua, tornando essa jornada mais leve e eficaz. 
-    Nossos cursos são cuidadosamente planejados para desenvolver <em>sua</em> confiança e autonomia, proporcionando um aprendizado prático e direcionado para que você alcance seu nível ideal com clareza e segurança. <span class="bg-[#e1ff00ce]">Aqui, o foco é você e seu crescimento!</span></p>
+<div id="about-us" class="mx-5 flex-col text-[#00003A] lg:mx-12">
+  <h1 class="mb-3 font-[Schoolbell] text-5xl opacity-90 lg:mb-7 lg:text-6xl">[Quem Somos?]</h1>
+  <p class="text-xl font-bold opacity-80 lg:text-3xl">
+    A Rise Idiomas nasce da proposta de transformar a maneira como você aprende uma segunda língua,
+    tornando essa jornada mais leve e eficaz. Nossos cursos são cuidadosamente planejados para
+    desenvolver <em>sua</em> confiança e autonomia, proporcionando um aprendizado prático e direcionado
+    para que você alcance seu nível ideal com clareza e segurança. <span class="bg-[#e1ff00ce]"
+      >Aqui, o foco é você e seu crescimento!</span
+    >
+  </p>
 </div>
 
 <style>
-    .embla {
-        overflow: hidden;
-        border: 1px solid #4242a54d;
-    }
+  .embla {
+    overflow: hidden;
+    border: 1px solid #4242a54d;
+  }
 
+  .embla__container {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+  }
+
+  .embla__slide {
+    flex: 0 0 auto;
+    font-family: 'Fjalla One', cursive;
+    font-size: 4.4rem;
+    color: transparent;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #4242a54d;
+    padding: 0 2.5rem;
+    cursor: default;
+    user-select: none;
+  }
+
+  .embla__slide:hover {
+    color: #4242a5;
+    -webkit-text-stroke-color: transparent;
+    transition: 0.5s ease-in-out;
+  }
+
+  @media (max-width: 1024px) {
     .embla__container {
-        display: flex;
-        align-items: center;
-        padding: 1rem 0;
+      padding: 0.4rem 0;
     }
 
     .embla__slide {
-        flex: 0 0 auto;
-        font-family: 'Fjalla One', cursive;
-        font-size: 4.4rem;
-        color: transparent;
-        -webkit-text-stroke-width: 1px;
-        -webkit-text-stroke-color: #4242a54d;
-        padding: 0 2.5rem;
-        cursor: default;
-        user-select: none;
+      font-size: 4rem;
     }
+  }
 
-    .embla__slide:hover {
-        color: #4242a5;
-        -webkit-text-stroke-color: transparent;
-        transition: 0.5s ease-in-out;
+  @media (max-width: 800px) {
+    .embla__slide {
+      font-size: 3rem;
+      padding: 0 1.5rem;
     }
-
-    @media (max-width: 1024px) {
-        .embla__container {
-            padding: 0.4rem 0;
-        }
-
-        .embla__slide {
-            font-size: 4rem;
-        }
-    }
-
-    @media (max-width: 800px) {
-        .embla__slide {
-            font-size: 3rem;
-            padding: 0 1.5rem;
-        }
-    }
+  }
 </style>
