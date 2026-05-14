@@ -1,15 +1,15 @@
 ---
 interface Props {
   class?: string;
-  intensity?: "low" | "medium" | "high";
+  intensity?: 'low' | 'medium' | 'high';
 }
 
-const { class: className = "", intensity = "medium" } = Astro.props;
+const { class: className = '', intensity = 'medium' } = Astro.props;
 
 const intensityMap = {
-  low: "blur(4px)",
-  medium: "blur(12px)",
-  high: "blur(20px)",
+  low: 'blur(4px)',
+  medium: 'blur(12px)',
+  high: 'blur(20px)',
 };
 ---
 
@@ -17,12 +17,8 @@ const intensityMap = {
 <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
   <defs>
     <filter id="liquid-glass-filter">
-      <feTurbulence
-        type="turbulence"
-        baseFrequency="0.015"
-        numOctaves="5"
-        seed="5"
-        result="noise"></feTurbulence>
+      <feTurbulence type="turbulence" baseFrequency="0.015" numOctaves="5" seed="5" result="noise"
+      ></feTurbulence>
       <feDisplacementMap
         in="SourceGraphic"
         in2="noise"
@@ -30,9 +26,8 @@ const intensityMap = {
         xChannelSelector="R"
         yChannelSelector="G"></feDisplacementMap>
       <feGaussianBlur stdDeviation="1"></feGaussianBlur>
-      <feColorMatrix
-        type="matrix"
-        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"></feColorMatrix>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"
+      ></feColorMatrix>
     </filter>
   </defs>
 </svg>
@@ -42,10 +37,10 @@ const intensityMap = {
   class={`glass-backdrop absolute inset-0 -z-10 w-full h-full overflow-hidden pointer-events-none rounded-inherit ${className}`}
 >
   <!-- Shadow/Glow -->
-  <div class="glass-shadow absolute inset-0 w-full h-full"></div>
+  <div class="glass-shadow absolute inset-0 h-full w-full"></div>
 
   <!-- Surface -->
-  <div class="glass-surface relative w-full h-full overflow-hidden">
+  <div class="glass-surface relative h-full w-full overflow-hidden">
     <!-- Liquid Distortion Layer -->
     <div class="glass-distortion absolute inset-0 z-0"></div>
 
@@ -53,20 +48,20 @@ const intensityMap = {
     <div class="glass-shine absolute inset-0 z-10"></div>
 
     <!-- Border Gradient -->
-    <div class="glass-border absolute inset-0 z-20 pointer-events-none"></div>
+    <div class="glass-border pointer-events-none absolute inset-0 z-20"></div>
   </div>
 </div>
 
 <style define:vars={{ blurAmount: intensityMap[intensity] }}>
   /* Custom Properties for Animation */
   @property --angle-1 {
-    syntax: "<angle>";
+    syntax: '<angle>';
     inherits: false;
     initial-value: -75deg;
   }
 
   @property --angle-2 {
-    syntax: "<angle>";
+    syntax: '<angle>';
     inherits: false;
     initial-value: -45deg;
   }
@@ -109,11 +104,7 @@ const intensityMap = {
 
   /* Liquid Distortion Effect */
   .glass-distortion {
-    background: radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 255, 255, 0.4),
-      transparent 40%
-    );
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4), transparent 40%);
     opacity: 0.5;
     mix-blend-mode: overlay;
     filter: url(#liquid-glass-filter);
@@ -121,7 +112,7 @@ const intensityMap = {
 
   /* =========== SHINE (The liquid reflection) =========== */
   .glass-shine::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     /* Caustic-like interference pattern */

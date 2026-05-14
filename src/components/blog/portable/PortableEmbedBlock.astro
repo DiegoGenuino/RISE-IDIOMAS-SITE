@@ -1,0 +1,150 @@
+---
+import type { SanityPtEmbedBlock } from '../../../lib/sanity.types';
+
+interface Props {
+  block: SanityPtEmbedBlock;
+}
+
+const { block } = Astro.props;
+
+const allowedIframeHosts = [
+  'youtube.com',
+  'www.youtube.com',
+  'youtu.be',
+  'player.vimeo.com',
+  'vimeo.com',
+];
+
+function getYoutubeEmbedUrl(sourceUrl: URL): string | null {
+  const host = sourceUrl.hostname.toLowerCase();
+
+  if (host === 'youtu.be') {
+    const id = sourceUrl.pathname.replace(/^\//, '');
+    return id ? `https://www.youtube.com/embed/${id}` : null;
+  }
+
+  if (host.includes('youtube.com')) {
+    if (sourceUrl.pathname.startsWith('/embed/')) {
+      return `https://www.youtube.com${sourceUrl.pathname}`;
+    }
+
+    if (sourceUrl.pathname === '/watch') {
+      const id = sourceUrl.searchParams.get('v');
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+
+    if (sourceUrl.pathname.startsWith('/shorts/')) {
+      const id = sourceUrl.pathname.split('/').filter(Boolean)[1];
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+  }
+
+  return null;
+}
+
+function getVimeoEmbedUrl(sourceUrl: URL): string | null {
+  const host = sourceUrl.hostname.toLowerCase();
+  if (!host.includes('vimeo.com')) {
+    return null;
+  }
+
+  const id = sourceUrl.pathname.split('/').filter(Boolean).pop();
+  if (!id) {
+    return null;
+  }
+
+  return `https://player.vimeo.com/video/${id}`;
+}
+
+function resolveEmbedUrl(embed: SanityPtEmbedBlock): string | null {
+  if (!embed.url) {
+    return null;
+  }
+
+  try {
+    const sourceUrl = new URL(embed.url);
+    const provider = embed.provider || 'youtube';
+
+    if (provider === 'youtube') {
+      return getYoutubeEmbedUrl(sourceUrl);
+    }
+
+    if (provider === 'vimeo') {
+      return getVimeoEmbedUrl(sourceUrl);
+    }
+
+    if (provider === 'iframe') {
+      const host = sourceUrl.hostname.toLowerCase();
+      const allowed = allowedIframeHosts.some((allowedHost) => host.includes(allowedHost));
+      return allowed ? sourceUrl.toString() : null;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+const embedUrl = resolveEmbedUrl(block);
+if (!embedUrl) {
+  return null;
+}
+
+const aspectRatioMap: Record<string, { paddingTop: string; aspectRatio: string }> = {
+  '16:9': { paddingTop: '56.25%', aspectRatio: '16 / 9' },
+  '4:3': { paddingTop: '75%', aspectRatio: '4 / 3' },
+  '1:1': { paddingTop: '100%', aspectRatio: '1 / 1' },
+};
+
+const resolvedAspectRatio = aspectRatioMap[block.aspectRatio || '16:9'] || aspectRatioMap['16:9'];
+const title = block.title || 'Conteudo incorporado';
+---
+
+<div
+  class="portable-embed"
+  style={`--portable-embed-ratio: ${resolvedAspectRatio.paddingTop}; --portable-embed-aspect: ${resolvedAspectRatio.aspectRatio};`}
+>
+  <iframe
+    src={embedUrl}
+    title={title}
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen></iframe>
+</div>
+
+<style>
+  .portable-embed {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 34px 0;
+    padding-top: var(--portable-embed-ratio);
+    box-sizing: border-box;
+    background: rgba(17, 17, 32, 0.05);
+    border: 1px solid rgba(17, 17, 32, 0.12);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  @supports (aspect-ratio: 1 / 1) {
+    .portable-embed {
+      padding-top: 0;
+      aspect-ratio: var(--portable-embed-aspect);
+    }
+  }
+
+  .portable-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (max-width: 600px) {
+    .portable-embed {
+      margin: 26px 0;
+    }
+  }
+</style>

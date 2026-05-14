@@ -1,0 +1,104 @@
+---
+import type { SanityPtTableBlock } from '../../../lib/sanity.types';
+
+interface Props {
+  block: SanityPtTableBlock;
+}
+
+const { block } = Astro.props;
+const headers = block.headers || [];
+const rows = block.rows || [];
+
+if (headers.length === 0 || rows.length === 0) {
+  return null;
+}
+---
+
+<div class="portable-table-wrap">
+  <table class="portable-table">
+    {block.caption && <caption>{block.caption}</caption>}
+    <thead>
+      <tr>
+        {headers.map((header) => <th scope="col">{header}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr>
+            {(row.cells || []).map((cell) => (
+              <td>{cell}</td>
+            ))}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .portable-table-wrap {
+    margin: 34px 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(17, 17, 32, 0.1);
+  }
+
+  .portable-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .portable-table caption {
+    caption-side: top;
+    text-align: left;
+    padding: 12px 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 32, 0.62);
+  }
+
+  .portable-table th,
+  .portable-table td {
+    border: 1px solid rgba(17, 17, 32, 0.1);
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(17, 17, 32, 0.84);
+  }
+
+  .portable-table thead th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: rgba(17, 17, 32, 0.05);
+  }
+
+  .portable-table tbody tr:nth-child(2n) td {
+    background: rgba(17, 17, 32, 0.02);
+  }
+
+  @media (max-width: 600px) {
+    .portable-table caption {
+      padding: 10px 11px;
+      font-size: 10px;
+    }
+
+    .portable-table th,
+    .portable-table td {
+      padding: 9px 10px;
+      font-size: 13px;
+    }
+
+    .portable-table thead th {
+      font-size: 10px;
+    }
+  }
+</style>

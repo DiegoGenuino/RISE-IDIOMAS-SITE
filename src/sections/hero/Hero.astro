@@ -1,50 +1,28 @@
 ---
-import riseTypeGradient from "../../assets/icons/rise-type-gradient.svg";
+import riseTypeGradient from '../../assets/icons/rise-type-gradient.svg';
 
 const subheaderText =
-  "Cursos imersivos e personalizados para crianças, adolescentes e profissionais.";
+  'Cursos imersivos e personalizados para crianças, adolescentes e profissionais.';
 ---
 
 <!-- HERO SECTION -->
 <section
-  class="hero-section background relative flex flex-col
-    w-full min-h-svh
-    px-2 py-6
-    sm:p-12
-    md:p-16
-    lg:h-auto lg:min-h-[160vh] lg:p-12
-    xl:p-16
-    2xl:px-32 2xl:pt-16 2xl:pb-16"
+  class="hero-section background relative flex min-h-svh w-full flex-col px-2 py-6 sm:p-12 md:p-16 lg:h-auto lg:min-h-[160vh] lg:p-12 xl:p-16 2xl:px-32 2xl:pt-16 2xl:pb-16"
   id="hero"
 >
   <!-- Title + desktop subheader -->
   <header
-    class="hero-header hero-animate hero-animate-delay-1 relative z-10 w-full shrink-0
-      h-[12em]
-      sm:h-auto
-      md:h-auto
-      lg:h-[22rem]
-      2xl:h-[24rem]"
+    class="hero-header hero-animate hero-animate-delay-1 relative z-10 h-[12em] w-full shrink-0 sm:h-auto md:h-auto lg:h-[22rem] 2xl:h-[24rem]"
   >
     <!-- fix responsivity for mobile [line 222]: large words overflow vw -->
     <h1
-      class="hero-title font-display w-full bg-gradient-to-r from-[#401EFF] via-[#9090FF] to-[#C0C0FF]
-        bg-clip-text text-transparent leading-[1.1] pb-3 overflow-visible select-none
-        text-8xl
-        sm:text-8xl
-        md:text-7xl
-        lg:text-9xl
-        2xl:text-[8rem]"
+      class="hero-title font-display w-full overflow-visible bg-gradient-to-r from-[#401EFF] via-[#9090FF] to-[#C0C0FF] bg-clip-text pb-3 text-8xl leading-[1.1] text-transparent select-none sm:text-8xl md:text-7xl lg:text-9xl 2xl:text-[8rem]"
       id="hero-header"
     >
     </h1>
 
     <p
-      class="hero-animate hero-animate-delay-2 hidden text-[#4242A5E5]
-        sm:block sm:text-lg sm:mt-2
-        md:text-xl md:mt-3
-        lg:absolute lg:inset-x-0 lg:mt-0 lg:text-2xl lg:top-[19rem]
-        2xl:top-[20rem]"
+      class="hero-animate hero-animate-delay-2 hidden text-[#4242A5E5] sm:mt-2 sm:block sm:text-lg md:mt-3 md:text-xl lg:absolute lg:inset-x-0 lg:top-[19rem] lg:mt-0 lg:text-2xl 2xl:top-[20rem]"
       id="hero-subheader-desktop"
     >
       {subheaderText}
@@ -52,26 +30,17 @@ const subheaderText =
   </header>
 
   <!-- Spacer: pushes content toward bottom on mobile/tablet -->
-  <div class="hero-spacer flex-1 min-h-12 sm:min-h-16 lg:hidden"></div>
+  <div class="hero-spacer min-h-12 flex-1 sm:min-h-16 lg:hidden"></div>
 
   <!-- RISE logo (CRT energize reveal on scroll) -->
   <div
-    class="hero-svg-container shrink-0 flex justify-center overflow-hidden items-start
-      h-[24vh]
-      sm:h-[26vh]
-      lg:flex-1 lg:h-auto lg:overflow-visible lg:items-end lg:mt-12
-      2xl:mt-16"
+    class="hero-svg-container flex h-[24vh] shrink-0 items-start justify-center overflow-hidden sm:h-[26vh] lg:mt-12 lg:h-auto lg:flex-1 lg:items-end lg:overflow-visible 2xl:mt-16"
     id="hero-svg-wrapper"
   >
     <img
       src={riseTypeGradient.src}
       alt="RISE"
-      class="h-auto
-        w-[90%]
-        sm:w-[80%]
-        md:w-[70%]
-        lg:w-[60%]
-        2xl:w-[75%]"
+      class="h-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] 2xl:w-[75%]"
       width="936"
       height="512"
     />
@@ -79,49 +48,47 @@ const subheaderText =
 </section>
 
 <script>
-  import Typewriter from "typewriter-effect/dist/core";
+  import Typewriter from 'typewriter-effect/dist/core';
 
   // Typewriter configuration
   const PAUSE_BETWEEN = 300; // transition gap between phrases
   const PAUSE_READ = 3500; // standard reading time
   const PAUSE_READ_LONG = 4500; // emphasized reading time
 
-  const heroHeader = document.getElementById("hero-header");
+  const heroHeader = document.getElementById('hero-header');
 
-  const isMobile = window.matchMedia("(max-width: 500px)").matches;
+  const isMobile = window.matchMedia('(max-width: 500px)').matches;
   const MAX_MOBILE_LENGTH = 12; //mobile max lenght is 12 chars to avoid overflow
 
   const phrases: { text: string; pauseFor: number }[] = [
     // Portuguese
-    { text: "sua carreira", pauseFor: PAUSE_READ_LONG },
-    { text: "seu futuro", pauseFor: PAUSE_READ },
-    { text: "suas conquistas", pauseFor: PAUSE_READ },
-    { text: "suas viagens", pauseFor: PAUSE_READ },
-    { text: "seu intercâmbio", pauseFor: PAUSE_READ },
+    { text: 'sua carreira', pauseFor: PAUSE_READ_LONG },
+    { text: 'seu futuro', pauseFor: PAUSE_READ },
+    { text: 'suas conquistas', pauseFor: PAUSE_READ },
+    { text: 'suas viagens', pauseFor: PAUSE_READ },
+    { text: 'seu intercâmbio', pauseFor: PAUSE_READ },
     // English
-    { text: "your career", pauseFor: PAUSE_READ },
-    { text: "your future", pauseFor: PAUSE_READ },
-    { text: "your success", pauseFor: PAUSE_READ_LONG },
+    { text: 'your career', pauseFor: PAUSE_READ },
+    { text: 'your future', pauseFor: PAUSE_READ },
+    { text: 'your success', pauseFor: PAUSE_READ_LONG },
     // Spanish
-    { text: "tu carrera", pauseFor: PAUSE_READ },
-    { text: "tu futuro", pauseFor: PAUSE_READ },
-    { text: "tus logros", pauseFor: PAUSE_READ },
+    { text: 'tu carrera', pauseFor: PAUSE_READ },
+    { text: 'tu futuro', pauseFor: PAUSE_READ },
+    { text: 'tus logros', pauseFor: PAUSE_READ },
   ];
 
   // if is mobile filters only phrases with less than 12 chars
-  const filtered = isMobile
-    ? phrases.filter((p) => p.text.length <= MAX_MOBILE_LENGTH)
-    : phrases;
+  const filtered = isMobile ? phrases.filter((p) => p.text.length <= MAX_MOBILE_LENGTH) : phrases;
 
   const typewriter = new Typewriter(heroHeader, {
     loop: true,
     delay: 50, // typing speed (ms per char)
     deleteSpeed: 25, // deletion speed (ms per char)
-    cursor: "|",
-    cursorClassName: "typewriter-cursor",
+    cursor: '|',
+    cursorClassName: 'typewriter-cursor',
   });
 
-  typewriter.typeString("Idiomas para ");
+  typewriter.typeString('Idiomas para ');
 
   filtered.forEach((phrase) => {
     typewriter
@@ -134,14 +101,13 @@ const subheaderText =
   typewriter.start();
 
   // Parallax fade on RISE logo
-  const svgWrapper = document.getElementById("hero-svg-wrapper");
+  const svgWrapper = document.getElementById('hero-svg-wrapper');
 
   if (svgWrapper) {
-    svgWrapper.style.transition =
-      "opacity 0.15s ease-out, transform 0.15s ease-out";
+    svgWrapper.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
 
     let ticking = false;
-    window.addEventListener("scroll", () => {
+    window.addEventListener('scroll', () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
@@ -150,11 +116,11 @@ const subheaderText =
           const fadeEnd = vh * 0.9;
 
           if (scrollY <= fadeStart) {
-            svgWrapper.style.opacity = "1";
-            svgWrapper.style.transform = "translateY(0)";
+            svgWrapper.style.opacity = '1';
+            svgWrapper.style.transform = 'translateY(0)';
           } else if (scrollY >= fadeEnd) {
-            svgWrapper.style.opacity = "0.15";
-            svgWrapper.style.transform = "translateY(20px)";
+            svgWrapper.style.opacity = '0.15';
+            svgWrapper.style.transform = 'translateY(20px)';
           } else {
             const progress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
             svgWrapper.style.opacity = String(1 - progress * 0.85);
@@ -172,14 +138,14 @@ const subheaderText =
     const triggerEnergize = () => {
       if (!energized && window.scrollY > 50) {
         energized = true;
-        svgWrapper.classList.add("crt-energized");
-        window.removeEventListener("scroll", triggerEnergize);
+        svgWrapper.classList.add('crt-energized');
+        window.removeEventListener('scroll', triggerEnergize);
       }
     };
 
     // Delay listener until entrance animations complete
     setTimeout(() => {
-      window.addEventListener("scroll", triggerEnergize, { passive: true });
+      window.addEventListener('scroll', triggerEnergize, { passive: true });
     }, 1500);
   }
 </script>

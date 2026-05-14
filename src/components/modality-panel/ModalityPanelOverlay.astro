@@ -15,8 +15,8 @@ const {
   tagline,
   description,
   features,
-  cta = "Agende uma aula experimental",
-  ctaLink = "/contato",
+  cta = 'Agende uma aula experimental',
+  ctaLink = '/contato',
 } = Astro.props;
 ---
 
@@ -30,7 +30,7 @@ const {
 >
   <!-- Close Button -->
   <button
-    class="overlay-close absolute top-[13px] right-4 md:top-8 md:right-12 z-50 cursor-pointer"
+    class="overlay-close absolute top-[13px] right-4 z-50 cursor-pointer md:top-8 md:right-12"
     data-overlay-close
     aria-label="Fechar detalhes"
   >
@@ -80,9 +80,7 @@ const {
       features.map((feat, i) => (
         <div class="overlay-item" style={`--i: ${i + (description ? 4 : 3)}`}>
           <div class="overlay-feature">
-            <span class="overlay-feature-num">
-              {String(i + 1).padStart(2, "0")}
-            </span>
+            <span class="overlay-feature-num">{String(i + 1).padStart(2, '0')}</span>
             <span>{feat}</span>
           </div>
         </div>
@@ -90,10 +88,7 @@ const {
     }
 
     <!-- CTA Button -->
-    <div
-      class="overlay-item"
-      style={`--i: ${features.length + (description ? 4 : 3)}`}
-    >
+    <div class="overlay-item" style={`--i: ${features.length + (description ? 4 : 3)}`}>
       <a href={ctaLink} class="overlay-cta">
         <span>{cta}</span>
         <svg

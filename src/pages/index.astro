@@ -1,28 +1,16 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import AnnouncementBar from "../components/announcement-bar/AnnouncementBar.astro";
-import Topbar from "../components/topbar/Topbar.astro";
-import Hero from "../sections/hero/Hero.astro";
-import Modalities from "../sections/modalities/Modalities.astro";
-import Testimonials from "../sections/testimonials/Testimonials.astro";
-import AboutUs from "../sections/about-us/AboutUs.astro";
-import Location from "../sections/location/Location.astro";
-import CTA from "../sections/cta/CTA.astro";
-import Footer from "../sections/footer/Footer.astro";
-import Analytics from "@vercel/analytics/astro";
-import EnrollmentLetter from "../components/enrollment-letter/EnrollmentLetter.tsx";
-import ViewportFallback from "../components/viewport-fallback/ViewportFallback.astro";
-import { fetchAnnouncementBar } from "../api/fetchAnnouncementBar";
-
-// announcement bar data
-const {
-  displayAnnouncementBar,
-  announcementText,
-  announcementBgColor,
-  announcementUrl,
-  announcementTarget,
-  announcementTitle,
-} = await fetchAnnouncementBar();
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Topbar from '../components/topbar/Topbar.astro';
+import Hero from '../sections/hero/Hero.astro';
+import Modalities from '../sections/modalities/Modalities.astro';
+import Testimonials from '../sections/testimonials/Testimonials.astro';
+import AboutUs from '../sections/about-us/AboutUs.astro';
+import Location from '../sections/location/Location.astro';
+import CTA from '../sections/cta/CTA.astro';
+import Footer from '../sections/footer/Footer.astro';
+import Analytics from '@vercel/analytics/astro';
+import EnrollmentLetter from '../components/enrollment-letter/EnrollmentLetter.tsx';
+import ViewportFallback from '../components/viewport-fallback/ViewportFallback.astro';
 ---
 
 <style>
@@ -31,7 +19,7 @@ const {
   }
 
   :global(body)::before {
-    content: "";
+    content: '';
     position: fixed;
     inset: 0;
     /* dotted bg */
@@ -48,11 +36,11 @@ const {
 
 <BaseLayout
   seo={{
-    title: "Idiomas Para Todos",
+    title: 'Idiomas Para Todos',
     description:
-      "Domine a fluência com a Rise Idiomas. Oferecemos cursos de inglês, espanhol e português desenvolvidos estrategicamente para o seu sucesso no nível executivo, tech, na vida acadêmica e em certificações internacionais.",
-    type: "website",
-    image: "/favicon.svg",
+      'Domine a fluência com a Rise Idiomas. Oferecemos cursos de inglês, espanhol e português desenvolvidos estrategicamente para o seu sucesso no nível executivo, tech, na vida acadêmica e em certificações internacionais.',
+    type: 'website',
+    image: '/favicon.svg',
   }}
 >
   <Fragment slot="head">
@@ -60,57 +48,45 @@ const {
     <script
       type="application/ld+json"
       set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "EducationalOrganization",
-        name: "Rise Idiomas",
+        '@context': 'https://schema.org',
+        '@type': 'EducationalOrganization',
+        name: 'Rise Idiomas',
         description:
-          "Escola de inglês moderna e imersiva focada no ensino de alta performance para adolescentes, executivos e mercado jurídico.",
-        logo: new URL("/favicon.svg", Astro.url).toString(),
+          'Escola de inglês moderna e imersiva focada no ensino de alta performance para adolescentes, executivos e mercado jurídico.',
+        logo: new URL('/favicon.svg', Astro.url).toString(),
         url: Astro.url.origin,
         offers: [
           {
-            "@type": "Course",
-            name: "Inglês Executivo",
+            '@type': 'Course',
+            name: 'Inglês Executivo',
             description:
-              "Foco em nuances culturais, diplomacia corporativa e técnicas de persuasão em inglês avançado.",
+              'Foco em nuances culturais, diplomacia corporativa e técnicas de persuasão em inglês avançado.',
           },
           {
-            "@type": "Course",
-            name: "Inglês Acadêmico",
-            description:
-              "Linguagem técnica, produção de artigos e leitura em nível de excelência.",
+            '@type': 'Course',
+            name: 'Inglês Acadêmico',
+            description: 'Linguagem técnica, produção de artigos e leitura em nível de excelência.',
           },
           {
-            "@type": "Course",
-            name: "Inglês Jurídico",
+            '@type': 'Course',
+            name: 'Inglês Jurídico',
             description:
-              "Terminologia essencial, interpretação de contratos e comunicação assertiva no Direito Internacional.",
+              'Terminologia essencial, interpretação de contratos e comunicação assertiva no Direito Internacional.',
           },
         ],
       })}
     />
   </Fragment>
-  <div class="w-full min-h-screen relative">
-    {
-      displayAnnouncementBar && (
-        <AnnouncementBar
-          text={announcementText}
-          link={announcementUrl}
-          target={announcementTarget}
-          title={announcementTitle}
-          style={`background-color: ${announcementBgColor};`}
-        />
-      )
-    }
+  <div class="relative min-h-screen w-full">
     <Topbar />
 
     <main
-      class="relative flex flex-col gap-26 md:gap-32 lg:gap-20 overflow-x-hidden w-full max-w-[100vw]"
+      class="relative flex w-full max-w-[100vw] flex-col gap-26 overflow-x-hidden md:gap-32 lg:gap-20"
     >
       <Hero />
       <Modalities />
       <Testimonials />
-      <div class="flex justify-center pointer-events-none">
+      <div class="pointer-events-none flex justify-center">
         <!-- only executes this island when the user scrolls to it -->
         <EnrollmentLetter client:visible />
       </div>
@@ -118,8 +94,8 @@ const {
       <Location />
       <!-- div to remove the gap between sections -->
       <div class="mt-10">
-      <CTA />
-      <Footer />
+        <CTA />
+        <Footer />
       </div>
     </main>
   </div>

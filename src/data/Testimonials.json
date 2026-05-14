@@ -1,39 +1,39 @@
 {
-    "testimonials": [
-        {
-            "studentName": "Bruna Siciliano",
-            "testimonial": "Eu tinha bloqueio com inglês e não conseguia evoluir. As aulas 100% em inglês pareciam loucura, mas foram a melhor escolha. Hoje falo com muito mais fluidez e confiança.",
-            "courseModality": "Executivo Inglês"
-        },
-        {
-            "studentName": "Bruno Rasteiro",
-            "testimonial": "Comecei com medo de não conseguir falar e depender do português. Em poucas aulas, essas barreiras foram quebradas. Hoje participo de reuniões e entrevistas em inglês com segurança.",
-            "courseModality": "Executivo Inglês"
-        },
-        {
-            "studentName": "Suzana Rainha",
-            "testimonial": "Aulas descontraídas, didática incrível e dificuldades resolvidas de forma clara e definitiva. Sem dúvida, a melhor escolha.",
-            "courseModality": "Executivo Inglês"
-        },
-        {
-            "studentName": "Bianca Alvarez",
-            "testimonial": "Uma experiência verdadeiramente maravilhosa. A professora Ester é simplesmente incrível — atenciosa, dedicada e faz cada aula ser leve e produtiva ao mesmo tempo.",
-            "courseModality": "Executivo Inglês"
-        },
-        {
-            "studentName": "Clara Costa",
-            "testimonial": "Está sendo simplesmente espetacular. Amo as aulas com a professora Ester e aprendo muito a cada encontro. É notório o avanço que tive desde o início — consigo perceber claramente minha evolução.",
-            "courseModality": "Executivo Inglês"
-        },
-        {
-            "studentName": "Adriana Aquino",
-            "testimonial": "Melhor impossível! Amo muito a professora Maiara. Ela é cuidadosa, paciente e maravilhosa — faz toda a diferença no meu aprendizado.",
-            "courseModality": "Executivo Espanhol"
-        },
-        {
-            "studentName": "Giovanna Seguette",
-            "testimonial": "Estou muito feliz por ter encontrado a Rise. O método de ensino é incrível e foi o que melhor me adaptei. Mesmo começando sem base no inglês, consigo entender as aulas e aprender com segurança e confiança.",
-            "courseModality": "Executivo Inglês"
-        }
-    ]
+  "testimonials": [
+    {
+      "studentName": "Bruna Siciliano",
+      "testimonial": "Eu tinha bloqueio com inglês e não conseguia evoluir. As aulas 100% em inglês pareciam loucura, mas foram a melhor escolha. Hoje falo com muito mais fluidez e confiança.",
+      "courseModality": "Executivo Inglês"
+    },
+    {
+      "studentName": "Bruno Rasteiro",
+      "testimonial": "Comecei com medo de não conseguir falar e depender do português. Em poucas aulas, essas barreiras foram quebradas. Hoje participo de reuniões e entrevistas em inglês com segurança.",
+      "courseModality": "Executivo Inglês"
+    },
+    {
+      "studentName": "Suzana Rainha",
+      "testimonial": "Aulas descontraídas, didática incrível e dificuldades resolvidas de forma clara e definitiva. Sem dúvida, a melhor escolha.",
+      "courseModality": "Executivo Inglês"
+    },
+    {
+      "studentName": "Bianca Alvarez",
+      "testimonial": "Uma experiência verdadeiramente maravilhosa. A professora Ester é simplesmente incrível — atenciosa, dedicada e faz cada aula ser leve e produtiva ao mesmo tempo.",
+      "courseModality": "Executivo Inglês"
+    },
+    {
+      "studentName": "Clara Costa",
+      "testimonial": "Está sendo simplesmente espetacular. Amo as aulas com a professora Ester e aprendo muito a cada encontro. É notório o avanço que tive desde o início — consigo perceber claramente minha evolução.",
+      "courseModality": "Executivo Inglês"
+    },
+    {
+      "studentName": "Adriana Aquino",
+      "testimonial": "Melhor impossível! Amo muito a professora Maiara. Ela é cuidadosa, paciente e maravilhosa — faz toda a diferença no meu aprendizado.",
+      "courseModality": "Executivo Espanhol"
+    },
+    {
+      "studentName": "Giovanna Seguette",
+      "testimonial": "Estou muito feliz por ter encontrado a Rise. O método de ensino é incrível e foi o que melhor me adaptei. Mesmo começando sem base no inglês, consigo entender as aulas e aprender com segurança e confiança.",
+      "courseModality": "Executivo Inglês"
+    }
+  ]
 }

@@ -1,0 +1,272 @@
+---
+import type { BlogPost } from '../../types/blog';
+import { Image } from 'astro:assets';
+
+interface Props {
+  post: BlogPost;
+  categoryKey: string;
+  tagKeys?: string[];
+  animationIndex?: number;
+}
+
+const { post, categoryKey, tagKeys = [], animationIndex = 0 } = Astro.props;
+
+const cardDelay = `${Math.min(animationIndex, 10) * 80}ms`;
+
+function renderCardIllustration(categoryFilterKey: string): string {
+  if (categoryFilterKey === 'carreira') {
+    return `<svg viewBox="0 0 360 180" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="180" fill="rgba(17,17,32,.03)"/><rect x="100" y="36" width="160" height="108" rx="4" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"/><rect x="100" y="36" width="160" height="18" rx="4" fill="#2B2BA8"/><rect x="120" y="72" width="80" height="7" rx="3.5" fill="rgba(17,17,32,.2)"/><rect x="130" y="88" width="60" height="5" rx="2.5" fill="rgba(17,17,32,.12)"/><circle cx="180" cy="116" r="14" fill="none" stroke="#2B2BA8" stroke-width="1.2"/><path d="M173 116 L178 121 L187 111" stroke="#2B2BA8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="128" cy="116" r="4" fill="#F0C44A"/><circle cx="232" cy="116" r="4" fill="#F0C44A"/></svg>`;
+  }
+
+  if (categoryFilterKey === 'dicas') {
+    return `<svg viewBox="0 0 360 180" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="180" fill="rgba(17,17,32,.03)"/><rect x="104" y="110" width="28" height="40" rx="2" fill="#E8E6DF" stroke="rgba(17,17,32,.1)" stroke-width="1"/><rect x="144" y="80" width="28" height="70" rx="2" fill="#D5D3CC" stroke="rgba(17,17,32,.1)" stroke-width="1"/><rect x="184" y="55" width="28" height="95" rx="2" fill="#2B2BA8"/><rect x="224" y="70" width="28" height="80" rx="2" fill="#D5D3CC" stroke="rgba(17,17,32,.1)" stroke-width="1"/><line x1="96" y1="150" x2="264" y2="150" stroke="rgba(17,17,32,.15)" stroke-width="1"/><polyline points="118,126 158,96 198,68 238,84" stroke="#2B2BA8" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/></svg>`;
+  }
+
+  if (categoryFilterKey === 'fluencia') {
+    return `<svg viewBox="0 0 360 180" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="180" fill="rgba(17,17,32,.03)"/><path d="M130 90 C130 62 154 40 180 40 C206 40 230 62 230 90" stroke="rgba(17,17,32,.18)" stroke-width="2" fill="none"/><rect x="116" y="88" width="20" height="36" rx="6" fill="#2B2BA8"/><rect x="224" y="88" width="20" height="36" rx="6" fill="#2B2BA8"/><path d="M152 98 C152 90 172 84 180 84 C188 84 208 90 208 98" stroke="rgba(43,43,168,.3)" stroke-width="1.2" fill="none"/><path d="M160 112 C160 100 172 94 180 94 C188 94 200 100 200 112" stroke="rgba(43,43,168,.5)" stroke-width="1" fill="none"/></svg>`;
+  }
+
+  return `<svg viewBox="0 0 360 180" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="180" fill="rgba(17,17,32,.03)"/><circle cx="180" cy="90" r="56" stroke="rgba(17,17,32,.1)" stroke-width="1"/><ellipse cx="180" cy="90" rx="28" ry="56" stroke="rgba(17,17,32,.1)" stroke-width="1"/><line x1="124" y1="90" x2="236" y2="90" stroke="rgba(17,17,32,.1)" stroke-width="1"/><line x1="131" y1="62" x2="229" y2="62" stroke="rgba(17,17,32,.07)" stroke-width="1"/><line x1="131" y1="118" x2="229" y2="118" stroke="rgba(17,17,32,.07)" stroke-width="1"/><circle cx="180" cy="90" r="8" fill="#2B2BA8"/></svg>`;
+}
+
+const cardIllustrationSvg = renderCardIllustration(categoryKey);
+---
+
+<article
+  class="card"
+  role="listitem"
+  data-article-card
+  data-category-key={categoryKey}
+  data-tag-keys={tagKeys.join(',')}
+  style={`--card-delay:${cardDelay};`}
+>
+  <a class="card-link" href={`/blog/${post.slug}`}>
+    <div class="card-img">
+      {
+        post.image?.url ? (
+          <Image
+            class="card-cover-image"
+            src={post.image.url}
+            alt={post.image.alt || `Capa do post ${post.title}`}
+            width={post.image.width ?? 720}
+            height={post.image.height ?? 720}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <Fragment set:html={cardIllustrationSvg} />
+        )
+      }
+    </div>
+
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-tag">{post.category}</span>
+        <span class="card-date">{post.publishDateLabel}</span>
+      </div>
+
+      <h3 class="card-title">{post.title}</h3>
+      <p class="card-excerpt">{post.description}</p>
+
+      <div class="card-foot">
+        <span class="card-read">{post.readingTimeMinutes} min</span>
+        <span class="card-arr" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path
+              d="M2 10L10 2M10 2H4.5M10 2V7.5"
+              stroke="#111120"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .card {
+    border-right: 1px solid rgba(17, 17, 32, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition:
+      background 280ms ease,
+      transform 280ms ease;
+  }
+
+  .card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .card-img {
+    height: clamp(148px, 20vw, 180px);
+    border-bottom: 1px solid rgba(17, 17, 32, 0.1);
+    overflow: hidden;
+    position: relative;
+    background: rgba(17, 17, 32, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-img :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .card-body {
+    padding: 28px 32px 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .card-tag {
+    border: 1px solid rgba(43, 43, 168, 0.25);
+    padding: 4px 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #2b2ba8;
+  }
+
+  .card-date {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8a8a9e;
+  }
+
+  .card-title {
+    flex: 1;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 0.92;
+    color: #111120;
+    margin-bottom: 14px;
+    overflow-wrap: anywhere;
+    transition: color 300ms ease;
+  }
+
+  .card-excerpt {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #2f2f2f;
+    margin-bottom: 24px;
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(17, 17, 32, 0.1);
+    padding-top: 16px;
+  }
+
+  .card-read {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8a8a9e;
+  }
+
+  .card-arr {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(17, 17, 32, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background 280ms ease,
+      border-color 280ms ease,
+      transform 280ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover {
+      background: rgba(17, 17, 32, 0.025);
+      transform: translateY(-2px);
+    }
+
+    .card:hover .card-title {
+      color: #2b2ba8;
+    }
+
+    .card:hover .card-arr {
+      background: #111120;
+      border-color: #111120;
+      transform: translate(3px, -3px);
+    }
+
+    .card:hover .card-arr :global(path) {
+      stroke: #ffffff;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .card-body {
+      padding: 24px 24px 26px;
+    }
+
+    .card:nth-child(2n) {
+      border-right: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .card {
+      border-right: none;
+      border-bottom: 1px solid rgba(17, 17, 32, 0.1);
+    }
+
+    .card-img {
+      height: 156px;
+    }
+
+    .card-body {
+      padding: 22px 20px 24px;
+    }
+
+    .card-meta {
+      margin-bottom: 14px;
+    }
+
+    .card-excerpt {
+      font-size: 12.5px;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .card:last-child {
+      border-bottom: none;
+    }
+  }
+</style>

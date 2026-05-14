@@ -1,8 +1,8 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { Image } from "astro:assets";
-import cautionTape from "../assets/images/404/caution-tape.png";
-import mousePointer from "../assets/icons/mouse-pointer.svg";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import cautionTape from '../assets/images/404/caution-tape.png';
+import mousePointer from '../assets/icons/mouse-pointer.svg';
 ---
 
 <style>
@@ -15,7 +15,7 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
 
   /* Dot pattern overlay */
   :global(body)::before {
-    content: "";
+    content: '';
     position: fixed;
     inset: 0;
     background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
@@ -25,7 +25,7 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
   }
 
   /* ── Entrance: hide everything until ready ── */
-  .scene[data-ready="false"] .anim-el {
+  .scene[data-ready='false'] .anim-el {
     opacity: 0;
   }
 
@@ -86,27 +86,27 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
   }
 
   /* ── Entrance orchestration (activated when data-ready="true") ── */
-  .scene[data-ready="true"] .anim-title {
+  .scene[data-ready='true'] .anim-title {
     animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
   }
 
-  .scene[data-ready="true"] .anim-subtitle {
+  .scene[data-ready='true'] .anim-subtitle {
     animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
   }
 
-  .scene[data-ready="true"] .anim-cta {
+  .scene[data-ready='true'] .anim-cta {
     animation: fade-in-scale 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
   }
 
-  .scene[data-ready="true"] .anim-badge {
+  .scene[data-ready='true'] .anim-badge {
     animation: fade-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
   }
 
-  .scene[data-ready="true"] .anim-tape-top {
+  .scene[data-ready='true'] .anim-tape-top {
     animation: slide-in-left 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
   }
 
-  .scene[data-ready="true"] .anim-tape-bottom {
+  .scene[data-ready='true'] .anim-tape-bottom {
     animation: slide-in-bottom 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
   }
 
@@ -171,10 +171,10 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
 
   /* ── Reduced motion: skip animations, show everything ── */
   @media (prefers-reduced-motion: reduce) {
-    .scene[data-ready="false"] .anim-el {
+    .scene[data-ready='false'] .anim-el {
       opacity: 1;
     }
-    .scene[data-ready="true"] .anim-el {
+    .scene[data-ready='true'] .anim-el {
       animation: none !important;
       opacity: 1;
     }
@@ -183,11 +183,11 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
 
 <BaseLayout
   seo={{
-    title: "Página não encontrada",
+    title: 'Página não encontrada',
     description:
-      "Oops! A página que você está procurando não existe ou foi movida. Volte para a página inicial da Rise Idiomas.",
-    type: "website",
-    image: "/favicon.svg",
+      'Oops! A página que você está procurando não existe ou foi movida. Volte para a página inicial da Rise Idiomas.',
+    type: 'website',
+    image: '/favicon.svg',
   }}
 >
   <!-- Prevent 404 pages from destroying SEO ranking by keeping search engines out, but allow them to follow links back home -->
@@ -196,97 +196,77 @@ import mousePointer from "../assets/icons/mouse-pointer.svg";
   </Fragment>
 
   <main
-    class="scene relative h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-[#F4F4F5]"
+    class="scene relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#F4F4F5]"
     data-ready="false"
   >
     <!-- HTTP Error Badge -->
     <div
-      class="anim-el anim-badge absolute top-4 right-4 md:top-8 md:right-8 z-20 flex gap-1 md:gap-2 items-center font-mono font-bold text-sm md:text-lg text-black page-header"
+      class="anim-el anim-badge page-header absolute top-4 right-4 z-20 flex items-center gap-1 font-mono text-sm font-bold text-black md:top-8 md:right-8 md:gap-2 md:text-lg"
     >
       <span>http</span>
       <span>error</span>
-      <span class="text-2xl md:text-4xl leading-none">404</span>
+      <span class="text-2xl leading-none md:text-4xl">404</span>
     </div>
 
     <!-- Center Content -->
     <div
-      class="z-10 text-center flex flex-col items-center gap-2 relative -mt-10 md:-mt-25 page-center"
+      class="page-center relative z-10 -mt-10 flex flex-col items-center gap-2 text-center md:-mt-25"
     >
       <h1
-        class="anim-el anim-title text-7xl md:text-[12rem] leading-none font-mono tracking-tight font-sans p-4 text-[#1a1a1a] page-title"
+        class="anim-el anim-title page-title p-4 font-mono font-sans text-7xl leading-none tracking-tight text-[#1a1a1a] md:text-[12rem]"
       >
         Oops !
       </h1>
       <p
-        class="anim-el anim-subtitle font-mono text-2xl text-black/80 tracking-wide mb-8 md:mb-12 page-subtitle"
+        class="anim-el anim-subtitle page-subtitle mb-8 font-mono text-2xl tracking-wide text-black/80 md:mb-12"
       >
         Página não encontrada
       </p>
 
       <!-- CTA Button -->
-      <div class="anim-el anim-cta relative group z-10">
+      <div class="anim-el anim-cta group relative z-10">
         <div
-          class="absolute inset-0 bg-[#5D5DFF] rounded-full blur-[20px] opacity-75 btn-glow pointer-events-none"
+          class="btn-glow pointer-events-none absolute inset-0 rounded-full bg-[#5D5DFF] opacity-75 blur-[20px]"
         >
         </div>
         <a
           href="/"
-          class="relative block px-8 md:px-12 py-2.5 md:py-3 bg-[#6363FF]/74 text-white rounded-full font-medium text-base md:text-lg transition-all shadow-lg"
+          class="relative block rounded-full bg-[#6363FF]/74 px-8 py-2.5 text-base font-medium text-white shadow-lg transition-all md:px-12 md:py-3 md:text-lg"
         >
           Home
         </a>
-        <div
-          class="absolute -right-5 -bottom-2.5 w-8 h-8 pointer-events-none drop-shadow-md z-30"
-        >
-          <Image
-            src={mousePointer}
-            alt=""
-            width={28}
-            height={29}
-            loading="eager"
-          />
+        <div class="pointer-events-none absolute -right-5 -bottom-2.5 z-30 h-8 w-8 drop-shadow-md">
+          <Image src={mousePointer} alt="" width={28} height={29} loading="eager" />
         </div>
       </div>
     </div>
 
     <!-- Caution Tape: Top Left -->
     <div
-      class="anim-el anim-tape-top absolute -top-20 -left-25 md:-top-40 md:-left-50 w-[300px] md:w-[600px] pointer-events-none z-0 blur-[2px] tape-top"
+      class="anim-el anim-tape-top tape-top pointer-events-none absolute -top-20 -left-25 z-0 w-[300px] blur-[2px] md:-top-40 md:-left-50 md:w-[600px]"
     >
-      <Image
-        src={cautionTape}
-        alt=""
-        class="w-full h-full object-contain"
-        loading="eager"
-      />
+      <Image src={cautionTape} alt="" class="h-full w-full object-contain" loading="eager" />
     </div>
 
     <!-- Caution Tape: Bottom -->
     <div
-      class="anim-el anim-tape-bottom absolute -bottom-[2.5rem] w-full pointer-events-none z-[1] blur-[4px] md:blur-[6px] tape-bottom"
+      class="anim-el anim-tape-bottom tape-bottom pointer-events-none absolute -bottom-[2.5rem] z-[1] w-full blur-[4px] md:blur-[6px]"
     >
-      <Image
-        src={cautionTape}
-        alt=""
-        class="w-full h-full object-contain"
-        loading="eager"
-      />
+      <Image src={cautionTape} alt="" class="h-full w-full object-contain" loading="eager" />
     </div>
   </main>
 
   <!-- Reveal only after images are decoded -->
   <script>
-    const scene = document.querySelector(".scene") as HTMLElement;
+    const scene = document.querySelector('.scene') as HTMLElement;
     if (scene) {
-      const imgs = Array.from(scene.querySelectorAll("img"));
-      const ready = () => (scene.dataset.ready = "true");
+      const imgs = Array.from(scene.querySelectorAll('img'));
+      const ready = () => (scene.dataset.ready = 'true');
 
       if (imgs.length === 0) {
         ready();
       } else {
-        Promise.all(imgs.map((img) => img.decode().catch(() => {}))).then(
-          ready,
-        );
+        Promise.all(imgs.map((img) => img.decode().catch(() => {}))).then(ready);
         // Safety net: reveal after 1.2s regardless
         setTimeout(ready, 1200);
       }

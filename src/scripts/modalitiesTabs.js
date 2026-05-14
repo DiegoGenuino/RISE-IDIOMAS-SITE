@@ -1,4 +1,4 @@
-import { gsap } from "gsap";
+import { gsap } from 'gsap';
 
 export function initModalitiesTabs() {
   const container = document.querySelector('[data-tab-container]');
@@ -6,14 +6,13 @@ export function initModalitiesTabs() {
   const panels = document.querySelectorAll('[role="tabpanel"]');
 
   if (!tabs.length || !panels.length || !container) {
-    console.error("Tab elements not found");
+    // eslint-disable-next-line no-console
+    console.error('Tab elements not found');
     return;
   }
 
   let currentTab = tabs[0];
   let isAnimating = false;
-
-
 
   // ── Direction-aware crossfade + slide ───────────────────────────────────────
   function switchTab(newTab) {
@@ -37,14 +36,16 @@ export function initModalitiesTabs() {
     // Kill any in-flight tweens
     gsap.killTweensOf([oldPanel, newPanel]);
 
-    const SLIDE_PX = 20;       // gentler horizontal drift on exit/enter
-    const EXIT_DUR = 0.35;     // slower exit speed for smooth crossfade
-    const ENTER_DUR = 0.55;    // slower enter speed
-    const EXIT_EASE = "power2.inOut";
-    const ENTER_EASE = "power3.out";
+    const SLIDE_PX = 20; // gentler horizontal drift on exit/enter
+    const EXIT_DUR = 0.35; // slower exit speed for smooth crossfade
+    const ENTER_DUR = 0.55; // slower enter speed
+    const EXIT_EASE = 'power2.inOut';
+    const ENTER_EASE = 'power3.out';
 
     const tl = gsap.timeline({
-      onComplete: () => { isAnimating = false; }
+      onComplete: () => {
+        isAnimating = false;
+      },
     });
 
     const isMobile = window.innerWidth < 768;
@@ -56,12 +57,14 @@ export function initModalitiesTabs() {
         opacity: 0,
         x: 0,
         duration: 0.25,
-        ease: "power2.inOut",
-        onStart: () => { oldPanel.style.visibility = 'visible'; },
+        ease: 'power2.inOut',
+        onStart: () => {
+          oldPanel.style.visibility = 'visible';
+        },
         onComplete: () => {
           oldPanel.classList.remove('active');
           oldPanel.style.visibility = 'hidden';
-        }
+        },
       });
 
       // 2. Prepare new panel
@@ -72,16 +75,21 @@ export function initModalitiesTabs() {
         y: 10,
       });
 
-      tl.add(() => { newPanel.classList.add('active'); });
+      tl.add(() => {
+        newPanel.classList.add('active');
+      });
 
       // 3. Fade new panel in and float up slightly
-      tl.to(newPanel, {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: "power3.out",
-      }, ">");
-
+      tl.to(
+        newPanel,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          ease: 'power3.out',
+        },
+        '>'
+      );
     } else {
       // --- DESKTOP ANIMATION: Horizontal Slide Crossfade ---
       // 1. Exit: fade + drift in departure direction
@@ -90,12 +98,14 @@ export function initModalitiesTabs() {
         x: -direction * SLIDE_PX,
         duration: EXIT_DUR,
         ease: EXIT_EASE,
-        onStart: () => { oldPanel.style.visibility = 'visible'; },
+        onStart: () => {
+          oldPanel.style.visibility = 'visible';
+        },
         onComplete: () => {
           oldPanel.classList.remove('active');
           oldPanel.style.visibility = 'hidden';
           gsap.set(oldPanel, { x: 0 });
-        }
+        },
       });
 
       // 2. Prepare new panel
@@ -105,15 +115,21 @@ export function initModalitiesTabs() {
         x: direction * SLIDE_PX,
       });
 
-      tl.add(() => { newPanel.classList.add('active'); });
+      tl.add(() => {
+        newPanel.classList.add('active');
+      });
 
       // 3. Wait for exit to finish, then fade + slide in
-      tl.to(newPanel, {
-        opacity: 1,
-        x: 0,
-        duration: ENTER_DUR,
-        ease: ENTER_EASE,
-      }, ">");
+      tl.to(
+        newPanel,
+        {
+          opacity: 1,
+          x: 0,
+          duration: ENTER_DUR,
+          ease: ENTER_EASE,
+        },
+        '>'
+      );
     }
 
     currentTab = newTab;
@@ -155,7 +171,6 @@ export function initModalitiesTabs() {
       }
     });
   });
-
 
   // ── Autoplay functionality ────────────────────────────────────────────────────
   let autoPlayInterval;

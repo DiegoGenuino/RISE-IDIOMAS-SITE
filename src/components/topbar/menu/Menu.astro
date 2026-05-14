@@ -12,76 +12,88 @@ import MenuLinkBg from '../../../assets/icons/menu-link-bg.svg';
 
   <button
     id="menu-close"
-    class="absolute top-[13px] right-4 md:top-[33px] md:right-12 z-50 cursor-pointer"
+    class="absolute top-[13px] right-4 z-50 cursor-pointer md:top-[33px] md:right-12"
     aria-label="Close menu"
   >
-    <div class="w-[44px] h-[36px] md:w-[56px] md:h-[46px]">
+    <div class="h-[36px] w-[44px] md:h-[46px] md:w-[56px]">
       <Fragment set:html={HamburguerOpenedSvg} />
     </div>
   </button>
 
   <!-- Navigation Links -->
-  <nav class="relative z-10 flex flex-col gap-4 md:gap-6 pl-8 md:pl-20">
+  <nav class="relative z-10 flex flex-col gap-4 pl-8 md:gap-6 md:pl-20">
     <div class="menu-item-wrapper group">
-      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">1.</span>
+      <span
+        class="mr-2 text-lg font-light text-[#4242A5] opacity-80 select-none md:mr-4 md:text-2xl"
+        >1.</span
+      >
       <a
         href="/"
-        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+        class="menu-link relative inline-block text-left text-[3.5rem] leading-none font-thin tracking-tight text-[#4242A5] md:text-8xl"
       >
         <span class="relative z-10">/home</span>
         <img
           src={MenuLinkBg.src}
           alt=""
           aria-hidden="true"
-          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+          class="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[250%] w-[250%] origin-center -translate-x-1/2 -translate-y-1/2 scale-150 object-contain opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-75"
         />
       </a>
     </div>
 
     <div class="menu-item-wrapper group">
-      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">2.</span>
+      <span
+        class="mr-2 text-lg font-light text-[#4242A5] opacity-80 select-none md:mr-4 md:text-2xl"
+        >2.</span
+      >
       <a
         href="/blog"
-        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+        class="menu-link relative inline-block text-left text-[3.5rem] leading-none font-thin tracking-tight text-[#4242A5] md:text-8xl"
       >
         <span class="relative z-10">/blog</span>
         <img
           src={MenuLinkBg.src}
           alt=""
           aria-hidden="true"
-          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+          class="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[250%] w-[250%] origin-center -translate-x-1/2 -translate-y-1/2 scale-150 object-contain opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-75"
         />
       </a>
     </div>
 
     <div class="menu-item-wrapper group">
-      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">3.</span>
+      <span
+        class="mr-2 text-lg font-light text-[#4242A5] opacity-80 select-none md:mr-4 md:text-2xl"
+        >3.</span
+      >
       <a
         href="/sobre"
-        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+        class="menu-link relative inline-block text-left text-[3.5rem] leading-none font-thin tracking-tight text-[#4242A5] md:text-8xl"
       >
         <span class="relative z-10">/sobre</span>
         <img
           src={MenuLinkBg.src}
           alt=""
           aria-hidden="true"
-          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+          class="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[250%] w-[250%] origin-center -translate-x-1/2 -translate-y-1/2 scale-150 object-contain opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-75"
         />
       </a>
     </div>
 
     <div class="menu-item-wrapper group">
-      <span class="text-[#4242A5] text-lg md:text-2xl font-light mr-2 md:mr-4 select-none opacity-80">4.</span>
+      <span
+        class="mr-2 text-lg font-light text-[#4242A5] opacity-80 select-none md:mr-4 md:text-2xl"
+        >4.</span
+      >
       <a
         href="https://wa.me/5511948606841"
-        class="menu-link text-[#4242A5] text-[3.5rem] md:text-8xl font-thin tracking-tight text-left relative inline-block leading-none"
+        class="menu-link relative inline-block text-left text-[3.5rem] leading-none font-thin tracking-tight text-[#4242A5] md:text-8xl"
       >
         <span class="relative z-10">/contato</span>
         <img
           src={MenuLinkBg.src}
           alt=""
           aria-hidden="true"
-          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] object-contain -z-10 opacity-0 group-hover:opacity-75 transition-opacity duration-500 ease-out pointer-events-none scale-150 origin-center"
+          class="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[250%] w-[250%] origin-center -translate-x-1/2 -translate-y-1/2 scale-150 object-contain opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-75"
         />
       </a>
     </div>
@@ -119,10 +131,18 @@ import MenuLinkBg from '../../../assets/icons/menu-link-bg.svg';
     opacity: 1;
   }
 
-  .menu-overlay.active .menu-item-wrapper:nth-child(1) { transition-delay: 100ms; }
-  .menu-overlay.active .menu-item-wrapper:nth-child(2) { transition-delay: 200ms; }
-  .menu-overlay.active .menu-item-wrapper:nth-child(3) { transition-delay: 300ms; }
-  .menu-overlay.active .menu-item-wrapper:nth-child(4) { transition-delay: 400ms; }
+  .menu-overlay.active .menu-item-wrapper:nth-child(1) {
+    transition-delay: 100ms;
+  }
+  .menu-overlay.active .menu-item-wrapper:nth-child(2) {
+    transition-delay: 200ms;
+  }
+  .menu-overlay.active .menu-item-wrapper:nth-child(3) {
+    transition-delay: 300ms;
+  }
+  .menu-overlay.active .menu-item-wrapper:nth-child(4) {
+    transition-delay: 400ms;
+  }
 
   /* Ensure inlined SVG fills wrapper */
   #menu-close :global(svg) {
@@ -132,6 +152,6 @@ import MenuLinkBg from '../../../assets/icons/menu-link-bg.svg';
 
   /* Override local SVG color for the close button to match the dark theme on light bg */
   #menu-close :global(path) {
-    fill: #4242A5;
+    fill: #4242a5;
   }
 </style>

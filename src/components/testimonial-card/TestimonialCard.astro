@@ -1,122 +1,122 @@
 ---
-import quotationMarks from "../../assets/icons/quotation-marks.svg";
+import quotationMarks from '../../assets/icons/quotation-marks.svg';
 
 export interface Props {
-    studentName: string;
-    testimonial: string;
-    courseModality: string;
+  studentName: string;
+  testimonial: string;
+  courseModality: string;
 }
 
 const { studentName, testimonial, courseModality } = Astro.props;
 ---
 
 <div class="testimonial-card">
-    <div class="content">
-        <h3 class="student-name">{studentName}</h3>
-        <p class="testimonial-text">{testimonial}</p>
-        <p class="course-modality">{courseModality}</p>
-    </div>
-    <img src={quotationMarks.src} alt="quotation marks" class="quote-icon" />
+  <div class="content">
+    <h3 class="student-name">{studentName}</h3>
+    <p class="testimonial-text">{testimonial}</p>
+    <p class="course-modality">{courseModality}</p>
+  </div>
+  <img src={quotationMarks.src} alt="quotation marks" class="quote-icon" />
 </div>
 
 <style>
-    .testimonial-card {
-        background: transparent;
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-        border-radius: 1.5rem;
-        padding: clamp(1.5rem, 5vw, 2.25rem) clamp(1.2rem, 4vw, 2rem);
-        display: flex;
-        flex-direction: column;
-        flex-shrink: 0;
-        width: 85vw; /* Fills screen context mostly organically scaling */
-        min-width: 300px; /* Smallest edge safety bound */
-        max-width: 480px; /* Max cap preserving original layout */
-        box-sizing: border-box;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 4px 24px #4242a532;
-        user-select: none;
-        transition:
-            backdrop-filter 0.3s ease,
-            -webkit-backdrop-filter 0.3s ease;
-    }
+  .testimonial-card {
+    background: transparent;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border-radius: 1.5rem;
+    padding: clamp(1.5rem, 5vw, 2.25rem) clamp(1.2rem, 4vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 85vw; /* Fills screen context mostly organically scaling */
+    min-width: 300px; /* Smallest edge safety bound */
+    max-width: 480px; /* Max cap preserving original layout */
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 24px #4242a532;
+    user-select: none;
+    transition:
+      backdrop-filter 0.3s ease,
+      -webkit-backdrop-filter 0.3s ease;
+  }
 
-    .testimonial-card:hover {
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
+  .testimonial-card:hover {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    flex-grow: 1;
+  }
+
+  .student-name {
+    font-size: clamp(1.1rem, 3.5vw, 1.25rem);
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+  }
+
+  .testimonial-text {
+    font-size: clamp(0.9rem, 2.8vw, 1rem);
+    font-weight: 400;
+    color: #1e1e1e;
+    margin: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .course-modality {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin: 0;
+    margin-top: auto;
+  }
+
+  .quote-icon {
+    position: absolute;
+    bottom: clamp(1rem, 4vw, 2rem);
+    right: clamp(1rem, 4vw, 2rem);
+    width: clamp(32px, 10vw, 48px);
+    height: auto;
+    color: #d1d5db;
+    z-index: 0;
+    opacity: 0.8;
+  }
+
+  @media (min-width: 1024px) {
+    .testimonial-card {
+      padding: 3.5rem 3rem;
+      max-width: 600px;
+      border-radius: 2rem;
     }
 
     .content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        position: relative;
-        z-index: 1;
-        flex-grow: 1;
+      gap: 0.75rem;
     }
 
     .student-name {
-        font-size: clamp(1.1rem, 3.5vw, 1.25rem);
-        font-weight: 700;
-        color: #111827;
-        margin: 0;
+      font-size: 1.75rem;
     }
 
     .testimonial-text {
-        font-size: clamp(0.9rem, 2.8vw, 1rem);
-        font-weight: 400;
-        color: #1e1e1e;
-        margin: 0;
-        margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
     }
 
     .course-modality {
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: #6b7280;
-        margin: 0;
-        margin-top: auto;
+      font-size: 1rem;
     }
 
     .quote-icon {
-        position: absolute;
-        bottom: clamp(1rem, 4vw, 2rem);
-        right: clamp(1rem, 4vw, 2rem);
-        width: clamp(32px, 10vw, 48px);
-        height: auto;
-        color: #d1d5db;
-        z-index: 0;
-        opacity: 0.8;
+      width: 64px;
+      bottom: 2.5rem;
+      right: 2.5rem;
     }
-
-    @media (min-width: 1024px) {
-        .testimonial-card {
-            padding: 3.5rem 3rem;
-            max-width: 600px;
-            border-radius: 2rem;
-        }
-
-        .content {
-            gap: 0.75rem;
-        }
-
-        .student-name {
-            font-size: 1.75rem;
-        }
-
-        .testimonial-text {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .course-modality {
-            font-size: 1rem;
-        }
-
-        .quote-icon {
-            width: 64px;
-            bottom: 2.5rem;
-            right: 2.5rem;
-        }
-    }
+  }
 </style>

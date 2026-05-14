@@ -1,10 +1,10 @@
-@import "@fontsource/pixelify-sans";
-@import "@fontsource/handlee";
-@import "@fontsource/geist-mono";
-@import "@fontsource/playfair-display";
-@import "@fontsource/salsa";
-@import "@fontsource/caladea";
-@import "@fontsource/schoolbell";
+@import '@fontsource/pixelify-sans';
+@import '@fontsource/handlee';
+@import '@fontsource/geist-mono';
+@import '@fontsource/playfair-display';
+@import '@fontsource/salsa';
+@import '@fontsource/caladea';
+@import '@fontsource/schoolbell';
 
 .splash {
   position: fixed;
@@ -31,13 +31,13 @@
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
     Oxygen,
     Ubuntu,
     Cantarell,
-    "Open Sans",
-    "Helvetica Neue",
+    'Open Sans',
+    'Helvetica Neue',
     sans-serif;
   font-size: clamp(1.1rem, 1.8vmin, 2.2rem);
   transform: translateY(7rem);
@@ -101,44 +101,44 @@ span.run-typography-animation {
   }
   10% {
     font-style: normal;
-    font-family: "Pixelify Sans", sans-serif;
+    font-family: 'Pixelify Sans', sans-serif;
   }
   20% {
-    font-family: "Handlee", sans-serif;
+    font-family: 'Handlee', sans-serif;
   }
   30% {
-    font-family: "Geist Mono", sans-serif;
+    font-family: 'Geist Mono', sans-serif;
   }
   40% {
-    font-family: "Playfair Display", sans-serif;
+    font-family: 'Playfair Display', sans-serif;
   }
   50% {
-    font-family: "Salsa", sans-serif;
+    font-family: 'Salsa', sans-serif;
   }
   60% {
-    font-family: "Caladea", sans-serif;
+    font-family: 'Caladea', sans-serif;
   }
   70% {
-    font-family: "Geist Mono", monospace;
+    font-family: 'Geist Mono', monospace;
   }
   80% {
-    font-family: "Playfair Display";
+    font-family: 'Playfair Display';
   }
   90% {
-    font-family: "Schoolbell", sans-serif;
+    font-family: 'Schoolbell', sans-serif;
   }
   100% {
     font-family:
       system-ui,
       -apple-system,
       BlinkMacSystemFont,
-      "Segoe UI",
+      'Segoe UI',
       Roboto,
       Oxygen,
       Ubuntu,
       Cantarell,
-      "Open Sans",
-      "Helvetica Neue",
+      'Open Sans',
+      'Helvetica Neue',
       sans-serif;
     font-weight: bold;
   }

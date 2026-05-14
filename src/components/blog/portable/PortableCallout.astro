@@ -1,0 +1,96 @@
+---
+import type { SanityPtCalloutBlock } from '../../../lib/sanity.types';
+import PortableTextBlock from './PortableTextBlock.astro';
+
+interface Props {
+  block: SanityPtCalloutBlock;
+}
+
+const { block } = Astro.props;
+const tone = block.tone || 'info';
+const contentBlocks = block.content || [];
+---
+
+<div class={`portable-callout tone-${tone}`}>
+  {block.title && <div class="portable-callout-title">{block.title}</div>}
+  <div class="portable-callout-content">
+    {contentBlocks.map((contentBlock) => <PortableTextBlock block={contentBlock} compact />)}
+  </div>
+</div>
+
+<style>
+  .portable-callout {
+    margin: 30px 0;
+    padding: 20px 24px;
+    border-left: 2px solid #2b2ba8;
+    background: rgba(43, 43, 168, 0.05);
+  }
+
+  .portable-callout-title {
+    margin-bottom: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .tone-info {
+    border-left-color: #2b2ba8;
+    background: rgba(43, 43, 168, 0.06);
+  }
+
+  .tone-info .portable-callout-title {
+    color: #2b2ba8;
+  }
+
+  .tone-warning {
+    border-left-color: #c87100;
+    background: rgba(200, 113, 0, 0.1);
+  }
+
+  .tone-warning .portable-callout-title {
+    color: #8d4d00;
+  }
+
+  .tone-success {
+    border-left-color: #147d44;
+    background: rgba(20, 125, 68, 0.1);
+  }
+
+  .tone-success .portable-callout-title {
+    color: #147d44;
+  }
+
+  .tone-neutral {
+    border-left-color: rgba(17, 17, 32, 0.32);
+    background: rgba(17, 17, 32, 0.06);
+  }
+
+  .tone-neutral .portable-callout-title {
+    color: rgba(17, 17, 32, 0.72);
+  }
+
+  @media (max-width: 900px) {
+    .portable-callout {
+      margin: 28px 0;
+      padding: 18px 20px;
+    }
+
+    .portable-callout-title {
+      margin-bottom: 7px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .portable-callout {
+      margin: 22px 0;
+      padding: 14px;
+    }
+
+    .portable-callout-title {
+      margin-bottom: 6px;
+      letter-spacing: 0.18em;
+    }
+  }
+</style>

@@ -1,0 +1,76 @@
+---
+import type { SanityPtImageBlock } from '../../../lib/sanity.types';
+
+interface Props {
+  block: SanityPtImageBlock;
+}
+
+const { block } = Astro.props;
+const image = block.image;
+const layout = image?.layout || 'inline';
+const imageUrl = image?.url;
+const alt = image?.alt || '';
+const caption = image?.caption;
+const width = image?.width;
+const height = image?.height;
+import { Image } from 'astro:assets';
+
+if (!imageUrl) {
+  return null;
+}
+---
+
+<figure class={`portable-image layout-${layout}`}>
+  <Image
+    src={imageUrl}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    width={width ?? 720}
+    height={height ?? 720}
+  />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .portable-image {
+    margin: 34px auto;
+  }
+
+  .portable-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(17, 17, 32, 0.08);
+  }
+
+  .portable-image figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(17, 17, 32, 0.62);
+  }
+
+  .layout-inline {
+    max-width: 680px;
+  }
+
+  .layout-wide {
+    max-width: 840px;
+  }
+
+  .layout-full {
+    max-width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    .portable-image {
+      margin: 26px 0;
+    }
+
+    .portable-image figcaption {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  }
+</style>

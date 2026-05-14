@@ -1,0 +1,108 @@
+---
+import { codeToHtml } from 'shiki';
+import type { SanityPtCodeBlock } from '../../../lib/sanity.types';
+
+interface Props {
+  block: SanityPtCodeBlock;
+}
+
+const { block } = Astro.props;
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+const code = block.code || '';
+const language = (block.language || 'text').toLowerCase();
+
+let highlightedCode: string;
+try {
+  highlightedCode = await codeToHtml(code, {
+    lang: language,
+    theme: 'github-dark',
+  });
+} catch {
+  highlightedCode = `<pre class="portable-code-fallback"><code>${escapeHtml(code)}</code></pre>`;
+}
+---
+
+<figure class="portable-code-block" data-show-lines={String(Boolean(block.showLineNumbers))}>
+  <figcaption class="portable-code-meta">
+    <span class="portable-code-lang">{language}</span>
+    {block.filename && <span class="portable-code-filename">{block.filename}</span>}
+  </figcaption>
+  <div class="portable-code-content" set:html={highlightedCode} />
+</figure>
+
+<style>
+  .portable-code-block {
+    margin: 34px 0;
+    border: 1px solid rgba(17, 17, 32, 0.16);
+    background: #0f1222;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .portable-code-meta {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .portable-code-filename {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .portable-code-content :global(pre) {
+    margin: 0;
+    padding: 16px;
+    min-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    tab-size: 2;
+    font-family: 'Geist Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .portable-code-content :global(code) {
+    font-family: 'Geist Mono', monospace;
+  }
+
+  :global(.portable-code-fallback) {
+    color: #f3f4f7;
+  }
+
+  @media (max-width: 600px) {
+    .portable-code-block {
+      margin: 26px 0;
+    }
+
+    .portable-code-meta {
+      padding: 8px 10px;
+    }
+
+    .portable-code-content :global(pre) {
+      padding: 12px;
+      font-size: 12px;
+    }
+  }
+</style>
