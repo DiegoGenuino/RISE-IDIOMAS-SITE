@@ -1,33 +1,33 @@
 ---
-import {codeToHtml} from "shiki";
-import type {SanityPtCodeBlock} from "../../../lib/sanity.types";
+import { codeToHtml } from 'shiki';
+import type { SanityPtCodeBlock } from '../../../lib/sanity.types';
 
 interface Props {
   block: SanityPtCodeBlock;
 }
 
-const {block} = Astro.props;
+const { block } = Astro.props;
 
 function escapeHtml(value: string): string {
   return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
-const code = block.code || "";
-const language = (block.language || "text").toLowerCase();
+const code = block.code || '';
+const language = (block.language || 'text').toLowerCase();
 
-let highlightedCode = "";
+let highlightedCode: string;
 try {
   highlightedCode = await codeToHtml(code, {
     lang: language,
-    theme: "github-dark",
+    theme: 'github-dark',
   });
 } catch {
-  highlightedCode = `<pre class=\"portable-code-fallback\"><code>${escapeHtml(code)}</code></pre>`;
+  highlightedCode = `<pre class="portable-code-fallback"><code>${escapeHtml(code)}</code></pre>`;
 }
 ---
 
@@ -36,7 +36,7 @@ try {
     <span class="portable-code-lang">{language}</span>
     {block.filename && <span class="portable-code-filename">{block.filename}</span>}
   </figcaption>
-  <div class="portable-code-content" set:html={highlightedCode}></div>
+  <div class="portable-code-content" set:html={highlightedCode} />
 </figure>
 
 <style>
@@ -58,7 +58,7 @@ try {
     padding: 9px 12px;
     background: rgba(255, 255, 255, 0.06);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -78,13 +78,13 @@ try {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     tab-size: 2;
-    font-family: "Geist Mono", monospace;
+    font-family: 'Geist Mono', monospace;
     font-size: 13px;
     line-height: 1.6;
   }
 
   .portable-code-content :global(code) {
-    font-family: "Geist Mono", monospace;
+    font-family: 'Geist Mono', monospace;
   }
 
   :global(.portable-code-fallback) {
