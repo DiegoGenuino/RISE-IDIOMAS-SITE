@@ -24,6 +24,12 @@ const students: Student[] = [
 
 const BG_LEFT = LeftVector.src;
 const BG_RIGHT = RightVector.src;
+const whatsappPhone = '5511948606841';
+const englishMessage = 'Olá, vim pelo site e quero mais informações sobre o curso de inglês.';
+const spanishMessage = 'Olá, vim pelo site e quero mais informações sobre o curso de espanhol.';
+
+const englishLink = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(englishMessage)}`;
+const spanishLink = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(spanishMessage)}`;
 ---
 
 <section
@@ -101,7 +107,7 @@ const BG_RIGHT = RightVector.src;
     </h2>
 
     <a
-      href="https://w.app/edwck2"
+      href={englishLink}
       target="_blank"
       rel="noopener noreferrer"
       class="inline-flex h-12.75 min-w-38.5 items-center justify-center rounded-[40px] bg-white/18 px-8 font-['Poppins',sans-serif] text-sm leading-none font-bold whitespace-nowrap text-[#4242a5] no-underline shadow-[0_0_16.1px_-4px_#4242a5] transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/32 hover:shadow-[0_0_24px_-2px_#4242a5] focus-visible:shadow-[0_0_24px_-2px_#4242a5] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#4242a5] motion-reduce:transition-none"
@@ -109,7 +115,7 @@ const BG_RIGHT = RightVector.src;
       Interesse em Inglês
     </a>
     <a
-      href="https://w.app/ocavqf"
+      href={spanishLink}
       target="_blank"
       rel="noopener noreferrer"
       class="inline-flex h-12.75 min-w-38.5 items-center justify-center rounded-[40px] bg-white/18 px-8 font-['Poppins',sans-serif] text-sm leading-none font-bold whitespace-nowrap text-[#4242a5] no-underline shadow-[0_0_16.1px_-4px_#4242a5] transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/32 hover:shadow-[0_0_24px_-2px_#4242a5] focus-visible:shadow-[0_0_24px_-2px_#4242a5] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#4242a5] motion-reduce:transition-none"

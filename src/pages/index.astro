@@ -11,6 +11,7 @@ import Footer from '../sections/footer/Footer.astro';
 import Analytics from '@vercel/analytics/astro';
 import EnrollmentLetter from '../components/enrollment-letter/EnrollmentLetter.tsx';
 import ViewportFallback from '../components/viewport-fallback/ViewportFallback.astro';
+import WhatsAppFab from '../components/whatsapp-fab/WhatsAppFab.astro';
 ---
 
 <style>
@@ -76,7 +77,6 @@ import ViewportFallback from '../components/viewport-fallback/ViewportFallback.a
         ],
       })}
     />
-    <script src="https://w.app/widget-v1/lZVxGu.js" type="text/javascript" async></script>
   </Fragment>
   <div class="relative min-h-screen w-full">
     <Topbar />
@@ -102,4 +102,5 @@ import ViewportFallback from '../components/viewport-fallback/ViewportFallback.a
   </div>
   <Analytics />
   <ViewportFallback />
+  <WhatsAppFab />
 </BaseLayout>
