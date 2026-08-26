@@ -8,7 +8,12 @@ import { ctaLinks } from '../../data/site';
 const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
 ---
 
-<section id="planos" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="planos-titulo">
+<section
+  id="planos"
+  class="bg-surface-alt ds-seam-t py-20 lg:py-28"
+  aria-labelledby="planos-titulo"
+  style="--seam-from: var(--color-abyss-deep)"
+>
   <div class="ds-shell flex flex-col gap-12">
     <div class="ds-reveal flex flex-col items-center gap-7">
       <SectionHeading
@@ -47,13 +52,23 @@ const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
     </div>
 
     <!-- Matriz -->
-    <ul class="grid items-start gap-4 lg:grid-cols-3" data-pricing data-cycle="monthly">
+    <ul
+      class="grid items-start gap-4 lg:grid-cols-3"
+      data-pricing
+      data-cycle="monthly"
+      data-spotlight
+    >
       {
         plans.map((plan, index) => (
-          <li class="ds-reveal" style={`transition-delay:${index * 70}ms`}>
+          <li class="ds-reveal" style={`--reveal-i:${index}`}>
             <article
-              class:list={['ds-plan flex h-full flex-col', plan.highlight && 'ds-plan--highlight']}
+              class:list={[
+                'ds-card ds-plan flex h-full flex-col',
+                plan.highlight && 'ds-plan--highlight',
+              ]}
             >
+              <span class="ds-spotlight" aria-hidden="true" />
+
               {plan.badge && (
                 <span class="ds-mono bg-brand shadow-brand absolute -top-3 left-6 rounded-xs px-2.5 py-1 text-[0.6875rem] text-white">
                   {plan.badge}
@@ -139,35 +154,24 @@ const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
 
 <style>
   .ds-plan {
-    position: relative;
     padding: 1.75rem;
-    border-radius: var(--radius-lg);
-    background-color: var(--color-surface);
-    box-shadow:
-      inset 0 0 0 1px var(--color-brand-soft),
-      var(--shadow-xs);
-    transition:
-      transform 0.3s var(--ease-out-expo),
-      box-shadow 0.3s var(--ease-out-expo);
   }
 
-  .ds-plan:hover {
-    transform: translate3d(0, -3px, 0);
-    box-shadow:
-      inset 0 0 0 1px var(--color-brand-soft),
-      var(--shadow-card);
-  }
-
+  /* O plano em destaque mantém o anel sólido mesmo em repouso. */
   .ds-plan--highlight {
     box-shadow:
       inset 0 0 0 1.5px var(--color-brand),
-      var(--shadow-card);
+      var(--shadow-md);
   }
 
   .ds-plan--highlight:hover {
     box-shadow:
       inset 0 0 0 1.5px var(--color-brand),
-      var(--shadow-float);
+      var(--shadow-lg);
+  }
+
+  .ds-plan--highlight::before {
+    display: none;
   }
 
   /* Troca de ciclo: só alterna a visibilidade dos dois valores já renderizados */

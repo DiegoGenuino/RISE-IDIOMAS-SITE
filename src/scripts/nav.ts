@@ -1,14 +1,17 @@
 import { scrollToId, startScroll, stopScroll } from './smoothScroll';
 
 /**
- * Navbar: estado "descolado do topo", drawer mobile e scroll suave dos links.
+ * Navbar: estado "descolado do topo", painel mobile e scroll suave dos links.
+ *
  * O estado de scroll usa IntersectionObserver sobre uma sentinela de 1px em vez
  * de um listener de scroll — zero trabalho na main thread enquanto se rola.
+ * O painel é aberto por atributo; toda a animação (clip-path, stagger) vive no
+ * CSS, portanto o JS não toca em geometria.
  */
 export function initNav(): void {
   const nav = document.querySelector<HTMLElement>('[data-nav]');
   const toggle = document.getElementById('nav-toggle');
-  const drawer = document.getElementById('nav-drawer');
+  const drawer = document.querySelector<HTMLElement>('[data-drawer]');
 
   // ── Estado "stuck" ────────────────────────────────────────────────────
   if (nav) {
@@ -27,15 +30,15 @@ export function initNav(): void {
     ).observe(sentinel);
   }
 
-  // ── Drawer mobile ─────────────────────────────────────────────────────
+  // ── Painel mobile ─────────────────────────────────────────────────────
   let isOpen = false;
 
   function openDrawer(): void {
-    if (!drawer || !toggle) return;
+    if (!drawer || !toggle || isOpen) return;
     isOpen = true;
-    drawer.hidden = false;
-    // hidden → visível precisa de um frame antes da transição de opacidade
-    requestAnimationFrame(() => drawer.setAttribute('data-open', ''));
+    drawer.removeAttribute('inert');
+    drawer.setAttribute('data-open', '');
+    nav?.setAttribute('data-open', '');
     toggle.setAttribute('aria-expanded', 'true');
     toggle.setAttribute('aria-label', 'Fechar menu');
     stopScroll();
@@ -45,15 +48,12 @@ export function initNav(): void {
     if (!drawer || !toggle || !isOpen) return;
     isOpen = false;
     drawer.removeAttribute('data-open');
+    nav?.removeAttribute('data-open');
+    // `inert` tira o painel da ordem de tabulação enquanto está recortado.
+    drawer.setAttribute('inert', '');
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-label', 'Abrir menu');
     startScroll();
-
-    const hide = () => {
-      if (!isOpen) drawer.hidden = true;
-    };
-    drawer.addEventListener('transitionend', hide, { once: true });
-    window.setTimeout(hide, 400);
   }
 
   toggle?.addEventListener('click', () => (isOpen ? closeDrawer() : openDrawer()));
@@ -63,6 +63,11 @@ export function initNav(): void {
       closeDrawer();
       toggle?.focus();
     }
+  });
+
+  // Voltar ao desktop com o painel aberto deixaria o scroll travado.
+  window.matchMedia('(min-width: 940px)').addEventListener('change', (event) => {
+    if (event.matches && isOpen) closeDrawer();
   });
 
   // ── Scroll suave nos alvos internos ───────────────────────────────────

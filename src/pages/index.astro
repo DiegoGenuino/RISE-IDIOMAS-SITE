@@ -3,6 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/nav/Navbar.astro';
 import Hero from '../sections/hero/Hero.astro';
 import SocialProof from '../sections/social-proof/SocialProof.astro';
+import Bento from '../sections/bento/Bento.astro';
+import LevelJourney from '../sections/journey/LevelJourney.astro';
+import BlogTeaser from '../sections/blog-teaser/BlogTeaser.astro';
 import StickyFeatureGrid from '../sections/methodology/StickyFeatureGrid.astro';
 import Courses from '../sections/courses/Courses.astro';
 import LevelQuizSection from '../sections/level-quiz/LevelQuizSection.astro';
@@ -81,11 +84,14 @@ const faqSchema = {
   <main id="conteudo">
     <Hero />
     <SocialProof />
+    <Bento />
     <StickyFeatureGrid />
     <Courses />
+    <LevelJourney />
     <LevelQuizSection />
     <Pricing />
     <Testimonials />
+    <BlogTeaser />
     <Faq />
     <CTA />
   </main>

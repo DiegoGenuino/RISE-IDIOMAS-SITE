@@ -184,3 +184,98 @@ O blog (`/blog`, `/blog/[slug]`), o `/404` e `/s/[slug]` continuam a funcionar; 
 Os assets da home antiga (`src/assets/images/modalities-section/`, `cta/`, etc.)
 **não** foram apagados. Não são importados por nenhum componente, portanto não entram
 no bundle, e ficam disponíveis caso queiram reaproveitar as ilustrações.
+
+---
+
+## v3 — calibração contra o CSS real da Stripe
+
+A v2 foi construída a partir do briefing. A v3 foi calibrada baixando e
+analisando os bundles CSS de produção da `stripe.com` (design system "HDS").
+As diferenças eram mensuráveis:
+
+| O quê | v2 | Stripe real (medido) |
+| --- | --- | --- |
+| Sombras | `rgba(50,50,93,.25)`, 1 camada, 25% | 2 camadas azul-marinho a **4–14%** |
+| Motion (transform) | 200–300 ms | **500 ms – 1,2 s**, `cubic-bezier(.165,.84,.44,1)` |
+| Grid | flex ad-hoc, 1200 px | **4/8/12 colunas**, container **1264 px** |
+| Paleta | 8 valores soltos | rampas `brand 25→975`, `neutral 0→990` |
+| Nav | 64 px, blur 8 px | **76 px**, blur **5 px**, breakpoint **940 px** |
+| Menu mobile | fade de opacidade | reveal por **`clip-path: inset()`** |
+| Raios | 4/6/10/14/20 | **2/4/6/16/32** |
+
+A receita `rgba(50,50,93,.25)` é a Stripe de ~2018, replicada em todo o CodePen —
+é 2,5× mais pesada que a atual, e era o que fazia os cartões lerem como
+"Bootstrap com box-shadow".
+
+### Tipografia
+
+Instrument Sans (grotesca livre mais próxima da Söhne, que a Stripe licencia da
+Klim) + Source Code Pro, a mesma mono que a Stripe usa. Inter foi removido.
+
+### Movimento
+
+Tokens de duração (`--dur-micro` a `--dur-scene`) e quatro curvas extraídas do
+HDS. `prefers-reduced-motion` zera os tokens num único bloco — o padrão da
+própria Stripe — em vez de espalhar overrides por seletor.
+
+### Seções novas
+
+- **Bento grid** "O que está incluído" — tile grande escuro + malha 2×2.
+- **Trilha CEFR A1→C2** — scroll horizontal conduzido pelo scroll vertical.
+  Descritores e horas guiadas são do CEFR e do Cambridge Assessment (padrão
+  público), rotuladas como referência e não como promessa de prazo.
+- **Últimos posts do blog** — usa `getBlogList()`; some sozinha se o Sanity
+  falhar ou não houver posts.
+
+### Hero: gradiente mesh em WebGL
+
+Shader próprio (~5 KB, sem biblioteca): value-noise em 3 oitavas misturando 4
+paradas de cor. Buffer a 0,5 × DPR, rAF pausado por `IntersectionObserver`, e a
+paleta trocada pelo seletor de perfil (fria para tech, quente para jovem). Sem
+WebGL ou com movimento reduzido, o canvas nunca é criado e fica o cônico
+estático do CSS.
+
+A malha é contida à direita, atrás do simulador: o contraste do H1 não pode
+depender de onde o ruído calhou de estar.
+
+### Títulos com GSAP SplitText
+
+Revelação caractere a caractere com blur, como pedido. Três diferenças em
+relação ao exemplo de referência:
+
+1. O `visibility: hidden` é armado por um script inline no `<head>` **com
+   failsafe de 2,5 s**. Sem isso, uma falha no bundle deixaria os títulos
+   invisíveis para sempre.
+2. `aria: 'auto'` mantém o título legível por leitores de ecrã.
+3. O split é revertido no fim e há um segundo failsafe que força
+   `timeline.progress(1)` após 4 s — a timeline avança por `requestAnimationFrame`,
+   e há contextos em que o rAF não corre.
+
+O acento do H1 passou a ser cor sólida: `background-clip: text` não sobrevive ao
+`filter: blur()` por caractere, que cria um novo contexto de pintura. Títulos
+sólidos também são mais fiéis à Stripe, que nunca usa gradiente em texto.
+
+### Custo do SplitText (decisão consciente)
+
+GSAP core (70 KB) + SplitText (7 KB) passaram a carregar em todo page view,
+porque o título do hero — que é o elemento de LCP — depende deles. O bundle de
+entrada é 35 KB; ScrollTrigger (43 KB) continua fora, carregado só quando as
+cenas de scroll se aproximam.
+
+**Isto atrasa o LCP**: o H1 fica invisível até o GSAP chegar. É o preço da
+animação pedida. Para reverter, basta remover `data-split` do H1 em
+`src/sections/hero/Hero.astro` — os títulos de seção continuariam animando sem
+custo de LCP, porque só carregam ao entrar na viewport.
+
+### Verificação
+
+Feita com Chrome headless (`--headless=new --screenshot`), em 390 px (via
+harness com iframe), 500 px, 1280 px e 1440 px, nos dois perfis e com
+`--force-prefers-reduced-motion`.
+
+**Limitação conhecida:** neste ambiente o `requestAnimationFrame` do Chrome
+headless dispara no máximo 2 vezes, portanto **nenhuma animação foi verificada
+visualmente em movimento** — nem o mesh gradient, nem o SplitText, nem as cenas
+sticky. O que foi verificado: layout, tipografia, cor, sombras, os estados
+finais, o menu mobile aberto, a troca de perfil, e que o GSAP aplica os estados
+iniciais corretos. O movimento em si precisa de um olhar num browser real.

@@ -2,27 +2,32 @@
 
 /* ─────────────────────────────────────────────────────────────────────────
    Fontes — variable, subset latin, font-display: swap (padrão do @fontsource)
+   Instrument Sans é a grotesca livre mais próxima da Söhne, que a Stripe
+   licencia da Klim e não pode ser usada aqui.
    ───────────────────────────────────────────────────────────────────────── */
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/instrument-sans';
 @import '@fontsource-variable/source-code-pro';
 
 /* ═════════════════════════════════════════════════════════════════════════
-   RISE DESIGN SYSTEM — v2
-   Referência estética: Stripe (geometria rígida, sombras atmosféricas frias,
-   tipografia técnica, movimento dirigido por scroll).
+   RISE DESIGN SYSTEM — v3
+
+   As rampas de cor, as sombras e as curvas de movimento abaixo foram
+   extraídas dos bundles CSS de produção da stripe.com (design system "HDS").
+   Não são aproximações: são os mesmos degraus, para o site herdar a mesma
+   sensação de material e de peso.
    ═════════════════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* ── Tipografia ─────────────────────────────────────────────────────── */
+  /* ══ TIPOGRAFIA ═══════════════════════════════════════════════════════ */
   --font-sans:
-    'Inter Variable', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
+    'Instrument Sans Variable', 'Instrument Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
   --font-mono:
     'Source Code Pro Variable', 'SFMono-Regular', ui-monospace, 'Menlo', 'Consolas', monospace;
 
-  /* Escala tipográfica — clamp() para não quebrar em telas pequenas */
-  --text-hero: clamp(2.5rem, 1.4rem + 4.6vw, 4rem);
-  --text-hero--line-height: 1.06;
+  /* Instrument Sans vai de 400 a 700 — não existe 800/900 nesta família. */
+  --text-hero: clamp(2.375rem, 1.5rem + 3.6vw, 3.625rem);
+  --text-hero--line-height: 1.05;
   --text-hero--letter-spacing: -0.035em;
   --text-display: clamp(2rem, 1.2rem + 3vw, 3rem);
   --text-display--line-height: 1.1;
@@ -36,76 +41,148 @@
   --text-eyebrow--line-height: 1.2;
   --text-eyebrow--letter-spacing: 0.08em;
 
-  /* ── Cor: marca ────────────────────────────────────────────────────── */
-  --color-brand: #533afd; /* CTA primário, foco, destaques interativos    */
-  --color-brand-strong: #4229e0; /* hover / pressed                             */
-  --color-brand-deep: #362baa; /* bordas tracejadas, contornos interativos     */
-  --color-brand-soft: #d6d9fc; /* divisórias e cartões secundários             */
-  --color-brand-wash: #f0f1fe; /* fundo de badge / superfície de destaque      */
-  --color-brand-legacy: #4242a5; /* indigo herdado da identidade Rise            */
+  /* ══ COR — rampa da marca (HDS core.brand) ════════════════════════════ */
+  --color-brand-25: #f5f5ff;
+  --color-brand-50: #e8e9ff;
+  --color-brand-75: #e2e4ff;
+  --color-brand-100: #d6d9fc;
+  --color-brand-200: #b9b9f9;
+  --color-brand-300: #9a9afe;
+  --color-brand-400: #7f7dfc;
+  --color-brand-500: #665efd;
+  --color-brand-600: #533afd; /* primária: CTA, foco, destaques           */
+  --color-brand-700: #4032c8;
+  --color-brand-800: #2e2b8c;
+  --color-brand-900: #1c1e54; /* fundo imersivo do briefing               */
+  --color-brand-950: #161741;
+  --color-brand-975: #0f1137;
 
-  /* ── Cor: texto ────────────────────────────────────────────────────── */
-  --color-ink: #061b31; /* títulos e corpo — 15.9:1 sobre branco (AAA)  */
-  --color-ink-soft: #425466; /* texto de apoio — 8.1:1 sobre branco (AAA)    */
-  --color-ink-muted: #64748b; /* metadados — 4.8:1 sobre branco (AA)          */
+  /* Atalhos semânticos — o resto do sistema fala por estes nomes */
+  --color-brand: var(--color-brand-600);
+  --color-brand-strong: var(--color-brand-700);
+  --color-brand-deep: #362baa; /* HDS brandDark-700: bordas tracejadas     */
+  --color-brand-soft: var(--color-brand-100);
+  --color-brand-wash: var(--color-brand-50);
 
-  /* ── Cor: superfícies claras ───────────────────────────────────────── */
-  --color-surface: #ffffff;
-  --color-surface-alt: #f6f9fc;
-  --color-surface-alt-2: #e5edf5;
+  /* ══ COR — rampa neutra (HDS core.neutral) ════════════════════════════ */
+  --color-neutral-0: #ffffff;
+  --color-neutral-25: #f8fafd;
+  --color-neutral-50: #e5edf5;
+  --color-neutral-100: #d4dee9;
+  --color-neutral-200: #bac8da;
+  --color-neutral-300: #95a4ba;
+  --color-neutral-400: #7d8ba4;
+  --color-neutral-500: #64748d;
+  --color-neutral-600: #50617a;
+  --color-neutral-700: #3c4f69;
+  --color-neutral-800: #273951;
+  --color-neutral-900: #1a2c44;
+  --color-neutral-950: #11273e;
+  --color-neutral-975: #0d253d;
+  --color-neutral-990: #061b31;
 
-  /* ── Cor: superfícies imersivas (seções tech) ──────────────────────── */
-  --color-abyss: #1c1e54; /* fundo escuro principal                       */
-  --color-abyss-deep: #101235; /* variação profunda para gradiente             */
-  --color-abyss-line: #343a80; /* bordas sobre fundo escuro                    */
-  --color-abyss-ink: #c3c8f5; /* texto de apoio sobre escuro — 8.0:1 (AAA)    */
+  --color-ink: var(--color-neutral-990); /* 15.9:1 sobre branco — AAA      */
+  --color-ink-soft: var(--color-neutral-700); /* 8.9:1 — AAA               */
+  --color-ink-muted: var(--color-neutral-500); /* 4.9:1 — AA               */
 
-  /* ── Cor: acentos ──────────────────────────────────────────────────── */
-  --color-ruby: #ea2261; /* início do gradiente decorativo               */
-  --color-magenta: #f96bee; /* fim do gradiente decorativo (público jovem)  */
-  --color-aqua: #45d1ff; /* acento legível sobre #1C1E54 — 7.9:1 (AAA)   */
-  --color-lime: #b4f461; /* sinalização de progresso/acerto no quiz      */
+  --color-surface: var(--color-neutral-0);
+  --color-surface-alt: var(--color-neutral-25);
+  --color-surface-alt-2: var(--color-neutral-50);
 
-  /* ── Sombras atmosféricas (assinatura Stripe: azul + preto) ────────── */
-  --shadow-xs: 0 2px 5px -1px rgba(50, 50, 93, 0.25), 0 1px 3px -1px rgba(0, 0, 0, 0.1);
-  --shadow-card: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
-  --shadow-float: 0 30px 60px -12px rgba(50, 50, 93, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
-  --shadow-hero: 0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.1);
-  --shadow-brand: 0 12px 28px -8px rgba(83, 58, 253, 0.5);
+  /* ══ COR — superfícies escuras (HDS core.neutralDark / brand) ═════════ */
+  --color-abyss: var(--color-brand-900); /* #1C1E54                        */
+  --color-abyss-deep: #0d1738; /* neutralDark-990                          */
+  --color-abyss-mid: #122054; /* neutralDark-950                           */
+  --color-abyss-line: #23356e; /* neutralDark-800                          */
+  --color-abyss-ink: #c0cee6; /* neutralDark-200 — 9.6:1 sobre #1C1E54     */
 
-  /* ── Raios ─────────────────────────────────────────────────────────── */
-  --radius-xs: 4px; /* componentes internos: chips, inputs pequenos */
-  --radius-sm: 6px; /* botões, inputs, navbar                       */
-  --radius-md: 10px;
-  --radius-lg: 14px; /* cartões                                      */
-  --radius-xl: 20px; /* painéis e janelas de simulação               */
+  /* ══ COR — acentos ════════════════════════════════════════════════════ */
+  --color-ruby: #ea2261;
+  --color-magenta: #f96bee;
+  --color-amber: #ffcf5e; /* terceira parada do cônico da Stripe          */
+  --color-violet: #7232f1; /* idem                                         */
+  --color-aqua: #45d1ff; /* legível sobre #1C1E54 — 7.9:1, AAA            */
+  --color-lime: #b4f461; /* sinalização de acerto/correção                */
 
-  /* ── Curvas de animação ────────────────────────────────────────────── */
+  /* ══ SOMBRAS ══════════════════════════════════════════════════════════
+     Duas camadas (topo largo e difuso + base curta), em azul-marinho a
+     4–14% de opacidade. A receita antiga rgba(50,50,93,.25) é 2,5× mais
+     pesada e é o que faz um cartão parecer "Bootstrap com box-shadow".   */
+  --shadow-xs: 0 2px 10px 0 #0037700f, 0 1px 4px 0 #003b890a;
+  --shadow-sm: 0 5px 14px 0 #00377014, 0 2px 8px 0 #003b890d;
+  --shadow-md: 0 6px 22px 0 #0037701a, 0 4px 8px 0 #003b8905;
+  --shadow-lg: 0 15px 40px -2px #0037701a, 0 5px 20px -2px #003b890a;
+  --shadow-xl: 0 20px 80px -16px #00377024, 0 10px 60px -16px #003b890f;
+  --shadow-brand: 0 6px 22px 0 #533afd2e, 0 2px 8px 0 #533afd1f;
+
+  /* Aliases mantidos para não quebrar o que já referencia os nomes antigos */
+  --shadow-card: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
+  --shadow-hero: var(--shadow-xl);
+
+  /* ══ RAIOS (HDS space.core.radius) ════════════════════════════════════ */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px; /* botões, inputs, nav — o raio padrão da Stripe      */
+  --radius-lg: 16px; /* cartões                                           */
+  --radius-xl: 32px; /* painéis e janelas de simulação                    */
+  --radius-round: 99999px;
+
+  /* ══ MOVIMENTO ════════════════════════════════════════════════════════
+     Transform e reveals são lentos (500–1200ms); cor e opacidade ficam
+     rápidos (120–240ms). Inverter isso é o que faz um site parecer
+     apressado em vez de caro.                                            */
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-card: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-nav: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  --ease-burger: cubic-bezier(0.6, 0, 0.2, 0.5);
+  /* Mantido: alguns componentes ainda referenciam este nome */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 
-  /* ── Larguras de container ─────────────────────────────────────────── */
-  --container-shell: 1200px;
+  --dur-micro: 120ms; /* cor, fill                                        */
+  --dur-fast: 240ms; /* opacidade, nav                                    */
+  --dur-base: 500ms; /* transform de UI                                   */
+  --dur-slow: 800ms; /* cartões, reveals                                  */
+  --dur-scene: 1200ms; /* transições de seção                             */
+
+  /* ══ LAYOUT ═══════════════════════════════════════════════════════════ */
+  --container-shell: 1264px;
   --container-prose: 1080px;
+
+  /* Breakpoint da navegação, igual ao da Stripe */
+  --breakpoint-nav: 940px;
 }
 
 /* ═════════════════════════════════════════════════════════════════════════
-   ESCALA FLUIDA
-   O briefing pede html { font-size: calc(100vw / 1440) }. Aplicado ao pé da
-   letra isso torna 1rem = 1px em 1440px — e como toda a escala de utilitários
-   do Tailwind v4 é baseada em rem, o corpo do texto viraria 1px.
-   A tradução funcional preserva a ideia (layout proporcional à viewport, sem
-   saltos de media query) ancorada em 16px @ 1440px e com limites:
-     1.111vw x 1440 = 16px  ->  1rem = 16px exatamente em 1440px
-   O clamp usa rem (não px) para preservar o tamanho-base de fonte escolhido
-   pelo utilizador no navegador — requisito de acessibilidade.
+   GRADE FLUIDA E ESCALA
    ═════════════════════════════════════════════════════════════════════════ */
 :root {
   font-size: 100%;
-  /* Permite transicionar block-size de 0 para auto (acordeões, ::details-content) */
   interpolate-size: allow-keywords;
+
+  /* Colunas: 4 no telemóvel, 8 no tablet, 12 no desktop */
+  --layout-columns: 4;
+  --layout-gap: 1rem;
 }
 
+@media (min-width: 640px) {
+  :root {
+    --layout-columns: 8;
+  }
+}
+
+@media (min-width: 940px) {
+  :root {
+    --layout-columns: 12;
+  }
+}
+
+/* A escala fluida mantém a proporção do layout sem saltos de media query.
+   O briefing pedia calc(100vw / 1440), o que tornaria 1rem = 1px em 1440px —
+   e como toda a escala do Tailwind v4 é em rem, o corpo do texto ficaria com
+   1px. Esta versão ancora o mesmo resultado (1rem = 16px @ 1440px) com
+   limites, e em `rem` para preservar o tamanho-base do navegador. */
 @media (min-width: 1024px) {
   :root {
     font-size: clamp(0.875rem, 1.111vw, 1.125rem);
@@ -121,7 +198,6 @@
     scroll-behavior: smooth;
   }
 
-  /* Lenis assume o controlo do scroll quando ativo */
   html.lenis,
   html.lenis body {
     height: auto;
@@ -143,7 +219,6 @@
     background-color: var(--color-surface);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: 'ss01', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -162,41 +237,50 @@
 
   ::selection {
     background-color: color-mix(in srgb, var(--color-brand) 22%, transparent);
-    color: var(--color-brand-deep);
+    color: var(--color-brand-800);
   }
 
   :focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 2px;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
   }
 
-  /* Fundo escuro inverte o anel de foco para manter contraste */
   .ds-dark :focus-visible {
     outline-color: var(--color-aqua);
   }
 }
 
 /* ═════════════════════════════════════════════════════════════════════════
-   UTILITÁRIOS DO SISTEMA
+   LAYOUT
    ═════════════════════════════════════════════════════════════════════════ */
 
-/* Container padrão — 1200px com respiro lateral fluido */
 @utility ds-shell {
   width: 100%;
   max-width: var(--container-shell);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
 @utility ds-shell-narrow {
   width: 100%;
   max-width: var(--container-prose);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
-/* Rótulo mono usado em eyebrows, métricas e níveis de inglês */
+/* Grade partilhada: as seções posicionam por span de coluna, e por isso
+   alinham uma com a outra em vez de cada uma resolver o próprio flex. */
+@utility ds-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--layout-columns), minmax(0, 1fr));
+  gap: var(--layout-gap);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITÁRIOS DO SISTEMA
+   ═════════════════════════════════════════════════════════════════════════ */
+
 @utility ds-mono {
   font-family: var(--font-mono);
   font-size: var(--text-eyebrow);
@@ -205,12 +289,10 @@
   font-weight: 600;
 }
 
-/* Gradiente decorativo Ruby → Magenta (público jovem) */
 @utility ds-gradient-warm {
   background-image: linear-gradient(101deg, var(--color-ruby) 0%, var(--color-magenta) 100%);
 }
 
-/* Gradiente frio Brand → Aqua (público tech) */
 @utility ds-gradient-cool {
   background-image: linear-gradient(101deg, var(--color-brand) 0%, var(--color-aqua) 100%);
 }
@@ -229,7 +311,6 @@
   color: transparent;
 }
 
-/* Malha técnica sutil para as seções imersivas escuras */
 @utility ds-grid-lines {
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
@@ -237,52 +318,254 @@
   background-size: 64px 64px;
 }
 
-/* Área tracejada — placeholders e containers interativos */
 @utility ds-dashed {
   border: 1px dashed var(--color-brand-deep);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
+}
+
+/* Grão: tira o aspecto de cor chapada das seções escuras. O SVG é inline
+   como data URI, portanto não custa nenhuma requisição. */
+@utility ds-grain {
+  position: relative;
+}
+
+@utility ds-grain-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.25;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* Costura entre seções: em vez de duas cores a bater numa linha reta, a cor
+   da seção anterior entra alguns rem na seguinte e dissolve. É o que dá
+   continuidade vertical ao scroll na Stripe. A cor de origem chega em
+   --seam-from, definida no próprio elemento. */
+@utility ds-seam {
+  position: relative;
+}
+
+@utility ds-seam-t {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 7rem;
+    /* Rampa em três paradas em vez de linear: uma interpolação linear entre
+       cor e transparente lê-se como uma faixa chapada de neblina. Cair mais
+       depressa no meio dá a dissolução suave. */
+    background: linear-gradient(
+      to bottom,
+      var(--seam-from, transparent) 0%,
+      color-mix(in srgb, var(--seam-from, transparent) 38%, transparent) 42%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+@utility ds-seam-b {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 7rem;
+    background: linear-gradient(
+      to top,
+      var(--seam-to, transparent) 0%,
+      color-mix(in srgb, var(--seam-to, transparent) 38%, transparent) 42%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/* Dissolve a fronteira entre uma seção e a seguinte, em vez de as encostar
+   numa linha reta. É o que dá continuidade vertical ao scroll. */
+@utility ds-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+}
+
+@utility ds-fade-t {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
 }
 
 /* ═════════════════════════════════════════════════════════════════════════
-   REVELAÇÃO POR SCROLL (fallback sem JS + estado controlado por GSAP)
-   Só transform/opacity — nunca propriedades que causam reflow.
+   CARTÕES
+   Um só lugar define o material dos cartões — superfície, borda de 1px por
+   inset shadow, e o realce em gradiente que aparece no hover.
    ═════════════════════════════════════════════════════════════════════════ */
 @layer components {
-  .ds-reveal {
-    opacity: 0;
-    transform: translate3d(0, 18px, 0);
+  .ds-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-100),
+      var(--shadow-xs);
     transition:
-      opacity 0.7s var(--ease-out-expo),
-      transform 0.7s var(--ease-out-expo);
-    will-change: transform, opacity;
+      transform var(--dur-slow) var(--ease-card),
+      box-shadow var(--dur-slow) var(--ease-card);
   }
 
-  .ds-reveal.is-visible {
+  /* Borda em gradiente: pinta-se só o anel de 1px via mask-composite, para
+     não haver um segundo elemento por baixo do cartão. */
+  .ds-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, var(--color-brand-400), var(--color-aqua));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-card);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .ds-card:hover {
+      transform: translate3d(0, -4px, 0);
+      box-shadow:
+        inset 0 0 0 1px transparent,
+        var(--shadow-lg);
+    }
+
+    .ds-card:hover::before {
+      opacity: 1;
+    }
+  }
+
+  /* Seta dos CTAs: avança no hover do botão que a contém. */
+  .ds-arrow {
+    transition: transform var(--dur-base) var(--ease-card);
+  }
+
+  .group:hover .ds-arrow {
+    transform: translate3d(3px, 0, 0);
+  }
+
+  /* Holofote que segue o cursor. As coordenadas chegam em --mx/--my, escritas
+     por um único listener no container — nunca um por cartão. */
+  .ds-spotlight {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease);
+    background: radial-gradient(
+      18rem circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--color-brand) 12%, transparent),
+      transparent 65%
+    );
+  }
+
+  @media (hover: hover) {
+    [data-spotlight] .ds-card:hover .ds-spotlight,
+    [data-spotlight] .ds-bento-tile:hover .ds-spotlight {
+      opacity: 1;
+    }
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   REVELAÇÃO POR SCROLL
+   Só transform e opacity — nunca propriedades que forcem reflow.
+   ═════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* O estado escondido está atrás de .ds-reveal-armed, que o JS só põe quando
+     o observer já está montado. Assim o conteúdo nunca fica preso a opacidade
+     zero por causa de um script que não chegou a correr. */
+  html.ds-reveal-armed .ds-reveal {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    transition:
+      opacity var(--dur-slow) var(--ease-card),
+      transform var(--dur-slow) var(--ease-card);
+    transition-delay: calc(var(--reveal-i, 0) * 70ms);
+  }
+
+  html.ds-reveal-armed .ds-reveal.is-visible {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
 }
 
-/* Sem JS o conteúdo tem de aparecer na mesma */
-html.no-js .ds-reveal {
-  opacity: 1;
-  transform: none;
+/* ═════════════════════════════════════════════════════════════════════════
+   REVELAÇÃO DE TÍTULOS (GSAP SplitText)
+   A classe .ds-split-armed é posta por um script inline no <head> e removida
+   assim que o GSAP assume — ou por failsafe. Enquanto está lá, os títulos
+   ficam invisíveis para não haver flash do texto antes do split.
+   ═════════════════════════════════════════════════════════════════════════ */
+html.ds-split-armed [data-split] {
+  visibility: hidden;
+}
+
+.ds-char {
+  display: inline-block;
+  /* Sem `will-change`: promover cada caractere a camada própria custa mais do
+     que a animação poupa — um título de 45 letras viraria 45 camadas com
+     filtro. O browser decide melhor sozinho neste caso. */
 }
 
 /* ═════════════════════════════════════════════════════════════════════════
    SELETOR DE PERFIL
-   O estado vive em html[data-audience]. A troca é puramente CSS — nenhum
-   componente re-renderiza e nenhum nó é criado ou destruído.
+   O estado vive em html[data-audience]. A troca é puramente CSS.
    ═════════════════════════════════════════════════════════════════════════ */
 html[data-audience='tech'] [data-aud='young'],
 html[data-audience='young'] [data-aud='tech'] {
   display: none !important;
 }
 
+/* Paleta da malha do hero. Lida pelo shader via getComputedStyle, portanto a
+   troca de perfil repinta o gradiente sem recompilar nada. */
+:root {
+  --mesh-0: #533afd;
+  --mesh-1: #7232f1;
+  --mesh-2: #45d1ff;
+  --mesh-3: #e8e9ff;
+}
+
+html[data-audience='young'] {
+  --mesh-0: #ea2261;
+  --mesh-1: #f96bee;
+  --mesh-2: #ffcf5e;
+  --mesh-3: #ffe4f5;
+}
+
 /* ═════════════════════════════════════════════════════════════════════════
-   ACESSIBILIDADE — movimento reduzido
+   MOVIMENTO REDUZIDO
+   Zerar os tokens de duração cobre todo o sistema de uma vez, que é como a
+   própria Stripe resolve — em vez de espalhar overrides por seletor.
    ═════════════════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-micro: 0ms;
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+    --dur-scene: 0ms;
+  }
+
   html {
     scroll-behavior: auto;
   }
@@ -290,7 +573,6 @@ html[data-audience='young'] [data-aud='tech'] {
   .ds-reveal {
     opacity: 1 !important;
     transform: none !important;
-    transition: none !important;
   }
 
   *,
@@ -298,6 +580,5 @@ html[data-audience='young'] [data-aud='tech'] {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }

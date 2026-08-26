@@ -2,19 +2,23 @@
 import riseLogo from '../../assets/shared/rise-logo.svg';
 import Button from '../ui/Button.astro';
 import AudienceSwitch from '../ui/AudienceSwitch.astro';
-import { ctaLinks } from '../../data/site';
+import { courses } from '../../data/courses';
+import { ctaLinks, site, whatsappLink } from '../../data/site';
 
 const navLinks = [
   { label: 'Modalidades', target: 'modalidades' },
   { label: 'Metodologia', target: 'metodologia' },
-  { label: 'Teste de nível', target: 'nivel' },
+  { label: 'Trilha', target: 'trilha' },
   { label: 'Planos', target: 'planos' },
 ];
+
+/* O painel mobile lista mais do que a barra do desktop, que tem de caber. */
+const drawerLinks = [...navLinks, { label: 'Teste de nível', target: 'nivel' }];
 ---
 
 <header id="site-nav" class="fixed inset-x-0 top-0 z-50" data-nav>
   <div class="ds-nav-surface">
-    <div class="ds-shell flex h-16 items-center justify-between gap-6">
+    <div class="ds-shell flex h-19 items-center justify-between gap-6">
       <!-- Marca -->
       <a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="Rise Idiomas — início">
         <img
@@ -29,60 +33,60 @@ const navLinks = [
         <span class="text-ink text-[0.9375rem] font-bold tracking-tight">Rise Idiomas</span>
       </a>
 
-      <!-- Navegação (desktop) -->
-      <nav class="hidden lg:block" aria-label="Navegação principal">
+      <!-- Navegação desktop -->
+      <nav class="nav:block hidden" aria-label="Navegação principal">
         <ul class="flex items-center gap-1">
           {
             navLinks.map((link) => (
               <li>
-                <button
-                  type="button"
-                  data-scroll-to={link.target}
-                  class="text-ink-soft hover:text-brand cursor-pointer rounded-xs px-3 py-2 text-sm font-medium transition-colors duration-150"
-                >
+                <button type="button" data-scroll-to={link.target} class="ds-nav-link">
                   {link.label}
                 </button>
               </li>
             ))
           }
           <li>
-            <a
-              href="/blog"
-              class="text-ink-soft hover:text-brand rounded-xs px-3 py-2 text-sm font-medium transition-colors duration-150"
-            >
-              Blog
-            </a>
+            <a href="/blog" class="ds-nav-link">Blog</a>
           </li>
         </ul>
       </nav>
 
       <!-- Ações -->
       <div class="flex items-center gap-3">
-        <AudienceSwitch size="bar" class="hidden md:inline-flex" />
+        <!--
+          Envolvido num wrapper em vez de receber `hidden` como classe: o
+          componente já traz `inline-flex` na base, e as duas regras de display
+          têm a mesma especificidade — quem ganha passa a depender da ordem no
+          CSS gerado, que não é um contrato estável.
+        -->
+        <div class="hidden md:block">
+          <AudienceSwitch size="bar" />
+        </div>
 
-        <Button href={ctaLinks.trial} size="sm" class="hidden sm:inline-flex">
-          Aula experimental
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            class="transition-transform duration-200 group-hover:translate-x-0.5"
-          >
-            <path d="M5 12h13M12 5l7 7-7 7"></path>
-          </svg>
-        </Button>
+        <div class="hidden sm:block">
+          <Button href={ctaLinks.trial} size="sm">
+            Aula experimental
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              class="ds-arrow"
+            >
+              <path d="M5 12h13M12 5l7 7-7 7"></path>
+            </svg>
+          </Button>
+        </div>
 
-        <!-- Hamburguer (mobile) -->
         <button
           type="button"
           id="nav-toggle"
-          class="text-ink flex h-9 w-9 cursor-pointer items-center justify-center rounded-xs lg:hidden"
+          class="ds-burger-btn"
           aria-label="Abrir menu"
           aria-expanded="false"
           aria-controls="nav-drawer"
@@ -92,74 +96,176 @@ const navLinks = [
       </div>
     </div>
   </div>
-</header>
 
-<!-- Painel mobile -->
-<div id="nav-drawer" class="ds-drawer fixed inset-0 z-40 lg:hidden" hidden>
-  <div class="ds-shell flex h-full flex-col justify-center gap-8 pt-16 pb-12">
-    <nav aria-label="Navegação mobile">
-      <ul class="flex flex-col gap-1">
-        {
-          navLinks.map((link, index) => (
-            <li class="ds-drawer-item" style={`--i:${index}`}>
-              <button
-                type="button"
-                data-scroll-to={link.target}
-                class="border-brand-soft/60 text-ink w-full cursor-pointer border-b py-4 text-left text-2xl font-semibold tracking-tight"
+  <!-- ── Painel mobile ──────────────────────────────────────────────────
+       Revela por clip-path a partir do topo, "descendo" por trás da navbar,
+       em vez de aparecer com um fade. É a mecânica do menu da Stripe.     -->
+  <div id="nav-drawer" class="ds-drawer" data-drawer inert>
+    <div class="ds-drawer-inner ds-shell">
+      <!-- Programas -->
+      <div class="ds-drawer-item" style="--i:0">
+        <span class="ds-mono text-ink-muted">Programas</span>
+        <ul class="mt-4 grid grid-cols-2 gap-x-4 gap-y-1">
+          {
+            courses.map((course) => (
+              <li>
+                <button
+                  type="button"
+                  data-scroll-to="modalidades"
+                  class="ds-drawer-course"
+                  data-aud={course.audiences.length === 1 ? course.audiences[0] : undefined}
+                >
+                  <span class="text-ink font-semibold">{course.title}</span>
+                  <span class="ds-mono text-brand/70 text-[0.625rem]">{course.meta}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Navegação -->
+      <div class="ds-drawer-item" style="--i:1">
+        <span class="ds-mono text-ink-muted">Explorar</span>
+        <ul class="mt-3 flex flex-col">
+          {
+            drawerLinks
+              .filter((link) => link.target !== 'modalidades')
+              .map((link) => (
+                <li>
+                  <button type="button" data-scroll-to={link.target} class="ds-drawer-link">
+                    {link.label}
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      class="ds-arrow text-brand"
+                    >
+                      <path d="M5 12h13M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </li>
+              ))
+          }
+          <li>
+            <a href="/blog" class="ds-drawer-link">
+              Blog
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                class="ds-arrow text-brand"
               >
-                <span class="ds-mono text-brand mr-3 align-middle">0{index + 1}</span>
-                {link.label}
-              </button>
-            </li>
-          ))
-        }
-        <li class="ds-drawer-item" style={`--i:${navLinks.length}`}>
-          <a
-            href="/blog"
-            class="border-brand-soft/60 text-ink block border-b py-4 text-2xl font-semibold tracking-tight"
-          >
-            <span class="ds-mono text-brand mr-3 align-middle">0{navLinks.length + 1}</span>
-            Blog
-          </a>
-        </li>
-      </ul>
-    </nav>
+                <path d="M5 12h13M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-    <div class="ds-drawer-item flex flex-col gap-4" style={`--i:${navLinks.length + 1}`}>
-      <AudienceSwitch size="hero" class="self-start" />
-      <Button href={ctaLinks.trial} size="lg" class="w-full">Agendar aula experimental</Button>
+      <!-- Perfil + contato + CTA -->
+      <div class="ds-drawer-item flex flex-col gap-5" style="--i:2">
+        <div class="flex flex-col gap-2">
+          <span class="ds-mono text-ink-muted">Conteúdo para</span>
+          <AudienceSwitch size="hero" class="self-start" />
+        </div>
+
+        <div class="ds-drawer-contact">
+          <a
+            href={whatsappLink('Olá, vim pelo site da Rise Idiomas.')}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <p class="ds-mono text-ink-muted">Seg–Sex 08:00–21:00 · Sáb 08:00–13:00</p>
+        </div>
+
+        <Button href={ctaLinks.trial} size="lg" class="w-full">Agendar aula experimental</Button>
+      </div>
     </div>
   </div>
-</div>
+</header>
 
 <style>
   /* ── Superfície da navbar ───────────────────────────────────────────── */
   .ds-nav-surface {
-    background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
-    backdrop-filter: blur(8px) saturate(180%);
-    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    position: relative;
+    z-index: 2;
+    background-color: color-mix(in srgb, var(--color-surface) 78%, transparent);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     border-bottom: 1px solid transparent;
     transition:
-      border-color 0.3s ease,
-      box-shadow 0.3s ease,
-      background-color 0.3s ease;
+      border-color var(--dur-fast) var(--ease-nav),
+      background-color var(--dur-fast) var(--ease-nav);
   }
 
-  /* Estado "descolado do topo" — aplicado por JS a partir de 8px de scroll */
   [data-nav][data-stuck] .ds-nav-surface {
-    background-color: color-mix(in srgb, var(--color-surface) 86%, transparent);
-    border-bottom-color: var(--color-brand-soft);
-    box-shadow: 0 1px 2px rgba(50, 50, 93, 0.06);
+    background-color: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border-bottom-color: var(--color-brand-100);
   }
 
-  /* Navegador sem backdrop-filter recebe fundo opaco */
+  /* Com o painel aberto a navbar fica sólida, senão lê-se o menu através dela */
+  [data-nav][data-open] .ds-nav-surface {
+    background-color: var(--color-surface);
+    border-bottom-color: var(--color-brand-100);
+  }
+
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .ds-nav-surface {
       background-color: var(--color-surface);
     }
   }
 
-  /* ── Ícone hamburguer ───────────────────────────────────────────────── */
+  .ds-nav-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+    cursor: pointer;
+    transition: color var(--dur-micro) var(--ease-nav);
+  }
+
+  .ds-nav-link:hover {
+    color: var(--color-brand);
+  }
+
+  /* ── Hamburguer ─────────────────────────────────────────────────────── */
+  .ds-burger-btn {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  /* Resolvido aqui e não com `nav:hidden`: a classe scoped do Astro carrega o
+     atributo de cid e ganha em especificidade do utilitário do Tailwind. */
+  @media (min-width: 940px) {
+    .ds-burger-btn,
+    .ds-drawer {
+      display: none;
+    }
+  }
+
   .ds-burger,
   .ds-burger::before,
   .ds-burger::after {
@@ -169,8 +275,8 @@ const navLinks = [
     border-radius: 2px;
     background-color: currentColor;
     transition:
-      transform 0.3s var(--ease-out-expo),
-      background-color 0.2s ease;
+      transform 0.25s var(--ease-burger),
+      background-color 0.25s var(--ease-burger);
   }
 
   .ds-burger {
@@ -204,30 +310,100 @@ const navLinks = [
     transform: rotate(-45deg);
   }
 
-  /* ── Drawer ─────────────────────────────────────────────────────────── */
+  /* ── Painel ─────────────────────────────────────────────────────────── */
   .ds-drawer {
-    background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    opacity: 0;
-    transition: opacity 0.35s var(--ease-out-expo);
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    padding-top: 4.75rem;
+    background-color: var(--color-surface);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Fechado: recortado até acima. Abrir é só levar o inset a zero. */
+    clip-path: inset(0 0 100% 0 round 0 0 var(--radius-lg) var(--radius-lg));
+    transition:
+      clip-path var(--dur-base) var(--ease-card),
+      visibility 0ms linear var(--dur-base);
+    visibility: hidden;
   }
 
   .ds-drawer[data-open] {
-    opacity: 1;
+    clip-path: inset(0 0 0 0 round 0 0 0 0);
+    visibility: visible;
+    transition:
+      clip-path var(--dur-base) var(--ease-card),
+      visibility 0ms linear 0ms;
+  }
+
+  .ds-drawer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 3rem;
   }
 
   .ds-drawer-item {
     opacity: 0;
-    transform: translate3d(-12px, 0, 0);
+    transform: translate3d(0, 14px, 0);
     transition:
-      opacity 0.4s var(--ease-out-expo),
-      transform 0.4s var(--ease-out-expo);
-    transition-delay: calc(var(--i) * 45ms);
+      opacity var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
   }
 
   .ds-drawer[data-open] .ds-drawer-item {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+    transition-delay: calc(140ms + var(--i) * 60ms);
+  }
+
+  .ds-drawer-course {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.625rem 0;
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-brand-50);
+    transition: color var(--dur-micro) var(--ease);
+  }
+
+  .ds-drawer-course:hover span:first-child {
+    color: var(--color-brand);
+  }
+
+  .ds-drawer-link {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 0;
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-brand-50);
+    transition: color var(--dur-micro) var(--ease);
+  }
+
+  .ds-drawer-link:hover {
+    color: var(--color-brand);
+  }
+
+  .ds-drawer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface-alt);
+    box-shadow: inset 0 0 0 1px var(--color-brand-50);
+  }
+
+  .ds-drawer-contact a {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-brand);
   }
 </style>

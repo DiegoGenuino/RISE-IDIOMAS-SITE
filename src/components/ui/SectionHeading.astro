@@ -29,7 +29,7 @@ const eyebrowColor = tone === 'dark' ? 'text-aqua' : accent === 'warm' ? 'text-r
 const ruleColor = tone === 'dark' ? 'bg-abyss-line' : 'bg-brand-soft';
 ---
 
-<div class={`flex max-w-2xl flex-col gap-4 ${alignment} ${className}`}>
+<div class={`flex max-w-2xl flex-col gap-4 ${alignment} ${className}`} data-split-group>
   {
     eyebrow && (
       <div class="flex items-center gap-3">
@@ -39,7 +39,11 @@ const ruleColor = tone === 'dark' ? 'bg-abyss-line' : 'bg-brand-soft';
     )
   }
 
-  <h2 id={id} class={`text-display font-semibold ${titleColor}`} set:html={title} />
+  <h2 id={id} data-split class={`text-display font-semibold ${titleColor}`} set:html={title} />
 
-  {lead && <p class={`text-lead ${leadColor}`}>{lead}</p>}
+  {lead && (
+    <p data-split-follow class={`text-lead ${leadColor}`}>
+      {lead}
+    </p>
+  )}
 </div>

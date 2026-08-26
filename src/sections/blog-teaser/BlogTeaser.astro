@@ -1,0 +1,133 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import { getBlogList } from '../../lib/sanity.blog';
+
+/**
+ * Últimos posts do blog.
+ *
+ * A home é pré-renderizada, portanto estes posts são resolvidos no build — o
+ * que é aceitável para uma página de marketing, que é reconstruída a cada
+ * deploy. Se o Sanity falhar ou não houver posts, a seção simplesmente não
+ * renderiza: o build nunca quebra por causa do CMS.
+ */
+let posts: Awaited<ReturnType<typeof getBlogList>>['posts'] = [];
+
+try {
+  const result = await getBlogList();
+  if (!result.errorMessage) posts = result.posts.slice(0, 3);
+} catch {
+  posts = [];
+}
+---
+
+{
+  posts.length > 0 && (
+    <section id="blog" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="blog-titulo">
+      <div class="ds-shell flex flex-col gap-12">
+        <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="Blog"
+            title="Do outro lado da aula"
+            lead="Vocabulário, cultura e método — o que a equipe escreve entre uma turma e outra."
+            class="ds-reveal"
+            id="blog-titulo"
+          />
+
+          <a href="/blog" class="ds-reveal group text-brand shrink-0 text-sm font-semibold">
+            Ver todos os posts
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              class="ds-arrow ml-1 inline-block align-middle"
+            >
+              <path d="M5 12h13M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        <ul class="grid gap-4 md:grid-cols-3" data-spotlight>
+          {posts.map((post, index) => (
+            <li class="ds-reveal" style={`--reveal-i:${index}`}>
+              <a href={`/blog/${post.slug}`} class="ds-post ds-card group">
+                <span class="ds-spotlight" aria-hidden="true" />
+
+                {post.image?.url && (
+                  <span class="ds-post-cover">
+                    <img
+                      src={post.image.url}
+                      alt={post.image.alt || ''}
+                      loading="lazy"
+                      decoding="async"
+                      width="480"
+                      height="270"
+                    />
+                  </span>
+                )}
+
+                <span class="ds-post-body">
+                  <span class="flex flex-wrap items-center gap-x-2">
+                    <span class="ds-mono text-brand">{post.category}</span>
+                    <span class="ds-mono text-ink-muted/70">
+                      · {post.publishDateLabel} · {post.readingTimeMinutes} min
+                    </span>
+                  </span>
+
+                  <span class="text-ink mt-3 block text-lg leading-snug font-semibold">
+                    {post.title}
+                  </span>
+
+                  {post.description && (
+                    <span class="text-ink-soft mt-2 line-clamp-3 block text-sm leading-relaxed">
+                      {post.description}
+                    </span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .ds-post {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .ds-post-cover {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--color-brand-25);
+  }
+
+  .ds-post-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease-card);
+  }
+
+  @media (hover: hover) {
+    .ds-post:hover .ds-post-cover img {
+      transform: scale(1.04);
+    }
+  }
+
+  .ds-post-body {
+    display: block;
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+</style>

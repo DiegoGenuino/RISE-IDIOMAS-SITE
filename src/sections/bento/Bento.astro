@@ -1,0 +1,260 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import { courses } from '../../data/courses';
+import { site } from '../../data/site';
+
+/**
+ * Bento grid "O que está incluído".
+ * Todo o conteúdo vem de dados já existentes — modalidades, idiomas,
+ * certificadoras e horários. Nada aqui é afirmação nova sobre a Rise.
+ */
+const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+---
+
+<section id="incluido" class="bg-surface py-20 lg:py-28" aria-labelledby="incluido-titulo">
+  <div class="ds-shell flex flex-col gap-12">
+    <SectionHeading
+      eyebrow="O que está incluído"
+      title="Uma estrutura inteira por trás de cada aula"
+      lead="Método, trilha, material e certificação. O que muda entre os programas é o vocabulário e o ritmo — não o cuidado."
+      class="ds-reveal"
+      id="incluido-titulo"
+    />
+
+    <div class="ds-bento">
+      <!-- ── Tile principal ────────────────────────────────────────────── -->
+      <article class="ds-bento-tile ds-bento-tile--hero ds-dark ds-reveal" data-spotlight>
+        <div class="ds-grain-layer" aria-hidden="true"></div>
+
+        <div class="relative flex h-full flex-col justify-between gap-8">
+          <div>
+            <span class="ds-mono text-aqua">Método</span>
+            <h3 class="text-title mt-3 max-w-sm font-semibold text-white">
+              Aulas conduzidas 100% no idioma, desde a primeira
+            </h3>
+            <p class="text-abyss-ink mt-4 max-w-md text-sm leading-relaxed">
+              O bloqueio de falar cai porque não existe rota de fuga para o português. A correção
+              acontece no momento, dentro da conversa — não numa lista de erros no fim.
+            </p>
+          </div>
+
+          <!-- Amostra da correção em tempo real -->
+          <div class="ds-bento-demo">
+            <span class="ds-bento-bubble">
+              The staging env is down <s class="ds-bento-strike">since ontem</s>
+            </span>
+            <span class="ds-bento-fix">
+              <svg
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+              since <strong>yesterday</strong>
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── Trilha por nível ──────────────────────────────────────────── -->
+      <article class="ds-bento-tile ds-reveal" data-spotlight>
+        <span class="ds-mono text-brand">Trilha</span>
+        <h3 class="text-ink mt-2 text-lg font-semibold">Do A1 ao C2, sem pular etapas</h3>
+
+        <ol class="mt-auto flex items-end gap-1 pt-6" aria-label="Níveis do A1 ao C2">
+          {
+            levels.map((level, index) => (
+              <li class="flex flex-1 flex-col items-center gap-1.5">
+                <span
+                  class="block w-full rounded-full"
+                  style={`height:${6 + index * 5}px; background: color-mix(in srgb, var(--color-brand) ${28 + index * 14}%, var(--color-brand-100))`}
+                  aria-hidden="true"
+                />
+                <span class="text-ink-muted font-mono text-[0.625rem] font-semibold">{level}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </article>
+
+      <!-- ── Certificação ──────────────────────────────────────────────── -->
+      <article class="ds-bento-tile ds-reveal" data-spotlight>
+        <span class="ds-mono text-brand">Certificação</span>
+        <h3 class="text-ink mt-2 text-lg font-semibold">Cambridge e Michigan</h3>
+        <p class="text-ink-soft mt-2 text-sm leading-relaxed">
+          Simulados, técnicas de prova e material didático oficial das certificadoras.
+        </p>
+
+        <div class="mt-auto flex gap-2 pt-6">
+          {['Cambridge', 'Michigan'].map((badge) => <span class="ds-bento-badge">{badge}</span>)}
+        </div>
+      </article>
+
+      <!-- ── Idiomas ───────────────────────────────────────────────────── -->
+      <article class="ds-bento-tile ds-reveal" data-spotlight>
+        <span class="ds-mono text-brand">Idiomas</span>
+        <h3 class="text-ink mt-2 text-lg font-semibold">Três, não só inglês</h3>
+
+        <ul class="mt-auto flex flex-col gap-2 pt-6">
+          {
+            site.languages.map((language) => (
+              <li class="border-brand-50 text-ink-soft flex items-center justify-between border-b pb-2 text-sm last:border-0">
+                {language}
+                <span class="ds-mono text-brand/70 text-[0.625rem]">
+                  {language.slice(0, 2).toUpperCase()}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+
+      <!-- ── Modalidades ───────────────────────────────────────────────── -->
+      <article class="ds-bento-tile ds-reveal" data-spotlight>
+        <span class="ds-mono text-brand">Programas</span>
+        <h3 class="text-ink mt-2 text-lg font-semibold">Seis trilhas, dos 5 anos ao C-level</h3>
+
+        <ul class="mt-auto flex flex-wrap gap-1.5 pt-6">
+          {courses.map((course) => <li class="ds-bento-chip">{course.title}</li>)}
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 12 colunas: metade esquerda é um tile alto, direita é uma malha 2×2. */
+  .ds-bento {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .ds-bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 940px) {
+    .ds-bento {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: minmax(13rem, auto);
+    }
+
+    .ds-bento-tile--hero {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+
+  .ds-bento-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-surface);
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-100),
+      var(--shadow-xs);
+    transition:
+      transform var(--dur-slow) var(--ease-card),
+      box-shadow var(--dur-slow) var(--ease-card);
+  }
+
+  @media (hover: hover) {
+    .ds-bento-tile:hover {
+      transform: translate3d(0, -3px, 0);
+      box-shadow:
+        inset 0 0 0 1px var(--color-brand-200),
+        var(--shadow-md);
+    }
+  }
+
+  .ds-bento-tile--hero {
+    background:
+      radial-gradient(120% 90% at 15% 0%, var(--color-brand-800) 0%, transparent 55%),
+      linear-gradient(160deg, var(--color-abyss) 0%, var(--color-abyss-deep) 100%);
+    box-shadow: var(--shadow-lg);
+    padding: 2rem;
+  }
+
+  @media (hover: hover) {
+    .ds-bento-tile--hero:hover {
+      box-shadow: var(--shadow-xl);
+    }
+  }
+
+  /* ── Demo de correção ───────────────────────────────────────────────── */
+  .ds-bento-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .ds-bento-bubble {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-lg);
+    background-color: rgba(83, 58, 253, 0.28);
+    box-shadow: inset 0 0 0 1px rgba(127, 125, 252, 0.5);
+    font-size: 0.8125rem;
+    color: #eef0ff;
+  }
+
+  .ds-bento-strike {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration-color: var(--color-ruby);
+    text-decoration-thickness: 1.5px;
+  }
+
+  .ds-bento-fix {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: 1.5rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-round);
+    background-color: rgba(180, 244, 97, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(180, 244, 97, 0.35);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-lime);
+  }
+
+  .ds-bento-fix strong {
+    color: #dff7b4;
+  }
+
+  /* ── Detalhes ───────────────────────────────────────────────────────── */
+  .ds-bento-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-alt);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-brand-800);
+  }
+
+  .ds-bento-chip {
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-brand-25);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-brand-800);
+  }
+</style>

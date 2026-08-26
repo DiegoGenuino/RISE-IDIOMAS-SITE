@@ -1,0 +1,233 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import { journey } from '../../data/journey';
+---
+
+<section
+  id="trilha"
+  class="ds-dark ds-seam-t bg-abyss relative text-white"
+  style="--seam-from: var(--color-surface)"
+  aria-labelledby="trilha-titulo"
+>
+  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
+  </div>
+  <div class="ds-grain-layer" aria-hidden="true"></div>
+
+  <!--
+    Bloco externo estendido = linha do tempo do scroll horizontal. Só é ativado
+    em desktop e com movimento permitido; abaixo disso a trilha é uma lista
+    vertical normal, que é um estado desenhado e não um fallback partido.
+  -->
+  <div class="ds-journey-block" data-journey-block>
+    <div class="ds-journey-stage">
+      <div class="ds-shell relative flex flex-col gap-10 pt-20 lg:pt-0">
+        <SectionHeading
+          eyebrow="Trilha"
+          title="Do primeiro <em>hello</em> à proficiência certificada"
+          lead="A escala CEFR descreve o que você consegue fazer em cada nível. As horas são a referência pública do Cambridge Assessment — não uma promessa de prazo."
+          tone="dark"
+          class="ds-reveal shrink-0"
+          id="trilha-titulo"
+        />
+
+        <!-- Régua de progresso: acompanha o scrub em desktop -->
+        <div class="ds-journey-rail" aria-hidden="true">
+          <span class="ds-journey-rail-fill" data-journey-fill></span>
+        </div>
+      </div>
+
+      <div class="ds-journey-viewport">
+        <ol class="ds-journey-track ds-shell" data-journey-track>
+          {
+            journey.map((stage, index) => (
+              <li class="ds-stage" data-journey-stage>
+                <div class="ds-stage-head">
+                  <span class="ds-stage-level">{stage.level}</span>
+                  <span class="ds-mono text-abyss-ink/60">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
+
+                <h3 class="mt-5 text-lg font-semibold text-white">{stage.name}</h3>
+                <p class="text-abyss-ink mt-3 text-sm leading-relaxed">{stage.can}</p>
+
+                <ul class="mt-5 flex flex-col gap-2">
+                  {stage.milestones.map((milestone) => (
+                    <li class="text-abyss-ink/85 flex items-start gap-2 text-[0.8125rem]">
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                        class="text-aqua mt-1 shrink-0"
+                      >
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                      {milestone}
+                    </li>
+                  ))}
+                </ul>
+
+                <div class="ds-stage-foot">
+                  <span class="ds-mono text-abyss-ink/60">{stage.hours}</span>
+                  <button type="button" class="ds-stage-course" data-scroll-to="modalidades">
+                    {stage.courseLabel}
+                  </button>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ═══ Base: lista vertical (telemóvel, tablet, sem JS) ════════════════ */
+  .ds-journey-block {
+    position: relative;
+  }
+
+  .ds-journey-stage {
+    position: relative;
+    padding-bottom: 5rem;
+  }
+
+  .ds-journey-rail {
+    position: relative;
+    height: 2px;
+    width: 100%;
+    border-radius: var(--radius-round);
+    background-color: var(--color-abyss-line);
+    overflow: hidden;
+  }
+
+  .ds-journey-rail-fill {
+    position: absolute;
+    inset: 0;
+    transform-origin: left center;
+    transform: scaleX(var(--progress, 0));
+    background: linear-gradient(90deg, var(--color-brand-400), var(--color-aqua));
+  }
+
+  .ds-journey-viewport {
+    margin-top: 2.5rem;
+  }
+
+  .ds-journey-track {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
+    padding-inline: clamp(1rem, 4vw, 3rem);
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .ds-journey-track {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .ds-stage {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      var(--shadow-lg);
+  }
+
+  .ds-stage-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .ds-stage-level {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    background-image: linear-gradient(101deg, var(--color-brand-300), var(--color-aqua));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ds-stage-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-abyss-line) 60%, transparent);
+  }
+
+  .ds-stage-course {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-aqua);
+    cursor: pointer;
+    transition: color var(--dur-micro) var(--ease);
+  }
+
+  .ds-stage-course:hover {
+    color: #fff;
+  }
+
+  /* ═══ Desktop com JS: cena fixada e trilho horizontal ═════════════════
+     Tudo depende de data-journey-ready, posto pelo GSAP. Sem isso, fica a
+     lista vertical acima.                                                */
+  @media (min-width: 940px) {
+    .ds-journey-block[data-journey-ready] {
+      /* Uma viewport por painel, mais uma de folga para entrar e sair. */
+      height: 420vh;
+    }
+
+    [data-journey-ready] .ds-journey-stage {
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3rem;
+      height: 100vh;
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    [data-journey-ready] .ds-journey-viewport {
+      margin-top: 0;
+      overflow: hidden;
+    }
+
+    [data-journey-ready] .ds-journey-track {
+      display: flex;
+      gap: 1.25rem;
+      width: max-content;
+      max-width: none;
+      margin: 0;
+      will-change: transform;
+    }
+
+    [data-journey-ready] .ds-stage {
+      width: 22rem;
+      min-height: 22rem;
+      flex: 0 0 auto;
+    }
+  }
+</style>

@@ -3,7 +3,11 @@ import Button from '../../components/ui/Button.astro';
 import { ctaLinks, site } from '../../data/site';
 ---
 
-<section id="contato" class="ds-dark bg-abyss relative overflow-hidden py-20 text-white lg:py-28">
+<section
+  id="contato"
+  class="ds-dark ds-seam-t bg-abyss relative overflow-hidden py-20 text-white lg:py-28"
+  style="--seam-from: var(--color-surface)"
+>
   <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-50" aria-hidden="true">
   </div>
   <div class="ds-cta-glow pointer-events-none absolute" aria-hidden="true"></div>

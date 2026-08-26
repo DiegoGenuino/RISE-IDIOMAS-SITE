@@ -1,40 +1,47 @@
 ---
 import HeroSimulator from '../../components/hero/HeroSimulator.astro';
+import MeshGradient from '../../components/hero/MeshGradient.astro';
 import Button from '../../components/ui/Button.astro';
 import AudienceSwitch from '../../components/ui/AudienceSwitch.astro';
 import { audiences, ctaLinks } from '../../data/site';
 
 const [tech, young] = audiences;
+
+const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, São Paulo'];
 ---
 
-<section id="inicio" class="ds-hero relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-24">
-  <!-- Campo decorativo: gradiente frio/quente conforme o perfil -->
-  <div class="ds-hero-field" aria-hidden="true"></div>
+<section id="inicio" class="ds-hero relative isolate overflow-hidden">
+  <MeshGradient />
 
-  <div
-    class="ds-shell relative grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16"
-  >
-    <!-- ── Coluna de mensagem ────────────────────────────────────────── -->
-    <div class="flex flex-col items-start gap-6">
+  <div class="ds-shell ds-grid relative items-center pt-30 pb-16 lg:pt-36 lg:pb-24">
+    <!-- ── Mensagem ──────────────────────────────────────────────────── -->
+    <div
+      class="ds-hero-copy col-span-full flex flex-col items-start gap-6 lg:col-span-7"
+      data-split-group
+    >
       <AudienceSwitch size="hero" />
 
+      <!--
+        Acento em cor sólida, não em background-clip:text: o SplitText anima
+        filter:blur() por caractere, e um filtro cria um novo contexto de
+        pintura que quebra o recorte do gradiente no texto. Sólido também é
+        mais fiel à Stripe, cujos títulos nunca são gradiente.
+      -->
       <h1 class="text-hero text-ink font-semibold" id="audience-region" aria-live="polite">
-        <span data-aud="tech">
-          O inglês que destrava a sua
-          <span class="ds-text-gradient-cool">carreira internacional</span>.
+        <span data-aud="tech" data-split="hero">
+          O inglês que destrava a sua <span class="text-brand">carreira internacional</span>.
         </span>
-        <span data-aud="young">
-          O inglês que abre o mundo
-          <span class="ds-text-gradient-warm">antes dos 18</span>.
+        <span data-aud="young" data-split="hero">
+          O inglês que abre o mundo <span class="text-ruby">antes dos 18</span>.
         </span>
       </h1>
 
-      <p class="text-lead text-ink-soft max-w-xl">
+      <p class="text-lead text-ink-soft max-w-xl" data-split-follow>
         <span data-aud="tech">{tech.sub}</span>
         <span data-aud="young">{young.sub}</span>
       </p>
 
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3" data-split-follow>
         <Button href={ctaLinks.trial} size="lg">
           Agendar aula experimental
           <svg
@@ -47,7 +54,7 @@ const [tech, young] = audiences;
             stroke-linecap="round"
             stroke-linejoin="round"
             aria-hidden="true"
-            class="transition-transform duration-200 group-hover:translate-x-0.5"
+            class="ds-arrow"
           >
             <path d="M5 12h13M12 5l7 7-7 7"></path>
           </svg>
@@ -60,9 +67,9 @@ const [tech, young] = audiences;
       </div>
 
       <!-- Micro-prova: fatos verificáveis, não números inventados -->
-      <ul class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2">
+      <ul class="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2" data-split-follow>
         {
-          ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, São Paulo'].map((item) => (
+          trust.map((item) => (
             <li class="text-ink-muted flex items-center gap-2 text-[0.8125rem]">
               <svg
                 width="14"
@@ -85,8 +92,8 @@ const [tech, young] = audiences;
       </ul>
     </div>
 
-    <!-- ── Coluna do simulador ───────────────────────────────────────── -->
-    <div class="ds-hero-sim relative">
+    <!-- ── Simulador ─────────────────────────────────────────────────── -->
+    <div class="ds-hero-sim col-span-full lg:col-span-5">
       <HeroSimulator />
     </div>
   </div>
@@ -94,70 +101,50 @@ const [tech, young] = audiences;
 
 <style>
   .ds-hero {
-    background:
-      radial-gradient(120% 90% at 50% 0%, var(--color-brand-wash) 0%, transparent 55%),
-      var(--color-surface);
+    background: linear-gradient(180deg, var(--color-brand-25) 0%, var(--color-surface) 62%);
   }
 
-  /* Campo de gradiente atrás do simulador — pintura única, sem animação */
-  .ds-hero-field {
-    position: absolute;
-    top: -14rem;
-    right: -10rem;
-    width: 46rem;
-    max-width: 90vw;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(83, 58, 253, 0.16) 0%, transparent 62%);
-    filter: blur(28px);
-    pointer-events: none;
+  /* Entrada escalonada. Só transform e opacity. */
+  .ds-hero-copy > * {
+    animation: ds-hero-in var(--dur-slow) var(--ease-card) both;
   }
 
-  :global(html[data-audience='young']) .ds-hero-field {
-    background: radial-gradient(circle, rgba(249, 107, 238, 0.18) 0%, transparent 62%);
+  .ds-hero-copy > *:nth-child(1) {
+    animation-delay: 40ms;
   }
-
-  /* Entrada escalonada — só transform/opacity */
-  .ds-hero > .ds-shell > * > * {
-    animation: ds-hero-in 0.75s var(--ease-out-expo) both;
+  .ds-hero-copy > *:nth-child(2) {
+    animation-delay: 110ms;
   }
-
-  .ds-hero > .ds-shell > :first-child > *:nth-child(1) {
-    animation-delay: 0.05s;
+  .ds-hero-copy > *:nth-child(3) {
+    animation-delay: 180ms;
   }
-  .ds-hero > .ds-shell > :first-child > *:nth-child(2) {
-    animation-delay: 0.12s;
+  .ds-hero-copy > *:nth-child(4) {
+    animation-delay: 250ms;
   }
-  .ds-hero > .ds-shell > :first-child > *:nth-child(3) {
-    animation-delay: 0.19s;
-  }
-  .ds-hero > .ds-shell > :first-child > *:nth-child(4) {
-    animation-delay: 0.26s;
-  }
-  .ds-hero > .ds-shell > :first-child > *:nth-child(5) {
-    animation-delay: 0.33s;
+  .ds-hero-copy > *:nth-child(5) {
+    animation-delay: 320ms;
   }
 
   .ds-hero-sim {
-    animation: ds-hero-sim-in 0.9s var(--ease-out-expo) 0.2s both;
+    animation: ds-hero-sim-in var(--dur-scene) var(--ease-card) 160ms both;
   }
 
   @keyframes ds-hero-in {
     from {
       opacity: 0;
-      transform: translate3d(0, 16px, 0);
+      transform: translate3d(0, 18px, 0);
     }
   }
 
   @keyframes ds-hero-sim-in {
     from {
       opacity: 0;
-      transform: translate3d(0, 28px, 0) scale(0.98);
+      transform: translate3d(0, 32px, 0) scale(0.97);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ds-hero > .ds-shell > * > *,
+    .ds-hero-copy > *,
     .ds-hero-sim {
       animation: none;
     }

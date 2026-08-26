@@ -27,7 +27,7 @@ import '../styles/global.css';
 // Pré-carrega apenas o corte latino das duas variable fonts — são estes os
 // ficheiros que o CSS acaba por pedir. O `?url` deixa o Vite resolver o caminho
 // com hash: preload apontado a um caminho adivinhado seria um 404 desperdiçado.
-import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import sansLatin from '@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url';
 import monoLatin from '@fontsource-variable/source-code-pro/files/source-code-pro-latin-wght-normal.woff2?url';
 ---
 
@@ -64,7 +64,7 @@ import monoLatin from '@fontsource-variable/source-code-pro/files/source-code-pr
     <meta name="author" content="Rise Idiomas" />
     <meta name="theme-color" content="#533AFD" />
 
-    <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={sansLatin} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={monoLatin} crossorigin />
 
     <!--
@@ -74,13 +74,30 @@ import monoLatin from '@fontsource-variable/source-code-pro/files/source-code-pr
     -->
     <script is:inline>
       (function () {
+        const root = document.documentElement;
+
         try {
           const stored = localStorage.getItem('rise:audience');
           if (stored === 'tech' || stored === 'young') {
-            document.documentElement.dataset.audience = stored;
+            root.dataset.audience = stored;
           }
         } catch {
           /* storage bloqueado — fica o perfil por omissão */
+        }
+
+        // Arma o estado escondido dos títulos antes do primeiro paint, para o
+        // SplitText não piscar o texto inteiro antes de o partir em caracteres.
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!still) {
+          root.classList.add('ds-split-armed');
+          // Failsafe: se o bundle não chegar, ou falhar antes de assumir a
+          // animação, os títulos aparecem na mesma.
+          setTimeout(function () {
+            root.classList.remove('ds-split-armed');
+            // Sinaliza que o texto já foi mostrado sem animação. Se o GSAP
+            // chegar depois disto, animar seria piscar o título de novo.
+            window.__riseSplitTimedOut = true;
+          }, 2500);
         }
       })();
     </script>

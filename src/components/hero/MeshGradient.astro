@@ -1,0 +1,87 @@
+---
+/**
+ * Campo de gradiente do hero.
+ *
+ * O <canvas> só é pintado se o WebGL inicializar. Até lá — e para sempre, em
+ * quem pediu menos movimento ou não tem WebGL — o que se vê é o gradiente
+ * cônico estático abaixo, que já é um estado desenhado e não um vazio.
+ */
+---
+
+<div class="ds-mesh" aria-hidden="true">
+  <div class="ds-mesh-static"></div>
+  <canvas class="ds-mesh-canvas" data-mesh></canvas>
+  <div class="ds-mesh-grain"></div>
+</div>
+
+<style>
+  /* A malha é uma fonte de luz atrás do simulador, não um papel de parede.
+     Fica contida à direita e some antes de chegar ao H1 — o contraste do
+     título não pode depender de onde o ruído calhou de estar. */
+  .ds-mesh {
+    position: absolute;
+    top: -25%;
+    right: -12%;
+    width: 78%;
+    height: 125%;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(66% 66% at 60% 40%, #000 8%, transparent 78%);
+    mask-image: radial-gradient(66% 66% at 60% 40%, #000 8%, transparent 78%);
+  }
+
+  @media (max-width: 1023px) {
+    .ds-mesh {
+      top: -20%;
+      right: -30%;
+      width: 110%;
+      height: 90%;
+      opacity: 0.75;
+    }
+  }
+
+  /* ── Fallback estático ─────────────────────────────────────────────── */
+  .ds-mesh-static {
+    position: absolute;
+    inset: 0;
+    background:
+      conic-gradient(
+        from 210deg at 68% 38%,
+        var(--mesh-0) 0deg,
+        var(--mesh-1) 110deg,
+        var(--mesh-2) 210deg,
+        var(--mesh-3) 300deg,
+        var(--mesh-0) 360deg
+      );
+    filter: blur(60px);
+    opacity: 0.55;
+    transition: opacity var(--dur-scene) var(--ease);
+  }
+
+  /* Assim que o shader assume, o estático sai de cena sem corte seco. */
+  .ds-mesh-canvas[data-mesh-ready] ~ .ds-mesh-grain,
+  .ds-mesh:has(.ds-mesh-canvas[data-mesh-ready]) .ds-mesh-static {
+    opacity: 0;
+  }
+
+  .ds-mesh-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity var(--dur-scene) var(--ease);
+  }
+
+  .ds-mesh-canvas[data-mesh-ready] {
+    opacity: 0.88;
+  }
+
+  /* Grão: quebra o banding que gradientes largos produzem em telas de 8 bits */
+  .ds-mesh-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  }
+</style>
