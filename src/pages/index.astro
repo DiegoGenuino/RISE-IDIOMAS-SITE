@@ -1,106 +1,102 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Topbar from '../components/topbar/Topbar.astro';
+import Navbar from '../components/nav/Navbar.astro';
 import Hero from '../sections/hero/Hero.astro';
-import Modalities from '../sections/modalities/Modalities.astro';
+import SocialProof from '../sections/social-proof/SocialProof.astro';
+import StickyFeatureGrid from '../sections/methodology/StickyFeatureGrid.astro';
+import Courses from '../sections/courses/Courses.astro';
+import LevelQuizSection from '../sections/level-quiz/LevelQuizSection.astro';
+import Pricing from '../sections/pricing/Pricing.astro';
 import Testimonials from '../sections/testimonials/Testimonials.astro';
-import AboutUs from '../sections/about-us/AboutUs.astro';
-import Location from '../sections/location/Location.astro';
+import Faq from '../sections/faq/Faq.astro';
 import CTA from '../sections/cta/CTA.astro';
 import Footer from '../sections/footer/Footer.astro';
-import Analytics from '@vercel/analytics/astro';
-import EnrollmentLetter from '../components/enrollment-letter/EnrollmentLetter.tsx';
-import ViewportFallback from '../components/viewport-fallback/ViewportFallback.astro';
 import WhatsAppFab from '../components/whatsapp-fab/WhatsAppFab.astro';
+import Analytics from '@vercel/analytics/astro';
+
+import { courses } from '../data/courses';
+import { faq } from '../data/faq';
+import { site } from '../data/site';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'Rise Idiomas',
+  description:
+    'Escola de idiomas com aulas conduzidas 100% no idioma-alvo, do inglês para carreiras tech ao preparatório Cambridge e Michigan.',
+  logo: new URL('/favicon.svg', Astro.url).toString(),
+  url: Astro.url.origin,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'São Paulo',
+    addressRegion: 'SP',
+    addressCountry: 'BR',
+    streetAddress: site.address,
+  },
+  sameAs: [
+    'https://www.instagram.com/rise.idiomas/',
+    'https://www.linkedin.com/company/riseidiomas/',
+    'https://www.facebook.com/riseidiomasprep/',
+    'https://www.youtube.com/@rise.idiomas',
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Modalidades',
+    itemListElement: courses.map((course) => ({
+      '@type': 'Course',
+      name: `Inglês ${course.title}`,
+      description: course.description,
+      provider: { '@type': 'EducationalOrganization', name: 'Rise Idiomas' },
+    })),
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 ---
-
-<style>
-  :global(body) {
-    position: relative;
-  }
-
-  :global(body)::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    /* dotted bg */
-    background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-    background-size: 12px 12px;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  :global(body) {
-    background-color: #f4f4f4 !important;
-  }
-</style>
 
 <BaseLayout
   seo={{
-    title: 'Idiomas Para Todos',
+    title: 'Inglês para carreiras tech e fluência jovem',
     description:
-      'Domine a fluência com a Rise Idiomas. Oferecemos cursos de inglês, espanhol e português desenvolvidos estrategicamente para o seu sucesso no nível executivo, tech, na vida acadêmica e em certificações internacionais.',
+      'Aulas conduzidas 100% no idioma, trilha por nível e preparação para Cambridge e Michigan. Inglês, espanhol e português na Vila Carrão, São Paulo.',
     type: 'website',
     image: '/favicon.svg',
   }}
 >
   <Fragment slot="head">
-    <!-- Google Knowledge Graph / Rich Snippets (Structured Data) -->
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'EducationalOrganization',
-        name: 'Rise Idiomas',
-        description:
-          'Escola de inglês moderna e imersiva focada no ensino de alta performance para adolescentes, executivos e mercado jurídico.',
-        logo: new URL('/favicon.svg', Astro.url).toString(),
-        url: Astro.url.origin,
-        offers: [
-          {
-            '@type': 'Course',
-            name: 'Inglês Executivo',
-            description:
-              'Foco em nuances culturais, diplomacia corporativa e técnicas de persuasão em inglês avançado.',
-          },
-          {
-            '@type': 'Course',
-            name: 'Inglês Acadêmico',
-            description: 'Linguagem técnica, produção de artigos e leitura em nível de excelência.',
-          },
-          {
-            '@type': 'Course',
-            name: 'Inglês Jurídico',
-            description:
-              'Terminologia essencial, interpretação de contratos e comunicação assertiva no Direito Internacional.',
-          },
-        ],
-      })}
-    />
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </Fragment>
-  <div class="relative min-h-screen w-full">
-    <Topbar />
 
-    <main
-      class="relative flex w-full max-w-[100vw] flex-col gap-26 overflow-x-hidden md:gap-32 lg:gap-20"
-    >
-      <Hero />
-      <Modalities />
-      <Testimonials />
-      <div class="pointer-events-none flex justify-center">
-        <!-- only executes this island when the user scrolls to it -->
-        <EnrollmentLetter client:visible />
-      </div>
-      <AboutUs />
-      <Location />
-      <!-- div to remove the gap between sections -->
-      <div class="mt-10">
-        <CTA />
-        <Footer />
-      </div>
-    </main>
-  </div>
-  <Analytics />
-  <ViewportFallback />
+  <Navbar />
+
+  <main id="conteudo">
+    <Hero />
+    <SocialProof />
+    <StickyFeatureGrid />
+    <Courses />
+    <LevelQuizSection />
+    <Pricing />
+    <Testimonials />
+    <Faq />
+    <CTA />
+  </main>
+
+  <Footer />
   <WhatsAppFab />
+  <Analytics />
 </BaseLayout>
+
+<script>
+  import { initHome } from '../scripts/main';
+
+  initHome();
+</script>

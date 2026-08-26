@@ -1,0 +1,182 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import Button from '../../components/ui/Button.astro';
+import { billingCycles, formatPrice, plans } from '../../data/pricing';
+import { ctaLinks } from '../../data/site';
+
+/** Enquanto os valores oficiais não forem preenchidos, a UI diz "Sob consulta". */
+const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
+---
+
+<section id="planos" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="planos-titulo">
+  <div class="ds-shell flex flex-col gap-12">
+    <div class="ds-reveal flex flex-col items-center gap-7">
+      <SectionHeading
+        eyebrow="Planos"
+        title="O que está incluído, sem letra miúda"
+        lead="Escolha pelo formato que combina com a sua rotina. A equipe confirma valores e condições no WhatsApp, sem compromisso."
+        align="center"
+        id="planos-titulo"
+      />
+
+      <!-- Alternador de ciclo -->
+      <div
+        class="ring-brand-soft/70 inline-flex rounded-sm bg-white p-1 shadow-xs ring-1 ring-inset"
+        role="radiogroup"
+        aria-label="Ciclo de cobrança"
+      >
+        {
+          billingCycles.map((cycle, index) => (
+            <button
+              type="button"
+              role="radio"
+              aria-checked={index === 0 ? 'true' : 'false'}
+              data-cycle-option={cycle.id}
+              class="text-ink-soft aria-checked:bg-brand cursor-pointer rounded-xs px-4 py-2 text-sm font-semibold transition-colors duration-200 aria-checked:text-white"
+            >
+              {cycle.label}
+              {'hint' in cycle && cycle.hint && (
+                <span class="ml-1.5 hidden text-[0.6875rem] font-medium opacity-70 sm:inline">
+                  · {cycle.hint}
+                </span>
+              )}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Matriz -->
+    <ul class="grid items-start gap-4 lg:grid-cols-3" data-pricing data-cycle="monthly">
+      {
+        plans.map((plan, index) => (
+          <li class="ds-reveal" style={`transition-delay:${index * 70}ms`}>
+            <article
+              class:list={['ds-plan flex h-full flex-col', plan.highlight && 'ds-plan--highlight']}
+            >
+              {plan.badge && (
+                <span class="ds-mono bg-brand shadow-brand absolute -top-3 left-6 rounded-xs px-2.5 py-1 text-[0.6875rem] text-white">
+                  {plan.badge}
+                </span>
+              )}
+
+              <h3 class="text-ink text-lg font-semibold tracking-tight">{plan.name}</h3>
+              <p class="text-ink-soft mt-2 text-sm leading-relaxed">{plan.pitch}</p>
+
+              <div class="border-brand-soft/70 mt-6 flex min-h-14 flex-col justify-center border-y py-4">
+                <div class="flex items-baseline gap-1.5">
+                  <span
+                    class="text-ink font-mono text-2xl font-semibold tracking-tight"
+                    data-price="monthly"
+                  >
+                    {formatPrice(plan.priceMonthly)}
+                  </span>
+                  <span
+                    class="text-ink hidden font-mono text-2xl font-semibold tracking-tight"
+                    data-price="yearly"
+                  >
+                    {formatPrice(plan.priceYearly)}
+                  </span>
+                  {plan.priceMonthly !== null && <span class="text-ink-muted text-sm">/mês</span>}
+                </div>
+                {!hasPrices && (
+                  <p class="text-ink-muted mt-1 text-[0.8125rem]">
+                    Valor definido pela modalidade e frequência
+                  </p>
+                )}
+              </div>
+
+              <ul class="mt-6 flex flex-1 flex-col gap-3">
+                {plan.includes.map((item) => (
+                  <li class="text-ink-soft flex items-start gap-2.5 text-sm">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      class="text-brand mt-1 shrink-0"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                href={plan.ctaHref}
+                variant={plan.highlight ? 'primary' : 'secondary'}
+                size="lg"
+                class="mt-8 w-full"
+              >
+                {plan.ctaLabel}
+              </Button>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="ds-reveal text-ink-muted text-center text-[0.8125rem]">
+      Precisa de algo fora dessas três caixas — turma fechada na empresa, horário atípico, outro
+      idioma?{' '}
+      <a
+        href={ctaLinks.plans}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-brand font-semibold underline underline-offset-2"
+      >
+        Fale com a equipe
+      </a>.
+    </p>
+  </div>
+</section>
+
+<style>
+  .ds-plan {
+    position: relative;
+    padding: 1.75rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-soft),
+      var(--shadow-xs);
+    transition:
+      transform 0.3s var(--ease-out-expo),
+      box-shadow 0.3s var(--ease-out-expo);
+  }
+
+  .ds-plan:hover {
+    transform: translate3d(0, -3px, 0);
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-soft),
+      var(--shadow-card);
+  }
+
+  .ds-plan--highlight {
+    box-shadow:
+      inset 0 0 0 1.5px var(--color-brand),
+      var(--shadow-card);
+  }
+
+  .ds-plan--highlight:hover {
+    box-shadow:
+      inset 0 0 0 1.5px var(--color-brand),
+      var(--shadow-float);
+  }
+
+  /* Troca de ciclo: só alterna a visibilidade dos dois valores já renderizados */
+  [data-pricing][data-cycle='monthly'] [data-price='yearly'],
+  [data-pricing][data-cycle='yearly'] [data-price='monthly'] {
+    display: none;
+  }
+
+  [data-pricing][data-cycle='yearly'] [data-price='yearly'] {
+    display: inline;
+  }
+</style>

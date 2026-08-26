@@ -1,124 +1,159 @@
 ---
-import TestimonialCard from '../../components/testimonial-card/TestimonialCard.astro';
-import TestimonialsTypeBg from '../../components/testimonial-type-bg/TestimonialsTypeBg.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
 import testimonialsData from '../../data/Testimonials.json';
+
+/** Depoimentos reais, mantidos exatamente como estão na branch `master`. */
+const testimonials = testimonialsData.testimonials;
+
+/** Duas trilhas para o carrossel infinito — a segunda é apenas visual. */
+const track = [...testimonials, ...testimonials];
+
+function initials(name: string): string {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('');
+}
 ---
 
-<div id="testimonials" class="h-fit overflow-hidden py-20 lg:pt-50 lg:pb-55">
-  <TestimonialsTypeBg aria-hidden="true" />
-  <div class="testimonials-carousel">
-    <div class="testimonials-track">
-      {
-        testimonialsData.testimonials.map((data) => (
-          <TestimonialCard
-            studentName={data.studentName}
-            testimonial={data.testimonial}
-            courseModality={data.courseModality}
-          />
-        ))
-      }
-    </div>
-    <div aria-hidden="true" class="testimonials-track">
-      {
-        testimonialsData.testimonials.map((data) => (
-          <TestimonialCard
-            studentName={data.studentName}
-            testimonial={data.testimonial}
-            courseModality={data.courseModality}
-          />
-        ))
-      }
-    </div>
+<section
+  id="depoimentos"
+  class="bg-surface overflow-hidden py-20 lg:py-28"
+  aria-labelledby="depoimentos-titulo"
+>
+  <div class="ds-shell">
+    <SectionHeading
+      eyebrow="Depoimentos"
+      title="Quem quebrou o bloqueio conta como foi"
+      lead="Relatos de alunos das turmas de Executivo — inglês e espanhol."
+      align="center"
+      class="ds-reveal"
+      id="depoimentos-titulo"
+    />
   </div>
 
-  <!-- Decorative second track explicitly for larger devices -->
-  <div aria-hidden="true" class="testimonials-carousel testimonials-carousel--reverse">
-    <div class="testimonials-track testimonials-track--reverse">
+  <!-- Marquee: duplicado para o loop, com máscara nas bordas -->
+  <div class="ds-marquee mt-12" data-marquee>
+    <ul class="ds-marquee-track">
       {
-        testimonialsData.testimonials.map((data) => (
-          <TestimonialCard
-            studentName={data.studentName}
-            testimonial={data.testimonial}
-            courseModality={data.courseModality}
-          />
+        track.map((item, index) => (
+          <li class="ds-quote" aria-hidden={index >= testimonials.length ? 'true' : undefined}>
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              class="text-brand-soft"
+            >
+              <path d="M9.5 5C6.5 5 4 7.6 4 10.8c0 3 2.2 5.2 5 5.2.4 0 .8 0 1.1-.1-.6 1.6-2.1 2.8-4 3.1l.5 1c3.7-.5 7.4-3.6 7.4-9.2C14 7.3 12.1 5 9.5 5Zm9 0C15.5 5 13 7.6 13 10.8c0 3 2.2 5.2 5 5.2.4 0 .8 0 1.1-.1-.6 1.6-2.1 2.8-4 3.1l.5 1c3.7-.5 7.4-3.6 7.4-9.2C23 7.3 21.1 5 18.5 5Z" />
+            </svg>
+
+            <p class="text-ink mt-4 flex-1 text-[0.9375rem] leading-relaxed">{item.testimonial}</p>
+
+            <footer class="border-brand-soft/70 mt-6 flex items-center gap-3 border-t pt-5">
+              <span class="ds-avatar-initials" aria-hidden="true">
+                {initials(item.studentName)}
+              </span>
+              <span class="flex flex-col">
+                <span class="text-ink text-sm font-semibold">{item.studentName}</span>
+                <span class="ds-mono text-ink-muted text-[0.6875rem]">{item.courseModality}</span>
+              </span>
+            </footer>
+          </li>
         ))
       }
-    </div>
-    <div class="testimonials-track testimonials-track--reverse">
-      {
-        testimonialsData.testimonials.map((data) => (
-          <TestimonialCard
-            studentName={data.studentName}
-            testimonial={data.testimonial}
-            courseModality={data.courseModality}
-          />
-        ))
-      }
-    </div>
+    </ul>
   </div>
-</div>
+</section>
 
 <style>
-  .testimonial-cards-container {
-    position: absolute;
-    top: -1%;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-    pointer-events: none;
-  }
-
-  .testimonials-track {
-    width: 100%;
-    will-change: transform;
-    animation: testimonials-scroll 40s linear infinite;
-    display: flex;
-    gap: 4rem;
-    /* Add padding to the right to create a gap between the last and first card. */
-    padding-right: 4rem;
-    margin: 3rem auto;
-  }
-
-  .testimonials-track--reverse {
-    animation-direction: reverse;
-    animation-duration: 60s;
-  }
-
-  .testimonials-carousel {
-    position: absolute;
-    z-index: 10;
-    display: flex;
-    margin: 0 auto;
-    padding: 4rem auto;
+  .ds-marquee {
+    position: relative;
     overflow: hidden;
-    width: fit-content%;
-    height: fit-content;
-    transform: translateY(-180%);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 6rem,
+      black calc(100% - 6rem),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 6rem,
+      black calc(100% - 6rem),
+      transparent
+    );
   }
 
-  .testimonials-carousel--reverse {
-    transform: translateY(-90%);
-    z-index: 1;
-    filter: blur(7px);
+  .ds-marquee-track {
+    display: flex;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* translate3d mantém a animação na GPU */
+    animation: ds-marquee 64s linear infinite;
+    will-change: transform;
   }
 
-  @keyframes testimonials-scroll {
-    0% {
-      transform: translateX(0);
+  .ds-marquee:hover .ds-marquee-track,
+  .ds-marquee:focus-within .ds-marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes ds-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
     }
-    100% {
-      transform: translateX(-100%);
+    to {
+      /* -50% só fecha o ciclo porque o espaçamento vive em margin-right de
+         cada cartão. Com `gap` o track teria 13 intervalos para 14 cartões e
+         metade da largura não corresponderia a uma cópia exata da lista. */
+      transform: translate3d(-50%, 0, 0);
     }
   }
 
-  @media (max-width: 524px) {
-    .testimonials-carousel {
-      transform: translateY(-130%);
+  .ds-quote {
+    display: flex;
+    flex-direction: column;
+    width: 21rem;
+    max-width: 80vw;
+    flex: 0 0 auto;
+    margin-right: 1rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-soft),
+      var(--shadow-xs);
+  }
+
+  .ds-avatar-initials {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(140deg, var(--color-brand) 0%, var(--color-brand-legacy) 100%);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-marquee {
+      overflow-x: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
     }
-    .testimonials-carousel--reverse {
-      display: none;
+
+    .ds-marquee-track {
+      animation: none;
     }
   }
 </style>

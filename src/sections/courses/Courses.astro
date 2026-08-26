@@ -1,0 +1,221 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import Button from '../../components/ui/Button.astro';
+import { courses } from '../../data/courses';
+import { ctaLinks } from '../../data/site';
+
+/** Cartões que pertencem a um só perfil são escondidos em CSS pelo seletor. */
+function audienceAttr(audiences: readonly string[]): string | undefined {
+  return audiences.length === 1 ? audiences[0] : undefined;
+}
+---
+
+<section id="modalidades" class="bg-surface py-20 lg:py-28" aria-labelledby="modalidades-titulo">
+  <div class="ds-shell flex flex-col gap-12">
+    <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <SectionHeading
+        eyebrow="Modalidades"
+        title="Uma trilha para cada objetivo"
+        lead="Seis programas, do primeiro contato à certificação internacional. O conteúdo abaixo acompanha o perfil que você escolheu no topo."
+        class="ds-reveal"
+      />
+
+      <Button variant="secondary" href={ctaLinks.trial} class="ds-reveal shrink-0">
+        Não sei qual escolher
+      </Button>
+    </div>
+
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        courses.map((course, index) => (
+          <li
+            class="ds-reveal"
+            data-aud={audienceAttr(course.audiences)}
+            style={`transition-delay:${index * 60}ms`}
+          >
+            <article class="ds-course group flex h-full flex-col">
+              <header class="flex items-start justify-between gap-3">
+                <h3 class="text-ink text-xl font-semibold tracking-tight">{course.title}</h3>
+                <span class="ds-mono bg-brand-wash text-brand-deep shrink-0 rounded-xs px-2 py-1 text-[0.6875rem]">
+                  {course.meta}
+                </span>
+              </header>
+
+              <p class="text-brand mt-1 text-sm font-semibold">{course.subtitle}</p>
+
+              <p class="text-ink-soft mt-3 flex-1 text-sm leading-relaxed">{course.description}</p>
+
+              <button
+                type="button"
+                class="text-brand hover:text-brand-strong mt-6 inline-flex cursor-pointer items-center gap-1.5 self-start text-sm font-semibold transition-colors duration-150"
+                data-open-modal={course.id}
+              >
+                Ver o programa
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  class="transition-transform duration-200 group-hover:translate-x-0.5"
+                >
+                  <path d="M5 12h13M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<!-- ── Detalhe de cada modalidade ───────────────────────────────────── -->
+{
+  courses.map((course) => (
+    <dialog
+      class="ds-modal"
+      id={`curso-${course.id}`}
+      aria-labelledby={`curso-${course.id}-titulo`}
+    >
+      <div class="ds-modal-card">
+        <button type="button" class="ds-modal-close" data-close-modal aria-label="Fechar">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <span class="ds-mono text-brand">{course.meta}</span>
+
+        <h3 id={`curso-${course.id}-titulo`} class="text-title text-ink mt-3 font-semibold">
+          {course.title}
+        </h3>
+
+        <p class="text-brand mt-1 font-semibold">{course.subtitle}</p>
+
+        <p class="text-ink-soft mt-5 text-[0.9375rem] leading-relaxed">{course.detail}</p>
+
+        <ul class="border-brand-soft/70 mt-6 flex flex-col gap-3 border-t pt-6">
+          {course.features.map((feature, index) => (
+            <li class="text-ink flex items-start gap-3 text-sm">
+              <span class="ds-mono text-brand/70 mt-0.5 shrink-0 text-[0.6875rem]">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              {feature}
+            </li>
+          ))}
+        </ul>
+
+        <Button href={ctaLinks.trial} size="lg" class="mt-8 w-full">
+          Agendar aula experimental
+        </Button>
+      </div>
+    </dialog>
+  ))
+}
+
+<style>
+  .ds-course {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-soft),
+      var(--shadow-xs);
+    transition:
+      transform 0.3s var(--ease-out-expo),
+      box-shadow 0.3s var(--ease-out-expo);
+  }
+
+  .ds-course:hover {
+    transform: translate3d(0, -3px, 0);
+    box-shadow:
+      inset 0 0 0 1px transparent,
+      var(--shadow-card);
+  }
+
+  /* ── Modal ──────────────────────────────────────────────────────────── */
+  .ds-modal {
+    max-width: min(34rem, calc(100vw - 2rem));
+    width: 100%;
+    max-height: min(85vh, 46rem);
+    margin: auto;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-xl);
+    background: transparent;
+    overflow: visible;
+  }
+
+  .ds-modal::backdrop {
+    background-color: rgba(6, 27, 49, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .ds-modal[open] {
+    animation: ds-modal-in 0.35s var(--ease-out-expo);
+  }
+
+  .ds-modal[open]::backdrop {
+    animation: ds-backdrop-in 0.35s ease;
+  }
+
+  @keyframes ds-modal-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0) scale(0.98);
+    }
+  }
+
+  @keyframes ds-backdrop-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .ds-modal-card {
+    position: relative;
+    max-height: min(85vh, 46rem);
+    overflow-y: auto;
+    padding: 2rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-hero);
+    overscroll-behavior: contain;
+  }
+
+  .ds-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-xs);
+    color: var(--color-ink-muted);
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .ds-modal-close:hover {
+    background-color: var(--color-surface-alt);
+    color: var(--color-ink);
+  }
+</style>

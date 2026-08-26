@@ -1,338 +1,165 @@
 ---
-import riseTypeGradient from '../../assets/icons/rise-type-gradient.svg';
+import HeroSimulator from '../../components/hero/HeroSimulator.astro';
+import Button from '../../components/ui/Button.astro';
+import AudienceSwitch from '../../components/ui/AudienceSwitch.astro';
+import { audiences, ctaLinks } from '../../data/site';
 
-const subheaderText =
-  'Cursos imersivos e personalizados para crianças, adolescentes e profissionais.';
+const [tech, young] = audiences;
 ---
 
-<!-- HERO SECTION -->
-<section
-  class="hero-section background relative flex min-h-svh w-full flex-col px-2 py-6 sm:p-12 md:p-16 lg:h-auto lg:min-h-[160vh] lg:p-12 xl:p-16 2xl:px-32 2xl:pt-16 2xl:pb-16"
-  id="hero"
->
-  <!-- Title + desktop subheader -->
-  <header
-    class="hero-header hero-animate hero-animate-delay-1 relative z-10 h-[12em] w-full shrink-0 sm:h-auto md:h-auto lg:h-[22rem] 2xl:h-[24rem]"
-  >
-    <!-- fix responsivity for mobile [line 222]: large words overflow vw -->
-    <h1
-      class="hero-title font-display w-full overflow-visible bg-gradient-to-r from-[#401EFF] via-[#9090FF] to-[#C0C0FF] bg-clip-text pb-3 text-8xl leading-[1.1] text-transparent select-none sm:text-8xl md:text-7xl lg:text-9xl 2xl:text-[8rem]"
-      id="hero-header"
-    >
-    </h1>
+<section id="inicio" class="ds-hero relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-24">
+  <!-- Campo decorativo: gradiente frio/quente conforme o perfil -->
+  <div class="ds-hero-field" aria-hidden="true"></div>
 
-    <p
-      class="hero-animate hero-animate-delay-2 hidden text-[#4242A5E5] sm:mt-2 sm:block sm:text-lg md:mt-3 md:text-xl lg:absolute lg:inset-x-0 lg:top-[19rem] lg:mt-0 lg:text-2xl 2xl:top-[20rem]"
-      id="hero-subheader-desktop"
-    >
-      {subheaderText}
-    </p>
-  </header>
-
-  <!-- Spacer: pushes content toward bottom on mobile/tablet -->
-  <div class="hero-spacer min-h-12 flex-1 sm:min-h-16 lg:hidden"></div>
-
-  <!-- RISE logo (CRT energize reveal on scroll) -->
   <div
-    class="hero-svg-container flex h-[24vh] shrink-0 items-start justify-center overflow-hidden sm:h-[26vh] lg:mt-12 lg:h-auto lg:flex-1 lg:items-end lg:overflow-visible 2xl:mt-16"
-    id="hero-svg-wrapper"
+    class="ds-shell relative grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16"
   >
-    <img
-      src={riseTypeGradient.src}
-      alt="RISE"
-      class="h-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] 2xl:w-[75%]"
-      width="936"
-      height="512"
-    />
+    <!-- ── Coluna de mensagem ────────────────────────────────────────── -->
+    <div class="flex flex-col items-start gap-6">
+      <AudienceSwitch size="hero" />
+
+      <h1 class="text-hero text-ink font-semibold" id="audience-region" aria-live="polite">
+        <span data-aud="tech">
+          O inglês que destrava a sua
+          <span class="ds-text-gradient-cool">carreira internacional</span>.
+        </span>
+        <span data-aud="young">
+          O inglês que abre o mundo
+          <span class="ds-text-gradient-warm">antes dos 18</span>.
+        </span>
+      </h1>
+
+      <p class="text-lead text-ink-soft max-w-xl">
+        <span data-aud="tech">{tech.sub}</span>
+        <span data-aud="young">{young.sub}</span>
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <Button href={ctaLinks.trial} size="lg">
+          Agendar aula experimental
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="transition-transform duration-200 group-hover:translate-x-0.5"
+          >
+            <path d="M5 12h13M12 5l7 7-7 7"></path>
+          </svg>
+        </Button>
+
+        <Button variant="secondary" size="lg" data-scroll-to="nivel">
+          Descobrir meu nível
+          <span class="ds-mono text-[0.6875rem] opacity-60">1 min</span>
+        </Button>
+      </div>
+
+      <!-- Micro-prova: fatos verificáveis, não números inventados -->
+      <ul class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2">
+        {
+          ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, São Paulo'].map((item) => (
+            <li class="text-ink-muted flex items-center gap-2 text-[0.8125rem]">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                class="text-brand"
+              >
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              {item}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- ── Coluna do simulador ───────────────────────────────────────── -->
+    <div class="ds-hero-sim relative">
+      <HeroSimulator />
+    </div>
   </div>
 </section>
 
-<script>
-  import Typewriter from 'typewriter-effect/dist/core';
-
-  // Typewriter configuration
-  const PAUSE_BETWEEN = 300; // transition gap between phrases
-  const PAUSE_READ = 3500; // standard reading time
-  const PAUSE_READ_LONG = 4500; // emphasized reading time
-
-  const heroHeader = document.getElementById('hero-header');
-
-  const isMobile = window.matchMedia('(max-width: 500px)').matches;
-  const MAX_MOBILE_LENGTH = 12; //mobile max lenght is 12 chars to avoid overflow
-
-  const phrases: { text: string; pauseFor: number }[] = [
-    // Portuguese
-    { text: 'sua carreira', pauseFor: PAUSE_READ_LONG },
-    { text: 'seu futuro', pauseFor: PAUSE_READ },
-    { text: 'suas conquistas', pauseFor: PAUSE_READ },
-    { text: 'suas viagens', pauseFor: PAUSE_READ },
-    { text: 'seu intercâmbio', pauseFor: PAUSE_READ },
-    // English
-    { text: 'your career', pauseFor: PAUSE_READ },
-    { text: 'your future', pauseFor: PAUSE_READ },
-    { text: 'your success', pauseFor: PAUSE_READ_LONG },
-    // Spanish
-    { text: 'tu carrera', pauseFor: PAUSE_READ },
-    { text: 'tu futuro', pauseFor: PAUSE_READ },
-    { text: 'tus logros', pauseFor: PAUSE_READ },
-  ];
-
-  // if is mobile filters only phrases with less than 12 chars
-  const filtered = isMobile ? phrases.filter((p) => p.text.length <= MAX_MOBILE_LENGTH) : phrases;
-
-  const typewriter = new Typewriter(heroHeader, {
-    loop: true,
-    delay: 50, // typing speed (ms per char)
-    deleteSpeed: 25, // deletion speed (ms per char)
-    cursor: '|',
-    cursorClassName: 'typewriter-cursor',
-  });
-
-  typewriter.typeString('Idiomas para ');
-
-  filtered.forEach((phrase) => {
-    typewriter
-      .typeString(phrase.text)
-      .pauseFor(phrase.pauseFor)
-      .deleteChars(phrase.text.length)
-      .pauseFor(PAUSE_BETWEEN);
-  });
-
-  typewriter.start();
-
-  // Parallax fade on RISE logo
-  const svgWrapper = document.getElementById('hero-svg-wrapper');
-
-  if (svgWrapper) {
-    svgWrapper.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          const vh = window.innerHeight;
-          const fadeStart = vh * 0.3;
-          const fadeEnd = vh * 0.9;
-
-          if (scrollY <= fadeStart) {
-            svgWrapper.style.opacity = '1';
-            svgWrapper.style.transform = 'translateY(0)';
-          } else if (scrollY >= fadeEnd) {
-            svgWrapper.style.opacity = '0.15';
-            svgWrapper.style.transform = 'translateY(20px)';
-          } else {
-            const progress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
-            svgWrapper.style.opacity = String(1 - progress * 0.85);
-            svgWrapper.style.transform = `translateY(${progress * 20}px)`;
-          }
-
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
-
-    // ── CRT energize: reveal RISE logo on first scroll ──
-    let energized = false;
-    const triggerEnergize = () => {
-      if (!energized && window.scrollY > 50) {
-        energized = true;
-        svgWrapper.classList.add('crt-energized');
-        window.removeEventListener('scroll', triggerEnergize);
-      }
-    };
-
-    // Delay listener until entrance animations complete
-    setTimeout(() => {
-      window.addEventListener('scroll', triggerEnergize, { passive: true });
-    }, 1500);
-  }
-</script>
-
-<style is:global>
-  /* Typewriter cursor */
-
-  .typewriter-cursor {
-    font-weight: 900;
-    font-size: inherit;
-    background: linear-gradient(to right, #6262ff, #9090ff, #c0c0ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: blink 1s step-end infinite;
+<style>
+  .ds-hero {
+    background:
+      radial-gradient(120% 90% at 50% 0%, var(--color-brand-wash) 0%, transparent 55%),
+      var(--color-surface);
   }
 
-  @keyframes blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
+  /* Campo de gradiente atrás do simulador — pintura única, sem animação */
+  .ds-hero-field {
+    position: absolute;
+    top: -14rem;
+    right: -10rem;
+    width: 46rem;
+    max-width: 90vw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(83, 58, 253, 0.16) 0%, transparent 62%);
+    filter: blur(28px);
+    pointer-events: none;
   }
 
-  /* CRT glow & flicker on title text */
-
-  .hero-title {
-    filter: drop-shadow(0 0 8px rgba(100, 100, 255, 0.3))
-      drop-shadow(0 0 20px rgba(64, 30, 255, 0.15));
-    animation: crtFlicker 4s ease-in-out infinite;
+  :global(html[data-audience='young']) .ds-hero-field {
+    background: radial-gradient(circle, rgba(249, 107, 238, 0.18) 0%, transparent 62%);
   }
 
-  @keyframes crtFlicker {
-    0%,
-    92%,
-    94%,
-    97%,
-    100% {
-      opacity: 1;
-    }
-    93% {
-      opacity: 0.95;
-    }
-    96% {
-      opacity: 0.97;
-    }
+  /* Entrada escalonada — só transform/opacity */
+  .ds-hero > .ds-shell > * > * {
+    animation: ds-hero-in 0.75s var(--ease-out-expo) both;
   }
 
-  /* ──────────────────────────────────────────
-     CRT energize reveal on RISE logo
-     Starts invisible, fades in with glow on scroll
-     ────────────────────────────────────────── */
-
-  .hero-svg-container img {
-    opacity: 0;
+  .ds-hero > .ds-shell > :first-child > *:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  .ds-hero > .ds-shell > :first-child > *:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+  .ds-hero > .ds-shell > :first-child > *:nth-child(3) {
+    animation-delay: 0.19s;
+  }
+  .ds-hero > .ds-shell > :first-child > *:nth-child(4) {
+    animation-delay: 0.26s;
+  }
+  .ds-hero > .ds-shell > :first-child > *:nth-child(5) {
+    animation-delay: 0.33s;
   }
 
-  .hero-svg-container.crt-energized img {
-    animation: crtEnergize 3s ease-in-out forwards;
+  .ds-hero-sim {
+    animation: ds-hero-sim-in 0.9s var(--ease-out-expo) 0.2s both;
   }
 
-  @keyframes crtEnergize {
-    0% {
-      opacity: 0;
-      filter: brightness(1) drop-shadow(0 0 0px transparent);
-    }
-    15% {
-      opacity: 0.4;
-      filter: brightness(2) drop-shadow(0 0 20px rgba(64, 30, 255, 0.6));
-    }
-    30% {
-      opacity: 0.7;
-      filter: brightness(1.4) drop-shadow(0 0 12px rgba(100, 100, 255, 0.4));
-    }
-    45% {
-      opacity: 0.85;
-      filter: brightness(1.8) drop-shadow(0 0 18px rgba(64, 30, 255, 0.5));
-    }
-    60% {
-      opacity: 0.95;
-      filter: brightness(1.3) drop-shadow(0 0 10px rgba(100, 100, 255, 0.3));
-    }
-    75% {
-      opacity: 1;
-      filter: brightness(1.15) drop-shadow(0 0 6px rgba(100, 100, 255, 0.15));
-    }
-    100% {
-      opacity: 1;
-      filter: brightness(1) drop-shadow(0 0 0px transparent);
-    }
-  }
-
-  /* Staggered entrance animation */
-
-  @keyframes heroFadeInUp {
+  @keyframes ds-hero-in {
     from {
       opacity: 0;
-      transform: translateY(24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+      transform: translate3d(0, 16px, 0);
     }
   }
 
-  .hero-animate {
-    opacity: 0;
-    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  @keyframes ds-hero-sim-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0) scale(0.98);
+    }
   }
-  .hero-animate-delay-1 {
-    animation-delay: 0.15s;
-  }
-  .hero-animate-delay-2 {
-    animation-delay: 0.4s;
-  }
-  .hero-animate-delay-3 {
-    animation-delay: 0.65s;
-  }
-  .hero-animate-delay-4 {
-    animation-delay: 0.9s;
-  }
-
-  /* Accessibility: respect reduced motion */
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-animate {
-      opacity: 1;
+    .ds-hero > .ds-shell > * > *,
+    .ds-hero-sim {
       animation: none;
-    }
-  }
-
-  /* ──────────────────────────────────────────
-     Landscape mobile (short viewport) overrides
-     Mirrors desktop layout at proportional scale
-     ────────────────────────────────────────── */
-
-  @media (max-height: 600px) and (orientation: landscape) {
-    .hero-section {
-      min-height: 160svh !important;
-      height: auto !important;
-      padding: 2rem 3rem !important;
-    }
-
-    .hero-header {
-      height: auto !important;
-      min-height: auto !important;
-      margin-bottom: 0 !important;
-      flex-shrink: 0 !important;
-      overflow: visible !important;
-    }
-
-    .hero-title {
-      font-size: 4.5rem !important;
-      line-height: 1.2 !important;
-      text-align: center !important;
-    }
-
-    .hero-header h2 {
-      display: block !important;
-      position: relative !important;
-      top: auto !important;
-      font-size: 0.9rem !important;
-      margin-top: 0.5rem !important;
-      text-align: center !important;
-    }
-
-    .hero-spacer,
-    .hero-mobile-subheader {
-      display: none !important;
-    }
-
-    .hero-svg-container {
-      flex: 1 1 auto !important;
-      height: auto !important;
-      min-height: 40svh !important;
-      overflow: visible !important;
-      display: flex !important;
-      align-items: flex-end !important;
-      justify-content: center !important;
-      margin-top: 1rem !important;
-    }
-
-    .hero-svg-container img {
-      width: 55% !important;
     }
   }
 </style>

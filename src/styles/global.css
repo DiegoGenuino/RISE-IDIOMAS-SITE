@@ -1,33 +1,303 @@
 @import 'tailwindcss';
 
-::selection {
-  background-color: #5d60f025;
-  color: #4142a6;
-}
+/* ─────────────────────────────────────────────────────────────────────────
+   Fontes — variable, subset latin, font-display: swap (padrão do @fontsource)
+   ───────────────────────────────────────────────────────────────────────── */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/source-code-pro';
+
+/* ═════════════════════════════════════════════════════════════════════════
+   RISE DESIGN SYSTEM — v2
+   Referência estética: Stripe (geometria rígida, sombras atmosféricas frias,
+   tipografia técnica, movimento dirigido por scroll).
+   ═════════════════════════════════════════════════════════════════════════ */
 
 @theme {
-  --animate-slideup: slideup 400ms cubic-bezier(0.23, 1, 0.32, 1) both;
-  --animate-slidedown: slidedown 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  /* ── Tipografia ─────────────────────────────────────────────────────── */
+  --font-sans:
+    'Inter Variable', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  --font-mono:
+    'Source Code Pro Variable', 'SFMono-Regular', ui-monospace, 'Menlo', 'Consolas', monospace;
 
-  @keyframes slideup {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* Escala tipográfica — clamp() para não quebrar em telas pequenas */
+  --text-hero: clamp(2.5rem, 1.4rem + 4.6vw, 4rem);
+  --text-hero--line-height: 1.06;
+  --text-hero--letter-spacing: -0.035em;
+  --text-display: clamp(2rem, 1.2rem + 3vw, 3rem);
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.03em;
+  --text-title: clamp(1.5rem, 1.1rem + 1.6vw, 2rem);
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.02em;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+  --text-eyebrow: 0.8125rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.08em;
+
+  /* ── Cor: marca ────────────────────────────────────────────────────── */
+  --color-brand: #533afd; /* CTA primário, foco, destaques interativos    */
+  --color-brand-strong: #4229e0; /* hover / pressed                             */
+  --color-brand-deep: #362baa; /* bordas tracejadas, contornos interativos     */
+  --color-brand-soft: #d6d9fc; /* divisórias e cartões secundários             */
+  --color-brand-wash: #f0f1fe; /* fundo de badge / superfície de destaque      */
+  --color-brand-legacy: #4242a5; /* indigo herdado da identidade Rise            */
+
+  /* ── Cor: texto ────────────────────────────────────────────────────── */
+  --color-ink: #061b31; /* títulos e corpo — 15.9:1 sobre branco (AAA)  */
+  --color-ink-soft: #425466; /* texto de apoio — 8.1:1 sobre branco (AAA)    */
+  --color-ink-muted: #64748b; /* metadados — 4.8:1 sobre branco (AA)          */
+
+  /* ── Cor: superfícies claras ───────────────────────────────────────── */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f6f9fc;
+  --color-surface-alt-2: #e5edf5;
+
+  /* ── Cor: superfícies imersivas (seções tech) ──────────────────────── */
+  --color-abyss: #1c1e54; /* fundo escuro principal                       */
+  --color-abyss-deep: #101235; /* variação profunda para gradiente             */
+  --color-abyss-line: #343a80; /* bordas sobre fundo escuro                    */
+  --color-abyss-ink: #c3c8f5; /* texto de apoio sobre escuro — 8.0:1 (AAA)    */
+
+  /* ── Cor: acentos ──────────────────────────────────────────────────── */
+  --color-ruby: #ea2261; /* início do gradiente decorativo               */
+  --color-magenta: #f96bee; /* fim do gradiente decorativo (público jovem)  */
+  --color-aqua: #45d1ff; /* acento legível sobre #1C1E54 — 7.9:1 (AAA)   */
+  --color-lime: #b4f461; /* sinalização de progresso/acerto no quiz      */
+
+  /* ── Sombras atmosféricas (assinatura Stripe: azul + preto) ────────── */
+  --shadow-xs: 0 2px 5px -1px rgba(50, 50, 93, 0.25), 0 1px 3px -1px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
+  --shadow-float: 0 30px 60px -12px rgba(50, 50, 93, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+  --shadow-hero: 0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.1);
+  --shadow-brand: 0 12px 28px -8px rgba(83, 58, 253, 0.5);
+
+  /* ── Raios ─────────────────────────────────────────────────────────── */
+  --radius-xs: 4px; /* componentes internos: chips, inputs pequenos */
+  --radius-sm: 6px; /* botões, inputs, navbar                       */
+  --radius-md: 10px;
+  --radius-lg: 14px; /* cartões                                      */
+  --radius-xl: 20px; /* painéis e janelas de simulação               */
+
+  /* ── Curvas de animação ────────────────────────────────────────────── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* ── Larguras de container ─────────────────────────────────────────── */
+  --container-shell: 1200px;
+  --container-prose: 1080px;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   ESCALA FLUIDA
+   O briefing pede html { font-size: calc(100vw / 1440) }. Aplicado ao pé da
+   letra isso torna 1rem = 1px em 1440px — e como toda a escala de utilitários
+   do Tailwind v4 é baseada em rem, o corpo do texto viraria 1px.
+   A tradução funcional preserva a ideia (layout proporcional à viewport, sem
+   saltos de media query) ancorada em 16px @ 1440px e com limites:
+     1.111vw x 1440 = 16px  ->  1rem = 16px exatamente em 1440px
+   O clamp usa rem (não px) para preservar o tamanho-base de fonte escolhido
+   pelo utilizador no navegador — requisito de acessibilidade.
+   ═════════════════════════════════════════════════════════════════════════ */
+:root {
+  font-size: 100%;
+  /* Permite transicionar block-size de 0 para auto (acordeões, ::details-content) */
+  interpolate-size: allow-keywords;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    font-size: clamp(0.875rem, 1.111vw, 1.125rem);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   BASE
+   ═════════════════════════════════════════════════════════════════════════ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
 
-  @keyframes slidedown {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(16px);
-    }
+  /* Lenis assume o controlo do scroll quando ativo */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  html.lenis {
+    scroll-behavior: auto;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-brand) 22%, transparent);
+    color: var(--color-brand-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Fundo escuro inverte o anel de foco para manter contraste */
+  .ds-dark :focus-visible {
+    outline-color: var(--color-aqua);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITÁRIOS DO SISTEMA
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* Container padrão — 1200px com respiro lateral fluido */
+@utility ds-shell {
+  width: 100%;
+  max-width: var(--container-shell);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+@utility ds-shell-narrow {
+  width: 100%;
+  max-width: var(--container-prose);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+/* Rótulo mono usado em eyebrows, métricas e níveis de inglês */
+@utility ds-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Gradiente decorativo Ruby → Magenta (público jovem) */
+@utility ds-gradient-warm {
+  background-image: linear-gradient(101deg, var(--color-ruby) 0%, var(--color-magenta) 100%);
+}
+
+/* Gradiente frio Brand → Aqua (público tech) */
+@utility ds-gradient-cool {
+  background-image: linear-gradient(101deg, var(--color-brand) 0%, var(--color-aqua) 100%);
+}
+
+@utility ds-text-gradient-warm {
+  background-image: linear-gradient(101deg, var(--color-ruby) 0%, var(--color-magenta) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility ds-text-gradient-cool {
+  background-image: linear-gradient(101deg, var(--color-brand) 0%, var(--color-aqua) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Malha técnica sutil para as seções imersivas escuras */
+@utility ds-grid-lines {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Área tracejada — placeholders e containers interativos */
+@utility ds-dashed {
+  border: 1px dashed var(--color-brand-deep);
+  border-radius: var(--radius-sm);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   REVELAÇÃO POR SCROLL (fallback sem JS + estado controlado por GSAP)
+   Só transform/opacity — nunca propriedades que causam reflow.
+   ═════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .ds-reveal {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    transition:
+      opacity 0.7s var(--ease-out-expo),
+      transform 0.7s var(--ease-out-expo);
+    will-change: transform, opacity;
+  }
+
+  .ds-reveal.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Sem JS o conteúdo tem de aparecer na mesma */
+html.no-js .ds-reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SELETOR DE PERFIL
+   O estado vive em html[data-audience]. A troca é puramente CSS — nenhum
+   componente re-renderiza e nenhum nó é criado ou destruído.
+   ═════════════════════════════════════════════════════════════════════════ */
+html[data-audience='tech'] [data-aud='young'],
+html[data-audience='young'] [data-aud='tech'] {
+  display: none !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   ACESSIBILIDADE — movimento reduzido
+   ═════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ds-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

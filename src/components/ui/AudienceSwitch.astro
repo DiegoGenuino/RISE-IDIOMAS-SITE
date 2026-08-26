@@ -1,0 +1,68 @@
+---
+import { audiences } from '../../data/site';
+
+interface Props {
+  /** `bar` = pílula compacta da navbar · `hero` = versão grande da dobra inicial */
+  size?: 'bar' | 'hero';
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+
+const { size = 'bar', tone = 'light', class: className = '' } = Astro.props;
+
+const isHero = size === 'hero';
+const shellTone =
+  tone === 'dark' ? 'bg-white/8 ring-white/15' : 'bg-surface-alt ring-brand-soft/70';
+const idleTone = tone === 'dark' ? 'text-abyss-ink' : 'text-ink-soft';
+---
+
+<div
+  class={`ds-audience-switch relative inline-flex rounded-sm p-1 ring-1 ring-inset ${shellTone} ${className}`}
+  role="tablist"
+  aria-label="Escolha o perfil de conteúdo"
+>
+  {
+    audiences.map((audience) => (
+      <button
+        type="button"
+        role="tab"
+        class:list={[
+          'ds-audience-option relative z-10 cursor-pointer rounded-xs font-semibold whitespace-nowrap transition-colors duration-200',
+          idleTone,
+          isHero ? 'px-4 py-2 text-sm sm:px-5 sm:text-[0.9375rem]' : 'px-3 py-1.5 text-[0.8125rem]',
+        ]}
+        data-audience-option={audience.id}
+        aria-selected="false"
+        aria-controls="audience-region"
+      >
+        <span class="hidden sm:inline">{audience.label}</span>
+        <span class="sm:hidden">{audience.short}</span>
+      </button>
+    ))
+  }
+
+  <!-- Indicador deslizante: apenas transform, sem reflow -->
+  <span
+    class="ds-audience-thumb pointer-events-none absolute inset-y-1 left-1 rounded-xs bg-white shadow-xs"
+    aria-hidden="true"></span>
+</div>
+
+<style>
+  .ds-audience-thumb {
+    width: var(--thumb-w, 0);
+    transform: translate3d(var(--thumb-x, 0), 0, 0);
+    transition:
+      transform 0.35s var(--ease-out-expo),
+      width 0.35s var(--ease-out-expo);
+    will-change: transform;
+  }
+
+  /* Antes do JS medir os botões o indicador fica invisível para não piscar */
+  .ds-audience-switch:not([data-ready]) .ds-audience-thumb {
+    opacity: 0;
+  }
+
+  .ds-audience-option[aria-selected='true'] {
+    color: var(--color-brand-deep);
+  }
+</style>

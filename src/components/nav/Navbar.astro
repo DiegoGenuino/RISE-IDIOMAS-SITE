@@ -1,0 +1,233 @@
+---
+import riseLogo from '../../assets/shared/rise-logo.svg';
+import Button from '../ui/Button.astro';
+import AudienceSwitch from '../ui/AudienceSwitch.astro';
+import { ctaLinks } from '../../data/site';
+
+const navLinks = [
+  { label: 'Modalidades', target: 'modalidades' },
+  { label: 'Metodologia', target: 'metodologia' },
+  { label: 'Teste de nível', target: 'nivel' },
+  { label: 'Planos', target: 'planos' },
+];
+---
+
+<header id="site-nav" class="fixed inset-x-0 top-0 z-50" data-nav>
+  <div class="ds-nav-surface">
+    <div class="ds-shell flex h-16 items-center justify-between gap-6">
+      <!-- Marca -->
+      <a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="Rise Idiomas — início">
+        <img
+          src={riseLogo.src}
+          alt=""
+          width="34"
+          height="28"
+          class="h-7 w-auto select-none"
+          draggable="false"
+          fetchpriority="high"
+        />
+        <span class="text-ink text-[0.9375rem] font-bold tracking-tight">Rise Idiomas</span>
+      </a>
+
+      <!-- Navegação (desktop) -->
+      <nav class="hidden lg:block" aria-label="Navegação principal">
+        <ul class="flex items-center gap-1">
+          {
+            navLinks.map((link) => (
+              <li>
+                <button
+                  type="button"
+                  data-scroll-to={link.target}
+                  class="text-ink-soft hover:text-brand cursor-pointer rounded-xs px-3 py-2 text-sm font-medium transition-colors duration-150"
+                >
+                  {link.label}
+                </button>
+              </li>
+            ))
+          }
+          <li>
+            <a
+              href="/blog"
+              class="text-ink-soft hover:text-brand rounded-xs px-3 py-2 text-sm font-medium transition-colors duration-150"
+            >
+              Blog
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Ações -->
+      <div class="flex items-center gap-3">
+        <AudienceSwitch size="bar" class="hidden md:inline-flex" />
+
+        <Button href={ctaLinks.trial} size="sm" class="hidden sm:inline-flex">
+          Aula experimental
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="transition-transform duration-200 group-hover:translate-x-0.5"
+          >
+            <path d="M5 12h13M12 5l7 7-7 7"></path>
+          </svg>
+        </Button>
+
+        <!-- Hamburguer (mobile) -->
+        <button
+          type="button"
+          id="nav-toggle"
+          class="text-ink flex h-9 w-9 cursor-pointer items-center justify-center rounded-xs lg:hidden"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+          aria-controls="nav-drawer"
+        >
+          <span class="ds-burger" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Painel mobile -->
+<div id="nav-drawer" class="ds-drawer fixed inset-0 z-40 lg:hidden" hidden>
+  <div class="ds-shell flex h-full flex-col justify-center gap-8 pt-16 pb-12">
+    <nav aria-label="Navegação mobile">
+      <ul class="flex flex-col gap-1">
+        {
+          navLinks.map((link, index) => (
+            <li class="ds-drawer-item" style={`--i:${index}`}>
+              <button
+                type="button"
+                data-scroll-to={link.target}
+                class="border-brand-soft/60 text-ink w-full cursor-pointer border-b py-4 text-left text-2xl font-semibold tracking-tight"
+              >
+                <span class="ds-mono text-brand mr-3 align-middle">0{index + 1}</span>
+                {link.label}
+              </button>
+            </li>
+          ))
+        }
+        <li class="ds-drawer-item" style={`--i:${navLinks.length}`}>
+          <a
+            href="/blog"
+            class="border-brand-soft/60 text-ink block border-b py-4 text-2xl font-semibold tracking-tight"
+          >
+            <span class="ds-mono text-brand mr-3 align-middle">0{navLinks.length + 1}</span>
+            Blog
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="ds-drawer-item flex flex-col gap-4" style={`--i:${navLinks.length + 1}`}>
+      <AudienceSwitch size="hero" class="self-start" />
+      <Button href={ctaLinks.trial} size="lg" class="w-full">Agendar aula experimental</Button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ── Superfície da navbar ───────────────────────────────────────────── */
+  .ds-nav-surface {
+    background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    border-bottom: 1px solid transparent;
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  /* Estado "descolado do topo" — aplicado por JS a partir de 8px de scroll */
+  [data-nav][data-stuck] .ds-nav-surface {
+    background-color: color-mix(in srgb, var(--color-surface) 86%, transparent);
+    border-bottom-color: var(--color-brand-soft);
+    box-shadow: 0 1px 2px rgba(50, 50, 93, 0.06);
+  }
+
+  /* Navegador sem backdrop-filter recebe fundo opaco */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .ds-nav-surface {
+      background-color: var(--color-surface);
+    }
+  }
+
+  /* ── Ícone hamburguer ───────────────────────────────────────────────── */
+  .ds-burger,
+  .ds-burger::before,
+  .ds-burger::after {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    border-radius: 2px;
+    background-color: currentColor;
+    transition:
+      transform 0.3s var(--ease-out-expo),
+      background-color 0.2s ease;
+  }
+
+  .ds-burger {
+    position: relative;
+  }
+
+  .ds-burger::before,
+  .ds-burger::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+  }
+
+  .ds-burger::before {
+    transform: translateY(-5px);
+  }
+
+  .ds-burger::after {
+    transform: translateY(5px);
+  }
+
+  #nav-toggle[aria-expanded='true'] .ds-burger {
+    background-color: transparent;
+  }
+
+  #nav-toggle[aria-expanded='true'] .ds-burger::before {
+    transform: rotate(45deg);
+  }
+
+  #nav-toggle[aria-expanded='true'] .ds-burger::after {
+    transform: rotate(-45deg);
+  }
+
+  /* ── Drawer ─────────────────────────────────────────────────────────── */
+  .ds-drawer {
+    background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-out-expo);
+  }
+
+  .ds-drawer[data-open] {
+    opacity: 1;
+  }
+
+  .ds-drawer-item {
+    opacity: 0;
+    transform: translate3d(-12px, 0, 0);
+    transition:
+      opacity 0.4s var(--ease-out-expo),
+      transform 0.4s var(--ease-out-expo);
+    transition-delay: calc(var(--i) * 45ms);
+  }
+
+  .ds-drawer[data-open] .ds-drawer-item {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+</style>

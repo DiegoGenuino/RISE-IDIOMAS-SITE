@@ -13,8 +13,8 @@ const { seo } = Astro.props;
 
 const defaultTitle = 'Rise Idiomas';
 const defaultDescription =
-  'Aprenda inglês de forma estratégica. Cursos e trilhas focadas no seu sucesso.';
-const defaultImage = '/favicon.svg'; // Fallback image for Open Graph
+  'Aulas conduzidas 100% no idioma, trilha por nível e preparação para certificação internacional.';
+const defaultImage = '/favicon.svg';
 
 const title = seo?.title ? `${seo.title} | Rise Idiomas` : defaultTitle;
 const description = seo?.description || defaultDescription;
@@ -23,10 +23,16 @@ const image = seo?.image || defaultImage;
 const type = seo?.type || 'website';
 
 import '../styles/global.css';
+
+// Pré-carrega apenas o corte latino das duas variable fonts — são estes os
+// ficheiros que o CSS acaba por pedir. O `?url` deixa o Vite resolver o caminho
+// com hash: preload apontado a um caminho adivinhado seria um 404 desperdiçado.
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import monoLatin from '@fontsource-variable/source-code-pro/files/source-code-pro-latin-wght-normal.woff2?url';
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="no-js" data-audience="tech">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -53,14 +59,57 @@ import '../styles/global.css';
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
-    <!-- Additional SEO & Accessibility defaults -->
+    <!-- SEO & acessibilidade -->
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Rise Idiomas" />
-    <meta name="theme-color" content="#4142A6" />
+    <meta name="theme-color" content="#533AFD" />
+
+    <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={monoLatin} crossorigin />
+
+    <!--
+      Restaura o perfil escolhido antes do primeiro paint. Tem de ser inline e
+      bloqueante: se corresse depois, o utilizador veria o conteúdo "tech"
+      piscar antes de trocar para "young".
+    -->
+    <script is:inline>
+      (function () {
+        try {
+          const stored = localStorage.getItem('rise:audience');
+          if (stored === 'tech' || stored === 'young') {
+            document.documentElement.dataset.audience = stored;
+          }
+        } catch {
+          /* storage bloqueado — fica o perfil por omissão */
+        }
+      })();
+    </script>
 
     <slot name="head" />
   </head>
   <body>
+    <a href="#conteudo" class="ds-skip">Ir para o conteúdo</a>
     <slot />
   </body>
 </html>
+
+<style is:global>
+  .ds-skip {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-brand);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transform: translateY(-150%);
+    transition: transform 0.2s ease;
+  }
+
+  .ds-skip:focus-visible {
+    transform: translateY(0);
+  }
+</style>

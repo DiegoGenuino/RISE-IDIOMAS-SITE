@@ -1,0 +1,129 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import { faq } from '../../data/faq';
+import { ctaLinks } from '../../data/site';
+---
+
+<section id="faq" class="bg-surface py-20 lg:py-28" aria-labelledby="faq-titulo">
+  <div class="ds-shell grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+    <div class="ds-reveal flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
+      <SectionHeading
+        eyebrow="Dúvidas"
+        title="Perguntas frequentes"
+        lead="Se a sua pergunta não estiver aqui, a equipe responde no WhatsApp."
+        id="faq-titulo"
+      />
+
+      <a
+        href={ctaLinks.trial}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-brand hover:text-brand-strong inline-flex items-center gap-2 self-start text-sm font-semibold transition-colors duration-150"
+      >
+        Falar com a equipe
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12h13M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <ul class="ds-reveal flex flex-col">
+      {
+        faq.map((item, index) => (
+          <li>
+            <details class="ds-faq" name="faq" open={index === 0}>
+              <summary class="ds-faq-summary">
+                <span class="text-ink text-[0.9375rem] font-semibold">{item.question}</span>
+                <span class="ds-faq-icon" aria-hidden="true" />
+              </summary>
+              <div class="ds-faq-body">
+                <p class="text-ink-soft pb-5 text-[0.9375rem] leading-relaxed">{item.answer}</p>
+              </div>
+            </details>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ds-faq {
+    border-bottom: 1px solid var(--color-brand-soft);
+  }
+
+  .ds-faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.15s ease;
+  }
+
+  .ds-faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ds-faq-summary:hover span:first-child {
+    color: var(--color-brand);
+  }
+
+  /* Sinal de +/− desenhado em CSS: sem SVG extra e anima só com transform */
+  .ds-faq-icon {
+    position: relative;
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+  }
+
+  .ds-faq-icon::before,
+  .ds-faq-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1.5px;
+    border-radius: 2px;
+    background-color: var(--color-brand);
+    transform: translateY(-50%);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+
+  .ds-faq-icon::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
+
+  .ds-faq[open] .ds-faq-icon::after {
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  /* Abertura fluida onde `interpolate-size` existe; degrada para corte seco */
+  @supports (interpolate-size: allow-keywords) {
+    .ds-faq::details-content {
+      block-size: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        block-size 0.35s var(--ease-out-expo),
+        content-visibility 0.35s allow-discrete,
+        opacity 0.25s ease;
+    }
+
+    .ds-faq[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+</style>

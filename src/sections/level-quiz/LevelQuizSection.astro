@@ -1,0 +1,71 @@
+---
+import LevelQuiz from '../../components/quiz/LevelQuiz.tsx';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+
+const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+---
+
+<section
+  id="nivel"
+  class="ds-dark bg-abyss relative overflow-hidden py-20 text-white lg:py-28"
+  aria-labelledby="nivel-titulo"
+>
+  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
+  </div>
+  <div class="ds-quiz-glow pointer-events-none absolute" aria-hidden="true"></div>
+
+  <div
+    class="ds-shell relative grid items-center gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16"
+  >
+    <div class="ds-reveal flex flex-col gap-8">
+      <SectionHeading
+        eyebrow="Teste de nível"
+        title="Descubra onde você está em 1 minuto"
+        lead="Seis perguntas — gramática, vocabulário de trabalho e produção oral. No fim você recebe o nível estimado na escala CEFR e a trilha da Rise que faz sentido para você."
+        tone="dark"
+        id="nivel-titulo"
+      />
+
+      <!-- Régua CEFR -->
+      <div class="flex flex-col gap-3">
+        <span class="ds-mono text-abyss-ink/70">Escala de referência</span>
+        <ol class="flex items-center gap-1.5">
+          {
+            levels.map((level, index) => (
+              <li class="flex flex-1 flex-col gap-2">
+                <span
+                  class="block h-1 rounded-full"
+                  style={`background: color-mix(in srgb, var(--color-aqua) ${20 + index * 16}%, var(--color-abyss-line))`}
+                  aria-hidden="true"
+                />
+                <span class="text-abyss-ink font-mono text-[0.6875rem] font-semibold">{level}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <p class="text-abyss-ink/80 max-w-md text-sm leading-relaxed">
+        O resultado é orientativo e serve para começar a conversa no lugar certo. O diagnóstico
+        definitivo acontece na aula experimental, com um professor.
+      </p>
+    </div>
+
+    <div class="ds-reveal">
+      <LevelQuiz client:visible />
+    </div>
+  </div>
+</section>
+
+<style>
+  .ds-quiz-glow {
+    top: -20%;
+    left: -10%;
+    width: 40rem;
+    max-width: 80vw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(83, 58, 253, 0.35) 0%, transparent 65%);
+    filter: blur(40px);
+  }
+</style>

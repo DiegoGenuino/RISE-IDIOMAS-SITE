@@ -1,0 +1,154 @@
+---
+/**
+ * Inscrição na newsletter.
+ * Mantém o contrato do endpoint já existente em src/pages/api/newsletter.ts
+ * (POST multipart com o campo `email`) e degrada para submit nativo sem JS.
+ */
+---
+
+<form class="ds-news" action="/api/newsletter" method="post" data-newsletter novalidate>
+  <label class="sr-only" for="newsletter-email">Seu e-mail</label>
+
+  <div class="ds-news-row">
+    <input
+      id="newsletter-email"
+      name="email"
+      type="email"
+      required
+      autocomplete="email"
+      placeholder="seu@email.com"
+      class="ds-news-input"
+      data-newsletter-input
+    />
+    <button type="submit" class="ds-news-submit" data-newsletter-submit>
+      <span data-newsletter-label>Inscrever</span>
+    </button>
+  </div>
+
+  <p class="ds-news-status" role="status" aria-live="polite" data-newsletter-status></p>
+</form>
+
+<style>
+  .ds-news {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 24rem;
+  }
+
+  .ds-news-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .ds-news-input {
+    flex: 1;
+    min-width: 0;
+    height: 2.5rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px var(--color-abyss-line);
+    color: #fff;
+    font-size: 0.875rem;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .ds-news-input::placeholder {
+    color: rgba(195, 200, 245, 0.5);
+  }
+
+  .ds-news-input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1.5px var(--color-aqua);
+  }
+
+  .ds-news-submit {
+    height: 2.5rem;
+    padding-inline: 1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-brand);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .ds-news-submit:hover:not(:disabled) {
+    background-color: var(--color-brand-strong);
+  }
+
+  .ds-news-submit:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .ds-news-status {
+    min-height: 1.125rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-abyss-ink);
+  }
+
+  .ds-news-status[data-state='ok'] {
+    color: var(--color-lime);
+  }
+
+  .ds-news-status[data-state='error'] {
+    color: #ff9db5;
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-newsletter]');
+
+  if (form) {
+    const input = form.querySelector<HTMLInputElement>('[data-newsletter-input]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-newsletter-submit]')!;
+    const label = form.querySelector<HTMLElement>('[data-newsletter-label]')!;
+    const status = form.querySelector<HTMLElement>('[data-newsletter-status]')!;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const email = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        status.dataset.state = 'error';
+        status.textContent = 'Confira o e-mail digitado.';
+        input.focus();
+        return;
+      }
+
+      submit.disabled = true;
+      label.textContent = 'Enviando…';
+      status.removeAttribute('data-state');
+      status.textContent = '';
+
+      try {
+        const body = new FormData();
+        body.append('email', email);
+
+        const response = await fetch('/api/newsletter', { method: 'POST', body });
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok) throw new Error(payload.error ?? 'Não foi possível concluir.');
+
+        status.dataset.state = 'ok';
+        status.textContent = 'Inscrição confirmada. Confira sua caixa de entrada.';
+        form.reset();
+      } catch (error) {
+        status.dataset.state = 'error';
+        status.textContent =
+          error instanceof Error ? error.message : 'Não foi possível concluir agora.';
+      } finally {
+        submit.disabled = false;
+        label.textContent = 'Inscrever';
+      }
+    });
+  }
+</script>

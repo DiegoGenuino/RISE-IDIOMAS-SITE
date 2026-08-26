@@ -1,0 +1,64 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'onDark';
+  size?: 'sm' | 'md' | 'lg';
+  external?: boolean;
+  class?: string;
+  id?: string;
+  type?: 'button' | 'submit';
+  'data-scroll-to'?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  external,
+  class: className = '',
+  type = 'button',
+  ...rest
+} = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2 rounded-sm font-semibold whitespace-nowrap ' +
+  'transition-[background-color,box-shadow,transform,color] duration-200 ease-out ' +
+  'hover:-translate-y-px active:translate-y-0 motion-reduce:transform-none cursor-pointer';
+
+const variants: Record<string, string> = {
+  primary: 'bg-brand text-white shadow-brand hover:bg-brand-strong hover:shadow-float',
+  secondary:
+    'bg-brand-wash text-brand-deep ring-1 ring-brand-soft ring-inset hover:bg-white hover:shadow-xs',
+  ghost: 'text-ink-soft hover:text-brand hover:bg-brand-wash',
+  onDark: 'bg-white/10 text-white ring-1 ring-white/25 ring-inset hover:bg-white/20',
+};
+
+const sizes: Record<string, string> = {
+  sm: 'h-8 px-3 text-[0.8125rem]',
+  md: 'h-10 px-4 text-sm',
+  lg: 'h-12 px-6 text-[0.9375rem]',
+};
+
+const classes = [base, variants[variant], sizes[size], className].filter(Boolean).join(' ');
+
+const isExternal = external ?? (href?.startsWith('http') || href?.startsWith('mailto:'));
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class={classes}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+      {...rest}
+    >
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}
