@@ -1,151 +1,112 @@
 /**
- * Revelação de títulos caractere a caractere (GSAP SplitText).
+ * Revelação de títulos com GSAP SplitText.
  *
- * Os títulos nascem `visibility: hidden` por CSS estático — nunca chegam a ser
- * pintados antes do split. Quem os revela é o próprio `animate()`, ao marcar
- * `data-split-done`, que é o atributo que desliga a regra. Não há classe armada
- * por JS nem script no <head>: o estado inicial é do CSS, e o GSAP só o levanta.
+ * Segue o padrão da documentação do GSAP: `SplitText.create()` com `onSplit`
+ * devolvendo o tween. Os caracteres entram desfocados e resolvem em cascata.
  *
- * A regra em global.css já cobre sozinha os casos em que não deve haver
- * animação nenhuma (sem JS, `prefers-reduced-motion`), portanto aqui só é
- * preciso tratar a falha do GSAP.
+ * A ordem dentro do `onSplit` é o que evita o lampejo: o tween é criado
+ * primeiro (e o `gsap.from` já põe os caracteres invisíveis no mesmo instante),
+ * e só depois o título é revelado. Até aí ele esteve `visibility: hidden` por
+ * CSS, portanto o texto inteiro nunca chega a ser pintado.
  */
 
 import type { gsap as GsapType } from 'gsap';
 
-/** Posta em <html> quando o GSAP não vem — desliga a regra de esconder. */
-const OFF = 'ds-split-off';
-
 type Gsap = typeof GsapType;
-
-let gsapRef: Gsap | null = null;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let SplitTextRef: any = null;
-
-function isVisible(element: HTMLElement): boolean {
-  return element.offsetParent !== null || element.getClientRects().length > 0;
-}
-
-/** Elementos que entram logo a seguir ao título, sem split. */
-function followers(scope: HTMLElement): HTMLElement[] {
-  const group = scope.closest<HTMLElement>('[data-split-group]') ?? scope.parentElement;
-  if (!group) return [];
-  return Array.from(group.querySelectorAll<HTMLElement>('[data-split-follow]'));
-}
-
-function animate(target: HTMLElement): void {
-  if (!gsapRef || !SplitTextRef || target.dataset.splitDone === 'true') return;
-
-  const gsap = gsapRef;
-  const isHero = target.dataset.split === 'hero';
-
-  // Este atributo é o que revela o elemento: desliga a regra de CSS que o
-  // mantinha invisível. Tudo o que vem a seguir corre na mesma tarefa, sem
-  // paint pelo meio, portanto o texto nunca aparece por inteiro antes do split.
-  target.dataset.splitDone = 'true';
-
-  // `words,chars` e não só `chars`: cada caractere vira um inline-block, e um
-  // inline-block é um ponto de quebra de linha válido. Só com `chars` o browser
-  // passa a poder quebrar entre quaisquer duas letras, e o título parte no meio
-  // das palavras. Envolver as palavras devolve as quebras ao sítio certo — a
-  // animação continua a correr sobre `split.chars`.
-  const split = SplitTextRef.create(target, {
-    type: 'words,chars',
-    wordsClass: 'ds-word',
-    charsClass: 'ds-char',
-    aria: 'auto',
-  });
-
-  const after = followers(target);
-
-  // O custo de pintura do blur cresce com o raio; 12px já entrega a leitura de
-  // "foco a resolver" a uma fração do preço de 18px.
-  gsap.set(split.chars, {
-    opacity: 0,
-    filter: `blur(${isHero ? 12 : 9}px)`,
-    yPercent: isHero ? 40 : 28,
-  });
-
-  if (after.length > 0) gsap.set(after, { opacity: 0, y: 10 });
-
-  const timeline = gsap.timeline({
-    defaults: { ease: 'power3.out' },
-    onComplete: () => {
-      window.clearTimeout(guard);
-      // O blur por caractere já cumpriu o papel — devolver o DOM ao normal.
-      gsap.set(split.chars, { clearProps: 'filter' });
-      split.revert();
-    },
-  });
-
-  // A timeline avança por requestAnimationFrame, e há contextos onde o rAF não
-  // corre (aba em segundo plano no load, extensões que o bloqueiam, browsers
-  // embutidos). Aí os caracteres ficariam a opacidade zero dentro de um título
-  // já revelado — pior do que não animar de todo.
-  const guard = window.setTimeout(() => {
-    if (timeline.progress() < 1) timeline.progress(1);
-  }, 4000);
-
-  timeline.to(split.chars, {
-    opacity: 1,
-    filter: 'blur(0px)',
-    yPercent: 0,
-    duration: isHero ? 0.9 : 0.7,
-    stagger: 0.015,
-  });
-
-  if (after.length > 0) {
-    timeline.to(after, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 }, '-=0.5');
-  }
-}
 
 export async function initTextReveal(): Promise<void> {
   const root = document.documentElement;
 
   try {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-split]'));
     if (targets.length === 0) return;
 
-    // Com movimento reduzido a regra de CSS nem chega a aplicar-se: os títulos
-    // já estão visíveis e não há nada a animar.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const [{ gsap }, { SplitText }] = await Promise.all([import('gsap'), import('gsap/SplitText')]);
 
-    const [gsapMod, splitMod] = await Promise.all([import('gsap'), import('gsap/SplitText')]);
+    gsap.registerPlugin(SplitText);
 
-    gsapRef = gsapMod.gsap;
-    SplitTextRef = splitMod.SplitText;
-    gsapRef.registerPlugin(SplitTextRef);
+    // Partir o texto antes das fontes carregarem mediria os caracteres na
+    // fonte de fallback, e a troca deslocaria tudo a meio da animação.
+    await document.fonts?.ready;
 
-    // O hero anima no load; os restantes esperam entrar na viewport.
+    const reveal = (target: HTMLElement) => split(gsap, SplitText, target);
+
     for (const target of targets) {
-      if (target.dataset.split === 'hero' && isVisible(target)) animate(target);
+      if (target.dataset.split === 'hero') reveal(target);
     }
-
-    const scoped = targets.filter((target) => target.dataset.split !== 'hero');
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
           observer.unobserve(entry.target);
-          animate(entry.target as HTMLElement);
+          reveal(entry.target as HTMLElement);
         }
       },
       { rootMargin: '0px 0px -12% 0px', threshold: 0.01 }
     );
 
-    for (const target of scoped) observer.observe(target);
+    for (const target of targets) {
+      if (target.dataset.split !== 'hero') observer.observe(target);
+    }
 
     // A troca de perfil revela um título diferente — vale reanimar.
     window.addEventListener('rise:audiencechange', () => {
       for (const target of targets) {
-        if (target.dataset.split !== 'hero' || !isVisible(target)) continue;
+        if (target.dataset.split !== 'hero') continue;
         target.dataset.splitDone = '';
-        animate(target);
+        reveal(target);
       }
     });
   } catch {
     // Sem GSAP não há animação — mas o texto tem de aparecer.
-    root.classList.add(OFF);
+    root.classList.add('ds-split-off');
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function split(gsap: Gsap, SplitText: any, target: HTMLElement): void {
+  if (target.dataset.splitDone === 'true') return;
+  if (target.offsetParent === null && target.getClientRects().length === 0) return;
+
+  const isHero = target.dataset.split === 'hero';
+  const after = Array.from(
+    (target.closest<HTMLElement>('[data-split-group]') ?? target).querySelectorAll<HTMLElement>(
+      '[data-split-follow]'
+    )
+  );
+
+  SplitText.create(target, {
+    // `words` além de `chars`: cada caractere é um inline-block, e um
+    // inline-block é ponto de quebra de linha. Sem a palavra a agrupá-los, o
+    // título parte no meio das palavras.
+    type: 'words,chars',
+    wordsClass: 'ds-word',
+    charsClass: 'ds-char',
+    aria: 'auto',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onSplit: (self: any) => {
+      const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      timeline.from(self.chars, {
+        opacity: 0,
+        filter: `blur(${isHero ? 14 : 10}px)`,
+        yPercent: isHero ? 40 : 28,
+        duration: isHero ? 0.9 : 0.7,
+        stagger: 0.015,
+      });
+
+      if (after.length > 0) {
+        timeline.from(after, { opacity: 0, y: 10, duration: 0.5, stagger: 0.08 }, '-=0.5');
+      }
+
+      // Revelar só agora: os caracteres já estão no DOM e já estão invisíveis,
+      // porque `from` aplica o estado inicial imediatamente.
+      target.dataset.splitDone = 'true';
+
+      return timeline;
+    },
+  });
 }

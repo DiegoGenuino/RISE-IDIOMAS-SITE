@@ -41,9 +41,11 @@ const ruleColor = tone === 'dark' ? 'bg-abyss-line' : 'bg-brand-soft';
 
   <h2 id={id} data-split class={`text-display font-semibold ${titleColor}`} set:html={title} />
 
-  {lead && (
-    <p data-split-follow class={`text-lead ${leadColor}`}>
-      {lead}
-    </p>
-  )}
+  {
+    lead && (
+      <p data-split-follow class={`text-lead ${leadColor}`}>
+        {lead}
+      </p>
+    )
+  }
 </div>

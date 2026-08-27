@@ -202,10 +202,9 @@ export function initMeshGradient(): void {
     cancelAnimationFrame(rafId);
   }
 
-  new IntersectionObserver(
-    ([entry]) => (entry.isIntersecting ? play() : pause()),
-    { threshold: 0 }
-  ).observe(canvas);
+  new IntersectionObserver(([entry]) => (entry.isIntersecting ? play() : pause()), {
+    threshold: 0,
+  }).observe(canvas);
 
   new ResizeObserver(() => {
     resize();

@@ -293,3 +293,69 @@ visualmente em movimento** — nem o mesh gradient, nem o SplitText, nem as cena
 sticky. O que foi verificado: layout, tipografia, cor, sombras, os estados
 finais, o menu mobile aberto, a troca de perfil, e que o GSAP aplica os estados
 iniciais corretos. O movimento em si precisa de um olhar num browser real.
+
+---
+
+## v5 — bento, metodologia, depoimentos e a seção "alcance"
+
+### SplitText simplificado
+
+Passou a seguir o padrão da documentação do GSAP: `SplitText.create()` com
+`onSplit` a devolver o tween. O que evita o lampejo é a ordem lá dentro — o
+tween é criado primeiro (e `gsap.from` aplica o estado inicial no mesmo
+instante), e só depois o título é revelado. Até aí esteve `visibility: hidden`
+por CSS estático, portanto o texto nunca chega a ser pintado.
+
+`type: 'words,chars'` continua obrigatório: com `chars` sozinho cada caractere
+é um inline-block, e um inline-block é ponto de quebra de linha — o título
+partia no meio das palavras.
+
+### Bento grid
+
+Cartões no estilo da Stripe: cantos vivos (sem `border-radius`), fios de 1px a
+separar num bloco único, e um lavado de gradiente que entra por um canto
+diferente em cada cartão — todos das rampas do sistema. Cada cartão tem um
+ícone SVG animado (`src/components/ui/BentoIcon.astro`) que anima só
+`transform`, `opacity` ou `stroke-dashoffset`.
+
+### Metodologia — novo formato
+
+A cena de zoom foi substituída por coluna fixa à esquerda com o índice dos
+passos e cartões a passar à direita. O problema do formato anterior era de
+narrativa: a grelha dava zoom e derivava durante quase toda a seção, e o texto
+que explicava a metodologia só entrava no fim — o utilizador via movimento sem
+saber o que estava a ler.
+
+Também ficou mais barato: sem GSAP. A coluna prende-se com `position: sticky` e
+o passo ativo sai de um `IntersectionObserver` sobre o terço central da
+viewport. `src/scripts/stickyGrid.ts` foi removido.
+
+### Depoimentos — slider
+
+Um depoimento grande de cada vez com abas por aluno, como na Stripe. Os painéis
+vivem todos na mesma célula de grid, portanto a altura é a do maior e a troca é
+um crossfade sem salto de layout (verificado: os 7 painéis medem o mesmo).
+
+### "O alcance de um idioma"
+
+Adaptação da seção *The backbone of global commerce*: título, as métricas
+factuais em linha com fios a separar, e um feixe de luz animado ao fundo com
+abas que trocam a cor por idioma.
+
+O objeto é **canvas 2D, não three.js** — são 210 linhas a partir de um ponto,
+com composição aditiva para o núcleo saturar em branco. three.js custaria
+~600 KB para desenhar isto. O rAF pausa fora da viewport e com movimento
+reduzido desenha-se um único frame estático.
+
+Substituiu a antiga faixa de prova social, levando as mesmas métricas
+verificáveis para um formato com muito mais presença.
+
+### Defeitos encontrados na verificação
+
+- **A página abria rolada ~7000px.** O slider de depoimentos chamava
+  `scrollIntoView` no arranque para manter a aba ativa à vista, e esse método
+  rola todos os antepassados — incluindo o documento. Passou a mexer só no
+  `scrollLeft` da própria tira de abas, e nunca no primeiro render.
+- **Faixa branca entre duas seções escuras.** As costuras (`ds-seam-t`) assumem
+  a cor da seção anterior; com a nova ordem, metodologia passou a vir depois de
+  uma seção escura. Costura removida daí e dos depoimentos.

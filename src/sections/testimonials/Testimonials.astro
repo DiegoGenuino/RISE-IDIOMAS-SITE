@@ -1,12 +1,15 @@
 ---
-import SectionHeading from '../../components/ui/SectionHeading.astro';
 import testimonialsData from '../../data/Testimonials.json';
 
-/** Depoimentos reais, mantidos exatamente como estão na branch `master`. */
+/**
+ * Slider de depoimentos no formato da Stripe: um depoimento grande de cada
+ * vez, com abas por aluno em baixo. A troca é um crossfade — os painéis vivem
+ * todos empilhados na mesma célula de grid, portanto a altura é a do maior e
+ * não há salto de layout entre um e outro.
+ *
+ * Depoimentos mantidos exatamente como estão na branch `master`.
+ */
 const testimonials = testimonialsData.testimonials;
-
-/** Duas trilhas para o carrossel infinito — a segunda é apenas visual. */
-const track = [...testimonials, ...testimonials];
 
 function initials(name: string): string {
   return name
@@ -17,143 +20,304 @@ function initials(name: string): string {
 }
 ---
 
-<section
-  id="depoimentos"
-  class="bg-surface overflow-hidden py-20 lg:py-28"
-  aria-labelledby="depoimentos-titulo"
->
-  <div class="ds-shell">
-    <SectionHeading
-      eyebrow="Depoimentos"
-      title="Quem quebrou o bloqueio conta como foi"
-      lead="Relatos de alunos das turmas de Executivo — inglês e espanhol."
-      align="center"
-      class="ds-reveal"
-      id="depoimentos-titulo"
-    />
-  </div>
+<section id="depoimentos" class="bg-surface py-20 lg:py-28" aria-labelledby="depoimentos-titulo">
+  <div class="ds-shell flex flex-col gap-10">
+    <div class="ds-reveal flex flex-col gap-4">
+      <div class="flex items-center gap-3">
+        <span class="ds-mono text-brand">Depoimentos</span>
+        <span class="bg-brand-100 h-px w-10" aria-hidden="true"></span>
+      </div>
+      <h2 id="depoimentos-titulo" data-split class="text-display text-ink max-w-2xl font-semibold">
+        Quem quebrou o bloqueio conta como foi
+      </h2>
+    </div>
 
-  <!-- Marquee: duplicado para o loop, com máscara nas bordas -->
-  <div class="ds-marquee mt-12" data-marquee>
-    <ul class="ds-marquee-track">
-      {
-        track.map((item, index) => (
-          <li class="ds-quote" aria-hidden={index >= testimonials.length ? 'true' : undefined}>
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-              class="text-brand-soft"
+    <div class="ds-quotes ds-reveal" data-quotes>
+      <!-- ── Painéis ──────────────────────────────────────────────────── -->
+      <div class="ds-quote-stage">
+        {
+          testimonials.map((item, index) => (
+            <figure
+              class="ds-quote"
+              data-quote={index}
+              data-active={index === 0 ? '' : undefined}
+              aria-hidden={index === 0 ? 'false' : 'true'}
             >
-              <path d="M9.5 5C6.5 5 4 7.6 4 10.8c0 3 2.2 5.2 5 5.2.4 0 .8 0 1.1-.1-.6 1.6-2.1 2.8-4 3.1l.5 1c3.7-.5 7.4-3.6 7.4-9.2C14 7.3 12.1 5 9.5 5Zm9 0C15.5 5 13 7.6 13 10.8c0 3 2.2 5.2 5 5.2.4 0 .8 0 1.1-.1-.6 1.6-2.1 2.8-4 3.1l.5 1c3.7-.5 7.4-3.6 7.4-9.2C23 7.3 21.1 5 18.5 5Z" />
+              <svg class="ds-quote-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M9.5 5C6.5 5 4 7.6 4 10.8c0 3 2.2 5.2 5 5.2.4 0 .8 0 1.1-.1-.6 1.6-2.1 2.8-4 3.1l.5 1c3.7-.5 7.4-3.6 7.4-9.2C14 7.3 12.1 5 9.5 5Zm9 0C15.5 5 13 7.6 13 10.8c0 3 2.2 5.2 5 5.2.4 0 .8 0 1.1-.1-.6 1.6-2.1 2.8-4 3.1l.5 1c3.7-.5 7.4-3.6 7.4-9.2C23 7.3 21.1 5 18.5 5Z" />
+              </svg>
+
+              <blockquote class="ds-quote-text">{item.testimonial}</blockquote>
+
+              <figcaption class="ds-quote-by">
+                <span class="ds-quote-avatar" aria-hidden="true">
+                  {initials(item.studentName)}
+                </span>
+                <span class="flex flex-col">
+                  <span class="text-ink text-sm font-semibold">{item.studentName}</span>
+                  <span class="ds-mono text-ink-muted text-[0.6875rem]">{item.courseModality}</span>
+                </span>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <!-- ── Abas ─────────────────────────────────────────────────────── -->
+      <div class="ds-quote-nav">
+        <div class="ds-quote-tabs" role="tablist" aria-label="Escolher depoimento">
+          {
+            testimonials.map((item, index) => (
+              <button
+                type="button"
+                role="tab"
+                class="ds-quote-tab"
+                data-quote-tab={index}
+                aria-selected={index === 0 ? 'true' : 'false'}
+                tabindex={index === 0 ? 0 : -1}
+              >
+                <span class="ds-quote-avatar ds-quote-avatar--sm" aria-hidden="true">
+                  {initials(item.studentName)}
+                </span>
+                <span>{item.studentName}</span>
+                <span class="ds-quote-tab-bar" aria-hidden="true" />
+              </button>
+            ))
+          }
+        </div>
+
+        <div class="ds-quote-arrows">
+          <button
+            type="button"
+            class="ds-quote-arrow"
+            data-quote-prev
+            aria-label="Depoimento anterior"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M19 12H6M12 5l-7 7 7 7"></path>
             </svg>
-
-            <p class="text-ink mt-4 flex-1 text-[0.9375rem] leading-relaxed">{item.testimonial}</p>
-
-            <footer class="border-brand-soft/70 mt-6 flex items-center gap-3 border-t pt-5">
-              <span class="ds-avatar-initials" aria-hidden="true">
-                {initials(item.studentName)}
-              </span>
-              <span class="flex flex-col">
-                <span class="text-ink text-sm font-semibold">{item.studentName}</span>
-                <span class="ds-mono text-ink-muted text-[0.6875rem]">{item.courseModality}</span>
-              </span>
-            </footer>
-          </li>
-        ))
-      }
-    </ul>
+          </button>
+          <button
+            type="button"
+            class="ds-quote-arrow"
+            data-quote-next
+            aria-label="Próximo depoimento"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h13M12 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  .ds-marquee {
-    position: relative;
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 6rem,
-      black calc(100% - 6rem),
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 6rem,
-      black calc(100% - 6rem),
-      transparent
-    );
-  }
-
-  .ds-marquee-track {
+  .ds-quotes {
     display: flex;
-    width: max-content;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    /* translate3d mantém a animação na GPU */
-    animation: ds-marquee 64s linear infinite;
-    will-change: transform;
+    flex-direction: column;
+    background-color: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
   }
 
-  .ds-marquee:hover .ds-marquee-track,
-  .ds-marquee:focus-within .ds-marquee-track {
-    animation-play-state: paused;
-  }
-
-  @keyframes ds-marquee {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-    to {
-      /* -50% só fecha o ciclo porque o espaçamento vive em margin-right de
-         cada cartão. Com `gap` o track teria 13 intervalos para 14 cartões e
-         metade da largura não corresponderia a uma cópia exata da lista. */
-      transform: translate3d(-50%, 0, 0);
-    }
+  /* ── Palco: painéis empilhados na mesma célula ──────────────────────
+     A altura passa a ser a do maior depoimento, e a troca não empurra
+     nada — sem salto de layout entre abas.                              */
+  .ds-quote-stage {
+    display: grid;
+    align-items: stretch;
   }
 
   .ds-quote {
+    grid-area: 1 / 1;
     display: flex;
     flex-direction: column;
-    width: 21rem;
-    max-width: 80vw;
-    flex: 0 0 auto;
-    margin-right: 1rem;
-    padding: 1.5rem;
-    border-radius: var(--radius-lg);
-    background-color: var(--color-surface);
-    box-shadow:
-      inset 0 0 0 1px var(--color-brand-soft),
-      var(--shadow-xs);
+    margin: 0;
+    padding: 2.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, 14px, 0);
+    transition:
+      opacity var(--dur-base) var(--ease-card),
+      transform var(--dur-base) var(--ease-card),
+      visibility 0s linear var(--dur-base);
   }
 
-  .ds-avatar-initials {
+  @media (min-width: 940px) {
+    .ds-quote {
+      padding: 3.5rem 4rem;
+    }
+  }
+
+  .ds-quote[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity var(--dur-base) var(--ease-card),
+      transform var(--dur-base) var(--ease-card),
+      visibility 0s linear 0s;
+  }
+
+  .ds-quote-mark {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--color-brand-200);
+  }
+
+  .ds-quote-text {
+    margin: 1.5rem 0 0;
+    max-width: 46rem;
+    font-size: clamp(1.125rem, 0.9rem + 0.9vw, 1.5rem);
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+
+  .ds-quote-by {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 2.5rem;
+  }
+
+  .ds-quote-avatar {
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     flex: 0 0 auto;
     border-radius: 50%;
     background: linear-gradient(140deg, var(--color-brand) 0%, var(--color-brand-legacy) 100%);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     color: #fff;
-    letter-spacing: 0.02em;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .ds-marquee {
-      overflow-x: auto;
-      -webkit-mask-image: none;
-      mask-image: none;
-    }
+  .ds-quote-avatar--sm {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.625rem;
+  }
 
-    .ds-marquee-track {
-      animation: none;
-    }
+  /* ── Barra de abas ─────────────────────────────────────────────────── */
+  .ds-quote-nav {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid var(--color-brand-100);
+  }
+
+  .ds-quote-tabs {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .ds-quote-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ds-quote-tab {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-ink-muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .ds-quote-tab:hover {
+    color: var(--color-ink);
+  }
+
+  .ds-quote-tab[aria-selected='true'] {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  /* O avatar só ganha cor na aba ativa — as outras ficam neutras */
+  .ds-quote-tab .ds-quote-avatar--sm {
+    background: var(--color-brand-100);
+    color: var(--color-brand-800);
+    transition:
+      background var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
+  }
+
+  .ds-quote-tab[aria-selected='true'] .ds-quote-avatar--sm {
+    background: linear-gradient(140deg, var(--color-brand) 0%, var(--color-brand-legacy) 100%);
+    color: #fff;
+  }
+
+  .ds-quote-tab-bar {
+    position: absolute;
+    inset-inline: 0;
+    top: -1px;
+    height: 2px;
+    background-color: var(--color-brand);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-base) var(--ease-card);
+  }
+
+  .ds-quote-tab[aria-selected='true'] .ds-quote-tab-bar {
+    transform: scaleX(1);
+  }
+
+  /* ── Setas ─────────────────────────────────────────────────────────── */
+  .ds-quote-arrows {
+    display: flex;
+    flex: 0 0 auto;
+    border-left: 1px solid var(--color-brand-100);
+  }
+
+  .ds-quote-arrow {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    cursor: pointer;
+    color: var(--color-ink-soft);
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
+  }
+
+  .ds-quote-arrow:hover {
+    background-color: var(--color-surface-alt);
+    color: var(--color-brand);
+  }
+
+  .ds-quote-arrow + .ds-quote-arrow {
+    border-left: 1px solid var(--color-brand-100);
+  }
+
+  .ds-quote-arrow svg {
+    width: 1rem;
+    height: 1rem;
   }
 </style>

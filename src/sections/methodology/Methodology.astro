@@ -1,0 +1,267 @@
+---
+import Button from '../../components/ui/Button.astro';
+import { pillars } from '../../data/methodology';
+import { ctaLinks } from '../../data/site';
+
+/**
+ * Metodologia — coluna fixa à esquerda, cartões a passar à direita.
+ *
+ * A versão anterior fazia a grelha inteira dar zoom e derivar, e o texto que
+ * explicava a metodologia só entrava no fim: durante quase toda a seção o
+ * utilizador via movimento sem saber o que estava a ler. Aqui o índice fica
+ * sempre visível e assinala em que passo se está — o movimento acompanha a
+ * leitura em vez de a substituir.
+ *
+ * Sem GSAP: a coluna prende-se com `position: sticky` e o passo ativo é
+ * resolvido por IntersectionObserver.
+ */
+---
+
+<section
+  id="metodologia"
+  class="ds-dark bg-abyss relative text-white"
+  aria-labelledby="metodologia-titulo"
+>
+  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
+  </div>
+  <div class="ds-grain-layer" aria-hidden="true"></div>
+
+  <div class="ds-shell ds-grid relative items-start py-20 lg:py-28">
+    <!-- ── Índice fixo ───────────────────────────────────────────────── -->
+    <div class="ds-method-aside col-span-full lg:col-span-5">
+      <div class="flex items-center gap-3">
+        <span class="ds-mono text-aqua">Metodologia</span>
+        <span class="bg-abyss-line h-px w-10" aria-hidden="true"></span>
+      </div>
+
+      <h2 id="metodologia-titulo" data-split class="text-display mt-4 font-semibold text-white">
+        Quatro decisões de ensino que mudam o seu resultado
+      </h2>
+
+      <p class="text-abyss-ink mt-5 max-w-md text-[0.9375rem] leading-relaxed">
+        Uma jornada mais leve e eficaz, planejada para desenvolver sua confiança e autonomia — com
+        foco em você e no seu crescimento.
+      </p>
+
+      <!-- Trilha de passos: assinala onde a leitura está -->
+      <ol class="ds-steps" data-steps>
+        {
+          pillars.map((pillar, index) => (
+            <li>
+              <button
+                type="button"
+                class="ds-step"
+                data-step={index}
+                data-goto={`pilar-${pillar.id}`}
+                aria-current="false"
+              >
+                <span class="ds-step-rail" aria-hidden="true" />
+                <span class="ds-step-index">{pillar.index}</span>
+                <span class="ds-step-label">{pillar.title}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+
+      <Button href={ctaLinks.trial} size="lg" class="mt-10 hidden lg:inline-flex">
+        Agendar aula experimental
+      </Button>
+    </div>
+
+    <!-- ── Cartões ───────────────────────────────────────────────────── -->
+    <ol class="col-span-full flex flex-col gap-4 lg:col-span-7">
+      {
+        pillars.map((pillar, index) => (
+          <li id={`pilar-${pillar.id}`} class="ds-method-card ds-reveal" data-panel={index}>
+            <div class="ds-method-card-wash" aria-hidden="true" />
+
+            <div class="relative flex h-full flex-col">
+              <header class="flex items-baseline justify-between gap-4">
+                <span class="ds-method-index">{pillar.index}</span>
+                <span class="ds-mono text-abyss-ink/50">
+                  {index + 1} de {pillars.length}
+                </span>
+              </header>
+
+              <h3 class="mt-6 text-xl leading-snug font-semibold text-white">{pillar.title}</h3>
+
+              <p class="text-abyss-ink mt-4 text-[0.9375rem] leading-relaxed">
+                {pillar.description}
+              </p>
+
+              <ul class="border-abyss-line/50 mt-auto flex flex-wrap gap-2 border-t pt-6">
+                {pillar.bullets.map((bullet) => (
+                  <li class="ds-method-chip">{bullet}</li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+
+      <li class="lg:hidden">
+        <Button href={ctaLinks.trial} size="lg" class="w-full">Agendar aula experimental</Button>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* ── Coluna fixa ────────────────────────────────────────────────────── */
+  @media (min-width: 1024px) {
+    .ds-method-aside {
+      position: sticky;
+      /* Altura da navbar (76px) mais respiro */
+      top: 7rem;
+      align-self: start;
+    }
+  }
+
+  /* ── Trilha de passos ───────────────────────────────────────────────── */
+  .ds-steps {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2.5rem;
+    list-style: none;
+  }
+
+  /* Em telas pequenas o índice não acrescenta nada: os cartões já estão
+     logo abaixo, numerados. */
+  @media (max-width: 1023px) {
+    .ds-steps {
+      display: none;
+    }
+  }
+
+  .ds-step {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem 0 0.75rem 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    color: var(--color-abyss-ink);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .ds-step:hover {
+    color: #fff;
+  }
+
+  /* O trilho vertical acende no passo ativo — só transform, sem layout. */
+  .ds-step-rail {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 2px;
+    background-color: var(--color-abyss-line);
+    overflow: hidden;
+  }
+
+  .ds-step-rail::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--color-brand-400), var(--color-aqua));
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform var(--dur-base) var(--ease-card);
+  }
+
+  .ds-step[aria-current='true'] .ds-step-rail::after {
+    transform: scaleY(1);
+  }
+
+  .ds-step-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-abyss-ink);
+    opacity: 0.5;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .ds-step[aria-current='true'] .ds-step-index {
+    opacity: 1;
+    color: var(--color-aqua);
+  }
+
+  .ds-step-label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .ds-step[aria-current='true'] .ds-step-label {
+    color: #fff;
+  }
+
+  /* ── Cartões ────────────────────────────────────────────────────────── */
+  .ds-method-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 20rem;
+    padding: 1.75rem;
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: box-shadow var(--dur-slow) var(--ease-card);
+  }
+
+  @media (min-width: 1024px) {
+    .ds-method-card {
+      padding: 2.25rem;
+    }
+  }
+
+  .ds-method-card-wash {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background: radial-gradient(
+      90% 80% at 85% 10%,
+      color-mix(in srgb, var(--color-brand) 30%, transparent) 0%,
+      transparent 60%
+    );
+    transition: opacity var(--dur-slow) var(--ease-card);
+  }
+
+  /* O cartão do passo ativo ganha relevo — é o que liga o índice ao conteúdo */
+  .ds-method-card[data-active] {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px color-mix(in srgb, var(--color-brand-400) 40%, transparent);
+  }
+
+  .ds-method-card[data-active] .ds-method-card-wash {
+    opacity: 1;
+  }
+
+  .ds-method-index {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    background-image: linear-gradient(101deg, var(--color-brand-300), var(--color-aqua));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ds-method-chip {
+    padding: 0.3rem 0.65rem;
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-abyss-line) 70%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: var(--color-abyss-ink);
+  }
+</style>

@@ -1,13 +1,15 @@
 import { initAudience } from './audience';
+import { initBurst } from './burst';
 import { initJourney } from './journey';
 import { initMeshGradient } from './meshGradient';
+import { initMethodology } from './methodology';
 import { initModals } from './modals';
 import { initNav } from './nav';
 import { initPricing } from './pricing';
 import { initReveal } from './reveal';
+import { initQuotes } from './quotes';
 import { initSimulator } from './simulator';
 import { initSpotlight } from './spotlight';
-import { initStickyGrid } from './stickyGrid';
 import { initTextReveal } from './textReveal';
 import { initSmoothScroll } from './smoothScroll';
 
@@ -29,7 +31,9 @@ export function initHome(): void {
   initModals();
   initPricing();
   initSpotlight();
-  initStickyGrid();
+  initMethodology();
+  initQuotes();
+  initBurst();
   void initJourney();
   initReveal();
   void initTextReveal();
