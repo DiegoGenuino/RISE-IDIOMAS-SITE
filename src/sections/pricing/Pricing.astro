@@ -12,38 +12,40 @@ const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
   <div class="ds-shell flex flex-col gap-12">
     <div class="ds-reveal flex flex-col items-center gap-7">
       <SectionHeading
-        eyebrow="Planos"
         title="O que está incluído, sem letra miúda"
         lead="Escolha pelo formato que combina com a sua rotina. A equipe confirma valores e condições no WhatsApp, sem compromisso."
         align="center"
         id="planos-titulo"
       />
 
-      <!-- Alternador de ciclo -->
-      <div
-        class="ring-brand-soft/70 inline-flex rounded-sm bg-white p-1 shadow-xs ring-1 ring-inset"
-        role="radiogroup"
-        aria-label="Ciclo de cobrança"
-      >
-        {
-          billingCycles.map((cycle, index) => (
-            <button
-              type="button"
-              role="radio"
-              aria-checked={index === 0 ? 'true' : 'false'}
-              data-cycle-option={cycle.id}
-              class="text-ink-soft aria-checked:bg-brand cursor-pointer rounded-xs px-4 py-2 text-sm font-semibold transition-colors duration-200 aria-checked:text-white"
-            >
-              {cycle.label}
-              {'hint' in cycle && cycle.hint && (
-                <span class="ml-1.5 hidden text-[0.6875rem] font-medium opacity-70 sm:inline">
-                  · {cycle.hint}
-                </span>
-              )}
-            </button>
-          ))
-        }
-      </div>
+      <!-- Alternador de ciclo. Só aparece quando há valores para alternar:
+           com os três planos em "Sob consulta" ele não mudava nada no ecrã. -->
+      {
+        hasPrices && (
+          <div
+            class="ring-brand-soft/70 inline-flex bg-white p-1 shadow-xs ring-1 ring-inset"
+            role="radiogroup"
+            aria-label="Ciclo de cobrança"
+          >
+            {billingCycles.map((cycle, index) => (
+              <button
+                type="button"
+                role="radio"
+                aria-checked={index === 0 ? 'true' : 'false'}
+                data-cycle-option={cycle.id}
+                class="text-ink-soft aria-checked:bg-brand cursor-pointer px-4 py-2 text-sm font-semibold transition-colors duration-200 aria-checked:text-white"
+              >
+                {cycle.label}
+                {'hint' in cycle && cycle.hint && (
+                  <span class="ml-1.5 hidden text-[0.6875rem] font-medium opacity-70 sm:inline">
+                    · {cycle.hint}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )
+      }
     </div>
 
     <!-- Matriz -->
@@ -65,7 +67,7 @@ const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
               <span class="ds-spotlight" aria-hidden="true" />
 
               {plan.badge && (
-                <span class="ds-mono bg-brand shadow-brand absolute -top-3 left-6 rounded-xs px-2.5 py-1 text-[0.6875rem] text-white">
+                <span class="ds-mono bg-brand shadow-brand absolute -top-3 left-6 px-2.5 py-1 text-[0.6875rem] text-white">
                   {plan.badge}
                 </span>
               )}
@@ -141,15 +143,21 @@ const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
         rel="noopener noreferrer"
         class="text-brand font-semibold underline underline-offset-2"
       >
-        Fale com a equipe
-      </a>.
+        Fale com a equipe</a
+      >.
     </p>
   </div>
 </section>
 
 <style>
+  /* Cantos vivos, como no bento e nas modalidades. */
   .ds-plan {
     padding: 1.75rem;
+    border-radius: 0;
+  }
+
+  .ds-plan::before {
+    border-radius: 0;
   }
 
   /* O plano em destaque mantém o anel sólido mesmo em repouso. */

@@ -1,23 +1,19 @@
 ---
 interface Props {
-  eyebrow?: string;
   title: string;
   lead?: string;
   align?: 'left' | 'center';
   tone?: 'light' | 'dark';
-  accent?: 'cool' | 'warm';
   class?: string;
   /** Aplicado ao <h2> — usado por aria-labelledby nas seções. */
   id?: string;
 }
 
 const {
-  eyebrow,
   title,
   lead,
   align = 'left',
   tone = 'light',
-  accent = 'cool',
   class: className = '',
   id,
 } = Astro.props;
@@ -25,20 +21,9 @@ const {
 const alignment = align === 'center' ? 'items-center text-center mx-auto' : 'items-start';
 const titleColor = tone === 'dark' ? 'text-white' : 'text-ink';
 const leadColor = tone === 'dark' ? 'text-abyss-ink' : 'text-ink-soft';
-const eyebrowColor = tone === 'dark' ? 'text-aqua' : accent === 'warm' ? 'text-ruby' : 'text-brand';
-const ruleColor = tone === 'dark' ? 'bg-abyss-line' : 'bg-brand-soft';
 ---
 
 <div class={`flex max-w-2xl flex-col gap-4 ${alignment} ${className}`} data-split-group>
-  {
-    eyebrow && (
-      <div class="flex items-center gap-3">
-        <span class={`ds-mono ${eyebrowColor}`}>{eyebrow}</span>
-        <span class={`h-px w-10 ${ruleColor}`} aria-hidden="true" />
-      </div>
-    )
-  }
-
   <h2 id={id} data-split class={`text-display font-semibold ${titleColor}`} set:html={title} />
 
   {

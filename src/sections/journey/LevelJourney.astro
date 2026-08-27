@@ -7,15 +7,15 @@ import { journey } from '../../data/journey';
  *
  * O scroll horizontal prendia a página durante quatro viewports para mostrar
  * seis painéis que cabem numa lista. Aqui é uma escada: uma linha por nível,
- * separadas por fios, com um degrau que cresce à esquerda. Lê-se de uma vez,
- * funciona igual no telemóvel e não precisa de GSAP nenhum.
+ * ligadas por um fio contínuo, com o quadrado do nível a escurecer do A1 ao
+ * C2 — a progressão vê-se sem ler. Funciona igual no telemóvel e não precisa
+ * de GSAP nenhum.
  */
 ---
 
 <section id="trilha" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="trilha-titulo">
   <div class="ds-shell flex flex-col gap-12">
     <SectionHeading
-      eyebrow="Trilha"
       title="Do primeiro <em>hello</em> à proficiência certificada"
       lead="A escala CEFR descreve o que você consegue fazer em cada nível. As horas são a referência pública do Cambridge Assessment — não uma promessa de prazo."
       class="ds-reveal"
@@ -25,12 +25,14 @@ import { journey } from '../../data/journey';
     <ol class="ds-ladder">
       {
         journey.map((stage, index) => (
-          <li class="ds-rung ds-reveal" style={`--reveal-i:${index}; --step:${index}`}>
-            <span class="ds-rung-bar" aria-hidden="true">
-              <span class="ds-rung-fill" />
-            </span>
-
-            <span class="ds-rung-level">{stage.level}</span>
+          <li
+            class="ds-rung ds-reveal"
+            style={`--reveal-i:${index}; --step:${index}`}
+            data-dark={index >= 3}
+          >
+            <div class="ds-rung-mark">
+              <span class="ds-rung-badge">{stage.level}</span>
+            </div>
 
             <div class="ds-rung-main">
               <h3 class="ds-rung-name">{stage.name}</h3>
@@ -44,9 +46,23 @@ import { journey } from '../../data/journey';
             </div>
 
             <div class="ds-rung-meta">
-              <span class="ds-mono text-ink-muted">{stage.hours}</span>
+              <span class="ds-rung-hours">{stage.hours}</span>
               <button type="button" class="ds-rung-course" data-scroll-to="modalidades">
                 {stage.courseLabel}
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  class="ds-arrow"
+                >
+                  <path d="M5 12h13M12 5l7 7-7 7" />
+                </svg>
               </button>
             </div>
           </li>
@@ -60,66 +76,115 @@ import { journey } from '../../data/journey';
   .ds-ladder {
     display: flex;
     flex-direction: column;
-    border-top: 1px solid var(--color-brand-100);
     list-style: none;
   }
 
-  /* Uma linha por nível. O degrau à esquerda cresce com o índice — a escada
+  /* Uma linha por nível. O quadrado do nível escurece do A1 ao C2 — a escada
      lê-se de relance, sem precisar de comparar números. */
   .ds-rung {
+    position: relative;
     display: grid;
-    grid-template-columns: 3px auto 1fr;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
     align-items: start;
     gap: 1rem 1.25rem;
-    padding: 1.75rem 0;
-    border-bottom: 1px solid var(--color-brand-100);
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--color-brand-100);
     transition: background-color var(--dur-base) var(--ease);
+  }
+
+  .ds-rung:last-child {
+    border-bottom: 1px solid var(--color-brand-100);
   }
 
   @media (min-width: 940px) {
     .ds-rung {
-      grid-template-columns: 3px 5rem minmax(0, 1fr) 14rem;
-      gap: 2rem;
+      grid-template-columns: 5rem minmax(0, 1fr) 13rem;
+      gap: 2.5rem;
       padding: 2rem 0;
     }
   }
 
   @media (hover: hover) {
     .ds-rung:hover {
-      background-color: color-mix(in srgb, var(--color-brand-25) 70%, transparent);
+      background-color: color-mix(in srgb, var(--color-brand-25) 80%, transparent);
     }
   }
 
-  /* ── Degrau ─────────────────────────────────────────────────────────── */
-  .ds-rung-bar {
+  /* ── Nível ──────────────────────────────────────────────────────────── */
+  .ds-rung-mark {
+    position: relative;
     align-self: stretch;
-    display: block;
-    width: 3px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Fio contínuo a ligar os quadrados: é o que faz a coluna ler como uma
+     trilha e não como seis linhas independentes. */
+  .ds-rung-mark::before {
+    content: '';
+    position: absolute;
+    top: -1.5rem;
+    bottom: -1.5rem;
+    left: 50%;
+    width: 1px;
     background-color: var(--color-brand-100);
+    transform: translateX(-50%);
   }
 
-  .ds-rung-fill {
-    display: block;
-    width: 100%;
-    /* Do A1 ao C2: 30% de altura no primeiro degrau, 100% no último. */
-    height: calc(30% + var(--step) * 14%);
-    background: linear-gradient(180deg, var(--color-brand-400), var(--color-brand));
+  @media (min-width: 940px) {
+    .ds-rung-mark::before {
+      top: -2rem;
+      bottom: -2rem;
+    }
   }
 
-  .ds-rung-level {
+  /* O fio não deve sair para fora da escada nas pontas. */
+  .ds-rung:first-child .ds-rung-mark::before {
+    top: 1.6rem;
+  }
+
+  .ds-rung:last-child .ds-rung-mark::before {
+    bottom: auto;
+    height: 1.6rem;
+  }
+
+  .ds-rung-badge {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
     font-family: var(--font-mono);
-    font-size: 1.5rem;
+    font-size: 0.9375rem;
     font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--color-brand);
-    line-height: 1.1;
+    letter-spacing: 0.02em;
+    color: var(--color-brand-800);
+    /* Do A1 (lavado) ao C2 (marca cheia). */
+    background-color: color-mix(
+      in srgb,
+      var(--color-brand) calc(10% + var(--step) * 18%),
+      var(--color-surface)
+    );
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+    transition: transform var(--dur-slow) var(--ease-card);
+  }
+
+  .ds-rung[data-dark='true'] .ds-rung-badge {
+    color: #fff;
+    box-shadow: none;
+  }
+
+  @media (hover: hover) {
+    .ds-rung:hover .ds-rung-badge {
+      transform: scale(1.06);
+    }
   }
 
   /* ── Conteúdo ───────────────────────────────────────────────────────── */
   .ds-rung-name {
-    font-size: 1.0625rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     color: var(--color-ink);
   }
 
@@ -134,26 +199,17 @@ import { journey } from '../../data/journey';
   .ds-rung-marks {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.375rem 1.25rem;
-    margin-top: 0.875rem;
+    gap: 0.375rem;
+    margin-top: 1rem;
     list-style: none;
   }
 
   .ds-rung-marks li {
-    position: relative;
-    padding-left: 0.875rem;
-    font-size: 0.8125rem;
-    color: var(--color-ink-muted);
-  }
-
-  .ds-rung-marks li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.5em;
-    width: 4px;
-    height: 4px;
-    background-color: var(--color-brand-300);
+    padding: 0.25rem 0.625rem;
+    background-color: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+    font-size: 0.75rem;
+    color: var(--color-ink-soft);
   }
 
   /* ── Metadados ──────────────────────────────────────────────────────── */
@@ -162,7 +218,7 @@ import { journey } from '../../data/journey';
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
-    grid-column: 2 / -1;
+    grid-column: 2;
   }
 
   @media (min-width: 940px) {
@@ -170,13 +226,24 @@ import { journey } from '../../data/journey';
       grid-column: auto;
       flex-direction: column;
       align-items: flex-end;
-      gap: 0.625rem;
+      gap: 0.75rem;
       text-align: right;
     }
   }
 
+  .ds-rung-hours {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-muted);
+  }
+
   .ds-rung-course {
-    padding: 0.3rem 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4rem 0.75rem;
     background-color: var(--color-surface);
     box-shadow: inset 0 0 0 1px var(--color-brand-100);
     font-size: 0.75rem;
@@ -191,5 +258,9 @@ import { journey } from '../../data/journey';
   .ds-rung-course:hover {
     color: var(--color-brand);
     box-shadow: inset 0 0 0 1px var(--color-brand-300);
+  }
+
+  .ds-rung-course:hover .ds-arrow {
+    transform: translate3d(3px, 0, 0);
   }
 </style>

@@ -1,19 +1,25 @@
 ---
 import NewsletterForm from '../../components/newsletter/NewsletterForm.astro';
-import { site, socialLinks, whatsappLink } from '../../data/site';
+import { WHATSAPP_PHONE, site, socialLinks, whatsappLink } from '../../data/site';
 
 /**
  * Rodapé.
  *
- * Referência: o padrão de wordmark gigante ancorado no fim da página — o gesto
- * que Vercel, Linear e Framer usam para fechar o scroll com a marca em vez de
- * uma linha de copyright. A versão anterior era quatro colunas de links e mais
- * nada, e o site acabava sem assinatura.
+ * Três coisas o separam de um rodapé genérico:
  *
- * O `master` já tinha essa intenção num marquee de "RISE" em contorno; aqui ela
- * volta como uma palavra só, à largura do container, que se preenche ao hover.
+ * 1. A grelha é desenhada. Fios verticais entre as colunas e horizontais entre
+ *    as faixas — o rodapé lê-se como um plano, e não como quatro listas soltas
+ *    empilhadas num fundo escuro.
+ * 2. O estado da escola é ao vivo. O horário já estava em `site.hours`; aqui
+ *    ele é comparado com a hora de São Paulo e vira "aberto agora" ou o
+ *    próximo horário de abertura. É informação, não enfeite.
+ * 3. A assinatura está aparada pelo fim da página. A palavra sangra de margem
+ *    a margem e é cortada em baixo: ancora o scroll em vez de flutuar num vão.
  */
 const currentYear = new Date().getFullYear();
+
+/** Número em formato legível, a partir da mesma constante que gera os links. */
+const phoneDisplay = WHATSAPP_PHONE.replace(/^55(\d{2})(\d{5})(\d{4})$/, '+55 ($1) $2-$3');
 
 const columns = [
   {
@@ -39,9 +45,9 @@ const columns = [
   {
     title: 'Contato',
     links: [
-      { label: 'WhatsApp', href: whatsappLink('Olá, vim pelo site da Rise Idiomas.') },
+      { label: phoneDisplay, href: whatsappLink('Olá, vim pelo site da Rise Idiomas.') },
       { label: site.email, href: `mailto:${site.email}` },
-      { label: 'Como chegar', href: site.mapsUrl },
+      { label: site.address, href: site.mapsUrl },
     ],
   },
 ];
@@ -62,123 +68,176 @@ const socialPaths: Record<string, string> = {
   <div class="ds-grain-layer" aria-hidden="true"></div>
 
   <!-- ── Newsletter ────────────────────────────────────────────────────── -->
-  <div class="border-abyss-line/40 relative border-b">
-    <div class="ds-shell ds-grid items-center py-14">
-      <div class="col-span-full lg:col-span-6">
-        <p class="text-title max-w-sm font-semibold text-white">
-          Uma dose de idioma na sua caixa de entrada
-        </p>
-        <p class="text-abyss-ink mt-3 max-w-sm text-sm leading-relaxed">
+  <div class="ds-foot-band">
+    <div class="ds-shell ds-foot-news">
+      <div>
+        <p class="ds-foot-kicker">Newsletter</p>
+        <p class="ds-foot-statement">Uma dose de idioma na sua caixa de entrada</p>
+        <p class="ds-foot-note">
           Vocabulário, cultura e método — o que a equipe escreve entre uma turma e outra. Sem spam.
         </p>
       </div>
 
-      <div class="col-span-full flex lg:col-span-6 lg:justify-end">
+      <div class="ds-foot-form">
         <NewsletterForm />
       </div>
     </div>
   </div>
 
-  <!-- ── Links ─────────────────────────────────────────────────────────── -->
-  <div class="ds-shell ds-grid relative items-start py-14">
-    <div class="col-span-full flex flex-col gap-6 lg:col-span-3">
-      <p class="text-abyss-ink max-w-xs text-sm leading-relaxed">
-        Transformamos a maneira como você aprende uma segunda língua — uma jornada mais leve e
-        eficaz, com foco em você e no seu crescimento.
-      </p>
+  <!-- ── Grelha ────────────────────────────────────────────────────────── -->
+  <div class="ds-foot-band">
+    <div class="ds-shell ds-foot-grid">
+      <div class="ds-foot-cell ds-foot-brand">
+        <p class="ds-foot-mark">Rise Idiomas</p>
+        <p class="ds-foot-note">
+          Transformamos a maneira como você aprende uma segunda língua — uma jornada mais leve e
+          eficaz, com foco em você e no seu crescimento.
+        </p>
 
-      <ul class="flex gap-2">
-        {
-          socialLinks.map((social) => (
-            <li>
-              <a
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.label}
-                class="ds-social"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  aria-hidden="true"
+        <!-- Estado ao vivo, calculado a partir de site.hours -->
+        <p class="ds-foot-status" data-open-status hidden>
+          <span class="ds-foot-dot" aria-hidden="true"></span>
+          <span data-open-label></span>
+        </p>
+
+        <ul class="ds-foot-social">
+          {
+            socialLinks.map((social) => (
+              <li>
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  class="ds-social"
                 >
-                  <path d={socialPaths[social.label]} />
-                </svg>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-
-    {
-      columns.map((column) => (
-        <nav aria-label={column.title} class="col-span-2 flex flex-col gap-4 lg:col-span-3">
-          <h2 class="ds-mono text-abyss-ink/50">{column.title}</h2>
-          <ul class="flex flex-col gap-2.5">
-            {column.links.map((link) => {
-              const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
-              return (
-                <li>
-                  <a
-                    href={link.href}
-                    target={external ? '_blank' : undefined}
-                    rel={external ? 'noopener noreferrer' : undefined}
-                    class="ds-foot-link"
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    aria-hidden="true"
                   >
-                    {link.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      ))
-    }
-  </div>
+                    <path d={socialPaths[social.label]} />
+                  </svg>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
 
-  <!-- ── Assinatura ─────────────────────────────────────────────────────
-       Puro contorno; o preenchimento acende de baixo para cima ao hover.
-       `aria-hidden` porque o nome da marca já está no link do topo — aqui
-       é ornamento, não conteúdo.                                        -->
-  <div class="ds-wordmark-wrap">
-    <p class="ds-wordmark" aria-hidden="true">RISE</p>
+      {
+        columns.map((column, index) => (
+          <nav aria-label={column.title} class="ds-foot-cell">
+            <h2 class="ds-foot-col-title">
+              <span class="ds-foot-col-num">{String(index + 1).padStart(2, '0')}</span>
+              {column.title}
+            </h2>
+            <ul class="ds-foot-links">
+              {column.links.map((link) => {
+                const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
+                return (
+                  <li>
+                    <a
+                      href={link.href}
+                      target={external ? '_blank' : undefined}
+                      rel={external ? 'noopener noreferrer' : undefined}
+                      class="ds-foot-link"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
   </div>
 
   <!-- ── Legal ─────────────────────────────────────────────────────────── -->
-  <div class="border-abyss-line/40 relative border-t">
-    <div
-      class="ds-shell flex flex-col items-center justify-between gap-3 py-6 text-center sm:flex-row sm:text-left"
-    >
-      <p class="ds-mono text-abyss-ink/50">© {currentYear} Rise Idiomas · {site.address}</p>
+  <div class="ds-foot-band">
+    <div class="ds-shell ds-foot-legal">
+      <p>© {currentYear} Rise Idiomas · {site.address}</p>
 
-      <div class="flex items-center gap-5">
-        <span class="ds-mono text-abyss-ink/50 flex items-center gap-2">
+      <div class="ds-foot-legal-right">
+        <span class="flex items-center gap-2">
           <span class="ds-clock-dot" aria-hidden="true"></span>
           São Paulo <span id="rise-clock" class="text-white">--:--</span>
         </span>
-        <span class="ds-mono text-abyss-ink/50" title="Idiomas ensinados na Rise">
+        <span title="Idiomas ensinados na Rise">
           {site.languages.map((language) => language.slice(0, 3).toUpperCase()).join(' / ')}
         </span>
       </div>
     </div>
   </div>
+
+  <!-- ── Assinatura ─────────────────────────────────────────────────────
+       Sangra de margem a margem e é aparada em baixo pelo fim da página.
+       `aria-hidden` porque o nome da marca já está no link do topo — aqui
+       é ornamento, não conteúdo.                                        -->
+  <div class="ds-wordmark-wrap">
+    <p class="ds-wordmark" aria-hidden="true">RISE</p>
+  </div>
 </footer>
 
-<script is:inline>
+<script is:inline define:vars={{ hours: site.hours }}>
   (function () {
     const clock = document.getElementById('rise-clock');
-    if (!clock) return;
+    const status = document.querySelector('[data-open-status]');
+    const statusLabel = document.querySelector('[data-open-label]');
 
-    function tick() {
-      clock.textContent = new Date().toLocaleTimeString('pt-BR', {
+    /** Hora de São Paulo, independentemente do fuso do visitante. */
+    function readSaoPaulo() {
+      const parts = new Intl.DateTimeFormat('pt-BR', {
         timeZone: 'America/Sao_Paulo',
+        weekday: 'short',
         hour: '2-digit',
         minute: '2-digit',
-      });
+        hour12: false,
+      }).formatToParts(new Date());
+
+      const get = (type) => (parts.find((part) => part.type === type) || {}).value || '';
+      return {
+        weekday: get('weekday').toLowerCase(),
+        hour: Number(get('hour')),
+        minute: Number(get('minute')),
+        label: get('hour') + ':' + get('minute'),
+      };
+    }
+
+    // Os intervalos vêm de site.hours; aqui só se decide em qual deles o dia
+    // de hoje cai. Domingo não consta na lista — logo, fechado.
+    const weekdayRange = hours[0].time.split(' - ');
+    const saturdayRange = hours[1].time.split(' - ');
+
+    function toMinutes(value) {
+      const parts = value.split(':').map(Number);
+      return parts[0] * 60 + parts[1];
+    }
+
+    function rangeForToday(weekday) {
+      if (weekday.indexOf('dom') === 0) return null;
+      if (weekday.indexOf('sáb') === 0 || weekday.indexOf('sab') === 0) return saturdayRange;
+      return weekdayRange;
+    }
+
+    function tick() {
+      const now = readSaoPaulo();
+      if (clock) clock.textContent = now.label;
+      if (!status || !statusLabel) return;
+
+      const range = rangeForToday(now.weekday);
+      const minutes = now.hour * 60 + now.minute;
+      const open = range !== null && minutes >= toMinutes(range[0]) && minutes < toMinutes(range[1]);
+
+      status.hidden = false;
+      status.dataset.open = String(open);
+      statusLabel.textContent = open
+        ? 'Aberto agora · até ' + range[1]
+        : 'Fechado · abre ' + weekdayRange[0];
     }
 
     tick();
@@ -187,11 +246,182 @@ const socialPaths: Record<string, string> = {
 </script>
 
 <style>
-  .ds-grid {
-    row-gap: 2.5rem;
+  /* ── Faixas ─────────────────────────────────────────────────────────── */
+  .ds-foot-band {
+    position: relative;
+    border-top: 1px solid color-mix(in srgb, var(--color-abyss-line) 45%, transparent);
   }
 
-  /* ── Social ─────────────────────────────────────────────────────────── */
+  .ds-foot-band:first-of-type {
+    border-top: 0;
+  }
+
+  .ds-foot-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-abyss-ink) 60%, transparent);
+  }
+
+  .ds-foot-note {
+    max-width: 26rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-abyss-ink);
+  }
+
+  /* ── Newsletter ─────────────────────────────────────────────────────── */
+  .ds-foot-news {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-block: 3.5rem;
+  }
+
+  @media (min-width: 940px) {
+    .ds-foot-news {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4rem;
+    }
+  }
+
+  .ds-foot-statement {
+    max-width: 24rem;
+    margin-top: 0.75rem;
+    font-size: clamp(1.375rem, 1rem + 1.2vw, 1.875rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+  .ds-foot-form {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 26rem;
+  }
+
+  /* ── Grelha de links ────────────────────────────────────────────────── */
+  .ds-foot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 940px) {
+    .ds-foot-grid {
+      grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* Fios verticais desenhados nas células: é o que faz o rodapé ler como um
+     plano, e não como listas soltas. */
+  .ds-foot-cell {
+    position: relative;
+    padding: 2.5rem 0 2.5rem 1.5rem;
+  }
+
+  .ds-foot-cell + .ds-foot-cell::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 1px;
+    background-color: color-mix(in srgb, var(--color-abyss-line) 45%, transparent);
+  }
+
+  .ds-foot-cell:first-child {
+    padding-left: 0;
+  }
+
+  /* Em duas colunas a marca ocupa a linha inteira, e o fio só separa pares. */
+  @media (max-width: 939px) {
+    .ds-foot-brand {
+      grid-column: 1 / -1;
+      padding-bottom: 0;
+    }
+
+    .ds-foot-cell:nth-child(even)::before {
+      display: none;
+    }
+
+    .ds-foot-cell:nth-child(even) {
+      padding-left: 0;
+    }
+  }
+
+  .ds-foot-mark {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+
+  .ds-foot-col-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-abyss-ink);
+  }
+
+  .ds-foot-col-num {
+    color: color-mix(in srgb, var(--color-abyss-ink) 45%, transparent);
+  }
+
+  .ds-foot-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+    list-style: none;
+  }
+
+  /* ── Estado ─────────────────────────────────────────────────────────── */
+  .ds-foot-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding: 0.35rem 0.7rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-abyss-line) 70%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--color-abyss-ink);
+  }
+
+  .ds-foot-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: color-mix(in srgb, var(--color-abyss-ink) 60%, transparent);
+  }
+
+  .ds-foot-status[data-open='true'] {
+    color: #fff;
+  }
+
+  .ds-foot-status[data-open='true'] .ds-foot-dot {
+    background-color: var(--color-lime);
+  }
+
+  .ds-foot-social {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    list-style: none;
+  }
+
   .ds-social {
     display: grid;
     place-items: center;
@@ -242,21 +472,52 @@ const socialPaths: Record<string, string> = {
     transform: scaleX(1);
   }
 
+  /* ── Legal ──────────────────────────────────────────────────────────── */
+  .ds-foot-legal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-block: 1.5rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: color-mix(in srgb, var(--color-abyss-ink) 60%, transparent);
+  }
+
+  @media (min-width: 640px) {
+    .ds-foot-legal {
+      flex-direction: row;
+      text-align: left;
+    }
+  }
+
+  .ds-foot-legal-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
   /* ── Wordmark ───────────────────────────────────────────────────────── */
   .ds-wordmark-wrap {
     position: relative;
-    padding-inline: clamp(1rem, 4vw, 3rem);
     overflow: hidden;
+    /* Apara a palavra em baixo: fica presa ao fim da página em vez de
+       flutuar num vão. */
+    height: clamp(3.5rem, 26vw, 23rem);
   }
 
   .ds-wordmark {
     margin: 0;
-    /* Acompanha a largura da janela em vez de ter um tamanho fixo. */
-    font-size: clamp(5rem, 27vw, 22rem);
-    line-height: 0.85;
+    /* Dimensionada para ocupar a largura do container. */
+    font-size: clamp(5rem, 46vw, 40rem);
+    line-height: 0.78;
     font-weight: 700;
-    letter-spacing: -0.06em;
+    letter-spacing: -0.07em;
     text-align: center;
+    white-space: nowrap;
     user-select: none;
 
     color: transparent;

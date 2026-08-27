@@ -10,7 +10,7 @@ import { site } from '../../data/site';
  * verificáveis — modalidades, idiomas, certificadoras e horário) para um
  * formato com muito mais presença. As abas trocam a cor do feixe por idioma.
  *
- * O objeto é canvas 2D, não three.js: são linhas a partir de um ponto, e a
+ * O objeto é canvas 2D, não three.js: são curvas de uma cor só, e a
  * biblioteca custaria ~600 KB para desenhar isso.
  */
 const contexts = {
@@ -188,16 +188,22 @@ const tints = [
     gap: 2rem;
     padding-top: 3rem;
     /* Reserva a altura antes do canvas pintar — CLS em zero. */
-    min-height: 34rem;
+    min-height: 30rem;
   }
 
+  /* Contido no palco e centrado: a versão anterior tinha `width: 130%` com
+     recuo negativo e ficava cortada na borda direita da seção. */
   .ds-reach-canvas {
     position: absolute;
-    inset-inline: -15%;
+    left: 50%;
     bottom: 0;
-    top: 2rem;
-    width: 130%;
-    height: auto;
+    width: min(100%, 44rem);
+    /* Altura explícita, e não `top` + `bottom`: <canvas> é um elemento
+       substituído — com a altura em `auto` ele resolve pela proporção
+       intrínseca (300×150) e ignora o `bottom`, ficando com um terço da
+       altura do palco. */
+    height: calc(100% - 4rem);
+    transform: translateX(-50%);
     pointer-events: none;
   }
 

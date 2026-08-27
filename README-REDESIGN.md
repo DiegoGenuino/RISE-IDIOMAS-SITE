@@ -497,3 +497,91 @@ como assinatura única.
 
 Acima dela: faixa de newsletter, três colunas de links, e a barra legal com o
 relógio de São Paulo e os idiomas.
+
+---
+
+## v9 — globo, algas, cartões e rodapé
+
+### Globo do hero
+
+O problema não era o headless: era a configuração. Com `baseColor` quase branca
+e `mapBrightness: 5.2`, os pontos dos continentes saturavam para branco por cima
+de uma base clara — o globo lia-se como uma bola lisa. Agora a base é escura
+(brand-900) e os pontos são a base multiplicada por `mapBrightness: 4`, o que
+dá continentes claros sobre azul-marinho.
+
+`dark: 0` de propósito: com `dark: 1` o lado que não apanha a luz fica preto e o
+globo lê-se como um disco.
+
+A rotação é contínua (`SPIN = 0.004` rad/frame, ~26 s por volta) e o arrasto só
+adianta ou atrasa — nunca para o loop. A troca de perfil recria só o contexto
+WebGL; os listeners de arrasto ficam onde estão (antes, `initGlobe()` chamava-se
+a si próprio e acumulava um jogo de listeners por clique).
+
+⚠️ Os continentes continuam sem poder ser conferidos por screenshot: o
+renderizador por software do Chrome headless não amostra a textura do mapa. A
+esfera, a iluminação e os marcadores conferem-se; a geometria dos continentes só
+numa GPU real. Se ficarem fracos, é `mapBrightness` que se mexe.
+
+### Algas em vez de raios
+
+`src/scripts/burst.ts` foi reescrito. Antes era um leque de linhas retas a
+partir de um ponto único: todas partiam juntas e baloiçavam juntas, e o conjunto
+lia-se como um objeto rígido. Agora são 64 fios independentes, cada um com a sua
+base, direção, curvatura, amplitude e ritmo, desenhados em 16 segmentos com a
+ondulação a crescer para a ponta (`along ** 1.6`) — a raiz fica presa e a ponta
+chicoteia.
+
+Dois erros de dimensionamento corrigidos ao mesmo tempo:
+
+- O canvas tinha `width: 130%` com recuo negativo e era cortado na borda direita
+  da seção. Agora é `min(100%, 44rem)`, centrado.
+- **`<canvas>` é um elemento substituído.** Com `top` + `bottom` e a altura em
+  `auto`, resolvia pela proporção intrínseca (300×150) e ignorava o `bottom`:
+  ficava com 179 px num palco de 480. A altura é agora explícita.
+
+### Rótulos de seção
+
+Os rótulos mono com o fio ao lado ("O QUE ESTÁ INCLUÍDO", "MODALIDADES", …)
+saíram de todas as seções, e a prop `eyebrow` saiu de `SectionHeading`.
+
+### Cartões
+
+**Modalidades** — cantos vivos, fio único entre cartões (desenhado por cartão, e
+não como fundo da grelha: o seletor de perfil esconde dois, e um fundo deixava
+blocos de cor nas células vazias), índice mono, lavado de gradiente por canto, e
+uma régua CEFR de seis degraus com a faixa do programa acesa. A régua só aparece
+nos três programas cujo `meta` declara um intervalo — nada é inventado. A área
+de clique é o cartão inteiro, com um só controlo para teclado e leitores de ecrã.
+
+**Trilha** — quadrado do nível a escurecer do A1 ao C2, fio contínuo a ligar os
+seis, marcos em chips.
+
+**Planos e quiz** — cantos vivos, para acompanhar. O alternador Mensal/Anual só
+aparece quando existem valores: com os três planos em "Sob consulta" ele não
+mudava nada no ecrã.
+
+### Rodapé
+
+Refeito outra vez. A grelha é desenhada — fios verticais entre as colunas,
+horizontais entre as faixas. O estado da escola é ao vivo: `site.hours` é
+comparado com a hora de São Paulo e vira "Aberto agora · até 21:00" ou "Fechado
+· abre 08:00". A assinatura passa a ser aparada pelo fim da página, à largura do
+container, em vez de flutuar num vão.
+
+### FAQ
+
+O cartão "Ainda com dúvida?" saiu.
+
+### Pontas soltas encontradas
+
+- `--color-brand-legacy` não existe. Era usada nos dois gradientes dos avatares
+  dos depoimentos, o que tornava a regra inválida: avatar sem fundo e texto
+  branco sobre branco — invisível. Trocada por `--color-brand-400`.
+- A tira de abas dos depoimentos rola: ganhou um esbatimento na borda direita,
+  senão o nome cortado parecia um defeito de layout.
+- Espaço solto antes do ponto final em "Fale com a equipe ." (Planos).
+- O mapa do CTA resolve mesmo para a ficha da escola (R. Francisca de Paula,
+  972, 5,0 ★). O aviso anterior era demasiado pessimista; fica só a nota de que,
+  se a busca deixar de acertar, se troca a `src` pelo código do Google Business
+  Profile.

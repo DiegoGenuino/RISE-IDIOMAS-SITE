@@ -39,7 +39,7 @@ export default function LevelQuiz() {
   const current = quizSteps[step];
 
   return (
-    <div className="bg-surface shadow-float relative overflow-hidden rounded-xl p-6 sm:p-8">
+    <div className="bg-surface shadow-float relative overflow-hidden p-6 sm:p-8">
       {/* Barra de progresso */}
       <div className="mb-6 flex items-center gap-4">
         <div
@@ -75,7 +75,7 @@ export default function LevelQuiz() {
             {result.description}
           </p>
 
-          <div className="bg-surface-alt ring-brand-soft/70 mt-6 rounded-lg p-5 ring-1 ring-inset">
+          <div className="bg-surface-alt ring-brand-soft/70 mt-6 p-5 ring-1 ring-inset">
             <span className="ds-mono text-ink-muted">Trilha recomendada</span>
             <p className="text-ink mt-2 text-lg font-semibold">{result.recommendLabel}</p>
             <p className="text-ink-soft mt-1 text-sm">
@@ -114,7 +114,7 @@ export default function LevelQuiz() {
                 <button
                   type="button"
                   onClick={() => answer(option.score)}
-                  className="group bg-surface-alt text-ink ring-brand-soft/70 hover:ring-brand flex w-full cursor-pointer items-center gap-3 rounded-sm px-4 py-3.5 text-left text-[0.9375rem] ring-1 transition-[background-color,box-shadow,transform] duration-200 ring-inset hover:-translate-y-px hover:bg-white hover:shadow-xs"
+                  className="group bg-surface-alt text-ink ring-brand-soft/70 hover:ring-brand flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left text-[0.9375rem] ring-1 transition-[background-color,box-shadow,transform] duration-200 ring-inset hover:-translate-y-px hover:bg-white hover:shadow-xs"
                 >
                   <span
                     className="ring-brand-soft group-hover:ring-brand grid h-5 w-5 shrink-0 place-items-center rounded-full ring-1 transition-colors duration-200"

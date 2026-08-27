@@ -133,17 +133,35 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
     animation: ds-hero-sim-in var(--dur-scene) var(--ease-card) 160ms both;
   }
 
+  /* Halo por trás do globo: sem ele a esfera escura fica colada ao branco do
+     hero com uma borda dura. Fica atrás do canvas e não intercepta o rato. */
+  .ds-hero-object::before {
+    content: '';
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--color-brand) 22%, transparent) 0%,
+      transparent 70%
+    );
+    filter: blur(28px);
+    pointer-events: none;
+  }
+
   .ds-globe {
+    position: relative;
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
     cursor: grab;
     opacity: 0;
     transition: opacity var(--dur-scene) var(--ease);
-    /* Lidas pelo script. */
-    --globe-base: 216, 221, 250;
-    --globe-marker: 83, 58, 253;
-    --globe-glow: 243, 245, 255;
+    /* Lidas pelo script. Base escura e pontos claros — é o contraste que faz
+       os continentes existirem. */
+    --globe-base: 28, 30, 84;
+    --globe-marker: 124, 224, 255;
+    --globe-glow: 214, 217, 252;
   }
 
   .ds-globe[data-globe-ready] {
@@ -151,7 +169,7 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
   }
 
   :global(html[data-audience='young']) .ds-globe {
-    --globe-marker: 234, 34, 97;
+    --globe-marker: 249, 140, 200;
   }
 
   @keyframes ds-hero-in {

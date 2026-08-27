@@ -1,7 +1,6 @@
 ---
 import SectionHeading from '../../components/ui/SectionHeading.astro';
 import { faq } from '../../data/faq';
-import { ctaLinks, site } from '../../data/site';
 ---
 
 <section id="faq" class="bg-surface py-20 lg:py-28" aria-labelledby="faq-titulo">
@@ -9,45 +8,12 @@ import { ctaLinks, site } from '../../data/site';
     <!-- ── Coluna fixa ───────────────────────────────────────────────── -->
     <div class="ds-faq-aside col-span-full lg:col-span-4">
       <SectionHeading
-        eyebrow="Dúvidas"
         title="Perguntas frequentes"
         lead="Se a sua pergunta não estiver aqui, a equipe responde no WhatsApp."
         class="ds-reveal"
         id="faq-titulo"
       />
 
-      <!-- Cartão de saída: quem chega ao fim das perguntas sem resposta tem
-           para onde ir sem voltar ao topo. -->
-      <div class="ds-faq-ask ds-reveal">
-        <span class="ds-faq-ping" aria-hidden="true"></span>
-        <p class="text-ink text-sm font-semibold">Ainda com dúvida?</p>
-        <p class="text-ink-soft mt-1 text-[0.8125rem] leading-relaxed">
-          A equipe responde no WhatsApp de segunda a sábado, dentro do horário da escola.
-        </p>
-        <a
-          href={ctaLinks.trial}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-brand hover:text-brand-strong group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold"
-        >
-          Falar com a equipe
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            class="ds-arrow"
-          >
-            <path d="M5 12h13M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-        <p class="ds-mono text-ink-muted/70 mt-4 text-[0.6875rem]">{site.address}</p>
-      </div>
     </div>
 
     <!-- ── Perguntas ─────────────────────────────────────────────────── -->
@@ -82,36 +48,6 @@ import { ctaLinks, site } from '../../data/site';
       position: sticky;
       top: 7rem;
       align-self: start;
-    }
-  }
-
-  /* ── Cartão de contacto ─────────────────────────────────────────────── */
-  .ds-faq-ask {
-    position: relative;
-    margin-top: 2.5rem;
-    padding: 1.5rem;
-    background-color: var(--color-surface-alt);
-    box-shadow: inset 0 0 0 1px var(--color-brand-100);
-  }
-
-  .ds-faq-ping {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: var(--color-lime);
-    box-shadow: 0 0 0 0 rgba(180, 244, 97, 0.7);
-    animation: ds-faq-ping 2.6s ease-out infinite;
-  }
-
-  @keyframes ds-faq-ping {
-    70% {
-      box-shadow: 0 0 0 8px rgba(180, 244, 97, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(180, 244, 97, 0);
     }
   }
 

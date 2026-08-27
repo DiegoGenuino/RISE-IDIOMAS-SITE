@@ -5,10 +5,10 @@ import { ctaLinks, site, whatsappLink } from '../../data/site';
 /**
  * CTA final com mapa.
  *
- * ⚠️ O embed usa `maps.google.com/maps?q=…&output=embed`, que funciona sem
- * chave de API. Localiza a escola, mas o pin vem da busca — não do perfil da
- * Rise. Para o pin oficial, trocar a `src` pelo código que o Google Business
- * Profile dá em Partilhar → Incorporar um mapa. Ver README-REDESIGN.md.
+ * O embed usa `maps.google.com/maps?q=…&output=embed`, que funciona sem chave
+ * de API e resolve para a ficha real da escola (R. Francisca de Paula, 972).
+ * Se um dia a busca deixar de acertar, trocar a `src` pelo código que o Google
+ * Business Profile dá em Partilhar → Incorporar um mapa.
  *
  * O iframe é `loading="lazy"`: nada do Google é pedido enquanto o visitante
  * está no topo da página.
@@ -40,11 +40,6 @@ const steps = [
   <div class="ds-shell ds-grid relative items-stretch py-20 lg:py-28">
     <!-- ── Chamada ───────────────────────────────────────────────────── -->
     <div class="ds-reveal col-span-full flex flex-col lg:col-span-6">
-      <div class="flex items-center gap-3">
-        <span class="ds-mono text-aqua">Próximo passo</span>
-        <span class="bg-abyss-line h-px w-10" aria-hidden="true"></span>
-      </div>
-
       <h2 data-split class="text-display mt-4 max-w-xl font-semibold text-white">
         Preparado para dar um salto na sua carreira?
       </h2>
@@ -102,8 +97,7 @@ const steps = [
         <div class="ds-place-body">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <span class="ds-mono text-aqua">Venha conhecer</span>
-              <p class="mt-2 text-lg font-semibold text-white">{site.address}</p>
+              <p class="text-lg font-semibold text-white">{site.address}</p>
             </div>
             <span class="ds-place-open">
               <span class="ds-place-dot" aria-hidden="true"></span>
@@ -198,7 +192,7 @@ const steps = [
     /* O mapa do Google é claro e berrante ao lado de uma seção escura.
        Dessaturar e escurecer alinha-o com o resto sem esconder ruas nem
        rótulos. */
-    filter: grayscale(0.35) contrast(1.05) brightness(0.82) saturate(0.9);
+    filter: grayscale(0.5) contrast(1.05) brightness(0.72) saturate(0.75);
   }
 
   .ds-map-open {

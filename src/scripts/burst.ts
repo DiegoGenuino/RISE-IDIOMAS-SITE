@@ -1,49 +1,70 @@
 /**
- * Explosão radial animada — o objeto da seção "alcance".
+ * Algas de luz — o objeto animado da seção "alcance".
  *
- * Canvas 2D e não three.js: o visual é um feixe de linhas a partir de um
- * ponto, e three.js custaria ~600 KB para desenhar o que aqui são umas
- * dezenas de linhas. Tudo o que se anima é o ângulo e o comprimento.
+ * Antes era um leque de raios retos a partir de um ponto único: todos partiam
+ * juntos e baloiçavam juntos, o que se lia como um só objeto rígido. Aqui cada
+ * fio é independente — tem a sua própria base, direção, ritmo e ondulação — e
+ * o conjunto move-se como uma moita debaixo de água.
+ *
+ * Canvas 2D e não three.js: são curvas de uma cor só, e a biblioteca custaria
+ * ~600 KB para desenhar isso.
  *
  * O rAF pausa fora da viewport e com `prefers-reduced-motion` desenha-se um
  * único frame estático — a forma continua lá, só não respira.
  */
 
-interface Ray {
+interface Strand {
+  /** Base ao longo do fundo, em fração da largura. */
+  x: number;
+  /** Direção de partida, em radianos (−π/2 é a vertical). */
   angle: number;
+  /** Comprimento, em fração do alcance da cena. */
   length: number;
+  /** Curvatura constante: é o que dá o arco em vez da linha reta. */
+  curl: number;
+  /** Amplitude e ritmo da ondulação — próprios de cada fio. */
+  sway: number;
   speed: number;
   phase: number;
-  dots: number[];
+  /** Comprimento de onda ao longo do fio: quantas curvas cabem nele. */
+  wave: number;
   width: number;
+  alpha: number;
 }
 
-const RAY_COUNT = 210;
+const STRAND_COUNT = 64;
+const SEGMENTS = 16;
 
-function buildRays(): Ray[] {
-  const rays: Ray[] = [];
-  for (let i = 0; i < RAY_COUNT; i++) {
-    // Distribuição num leque de ~200°, mais densa ao centro: é o que dá a
-    // silhueta de explosão em vez de um círculo uniforme.
-    const t = i / (RAY_COUNT - 1);
-    const spread = Math.PI * 1.12;
-    const bias = Math.sin(t * Math.PI) ** 0.55;
-    const angle = -Math.PI / 2 - spread / 2 + t * spread;
+function buildStrands(): Strand[] {
+  const strands: Strand[] = [];
 
-    const dots: number[] = [];
-    const dotCount = 1 + Math.floor(Math.random() * 3);
-    for (let d = 0; d < dotCount; d++) dots.push(0.35 + Math.random() * 0.6);
+  for (let i = 0; i < STRAND_COUNT; i++) {
+    const t = i / (STRAND_COUNT - 1);
+    // Base espalhada por toda a largura, com um empurrão para o centro: é o
+    // que faz a moita ter um corpo em vez de uma fila.
+    const x = 0.5 + (t - 0.5) * (0.55 + Math.random() * 0.45);
+    // Sobem quase a direito, abrindo em leque à medida que se afastam do meio.
+    const fan = (x - 0.5) * 1.5;
+    const angle = -Math.PI / 2 + fan + (Math.random() - 0.5) * 0.35;
+    // Os do centro são mais compridos — a silhueta fica em cúpula.
+    const centerBias = 1 - Math.abs(x - 0.5) * 1.1;
 
-    rays.push({
+    strands.push({
+      x,
       angle,
-      length: (0.45 + bias * 0.55) * (0.72 + Math.random() * 0.38),
-      speed: 0.06 + Math.random() * 0.12,
+      length: (0.45 + centerBias * 0.55) * (0.75 + Math.random() * 0.4),
+      curl: (Math.random() - 0.5) * 0.055,
+      sway: 0.1 + Math.random() * 0.16,
+      // Ritmos irracionais entre si: nenhum par de fios volta a sincronizar.
+      speed: 0.16 + Math.random() * 0.42,
       phase: Math.random() * Math.PI * 2,
-      dots,
-      width: Math.random() < 0.22 ? 1.9 : 0.9,
+      wave: 0.5 + Math.random() * 1.1,
+      width: Math.random() < 0.18 ? 1.8 : 0.85,
+      alpha: 0.45 + Math.random() * 0.55,
     });
   }
-  return rays;
+
+  return strands;
 }
 
 export function initBurst(): void {
@@ -54,7 +75,7 @@ export function initBurst(): void {
   if (!ctx) return;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const rays = buildRays();
+  const strands = buildStrands();
 
   let width = 0;
   let height = 0;
@@ -76,53 +97,57 @@ export function initBurst(): void {
 
   function draw(time: number): void {
     ctx!.clearRect(0, 0, width, height);
-    // Aditivo: onde os raios se cruzam a luz soma, e o núcleo do feixe fica
-    // branco sem ser preciso desenhar um brilho por cima.
+    // Aditivo: onde os fios se cruzam a luz soma, sem ser preciso desenhar
+    // brilho nenhum por cima.
     ctx!.globalCompositeOperation = 'lighter';
+    ctx!.lineCap = 'round';
 
-    // A origem vagueia e o feixe inteiro baloiça. Somam-se senos de períodos
-    // incomensuráveis (0.13/0.071/0.097...) para o percurso nunca fechar num
-    // ciclo audível — é o que faz parecer vivo em vez de repetido.
-    const wanderX =
-      (Math.sin(time * 0.13) * 0.6 + Math.sin(time * 0.071 + 2.1) * 0.4) * width * 0.13;
-    const wanderY =
-      (Math.sin(time * 0.097 + 1.3) * 0.5 + Math.sin(time * 0.053) * 0.5) * height * 0.05;
-    const swing = Math.sin(time * 0.061) * 0.2 + Math.sin(time * 0.037 + 0.8) * 0.11;
+    // Só a altura manda no comprimento. Com um termo em largura, num ecrã
+    // estreito os fios encolhiam para um terço e a cena virava relva.
+    const reach = height * 0.9;
 
-    const ox = width / 2 + wanderX;
-    const oy = height * 1.04 + wanderY;
-    const reach = Math.min(width * 0.68, height * 1.55);
+    for (const strand of strands) {
+      const ox = strand.x * width;
+      const oy = height;
+      const total = reach * strand.length;
+      const step = total / SEGMENTS;
 
-    for (const ray of rays) {
-      const breathe = Math.sin(time * ray.speed + ray.phase) * 0.1;
-      const len = reach * ray.length * (1 + breathe);
-      const angle = ray.angle + swing + Math.sin(time * 0.08 + ray.phase) * 0.02;
+      let x = ox;
+      let y = oy;
 
-      const x = ox + Math.cos(angle) * len;
-      const y = oy + Math.sin(angle) * len;
-
-      const gradient = ctx!.createLinearGradient(ox, oy, x, y);
-      gradient.addColorStop(0, `rgba(${tint}, 1)`);
-      gradient.addColorStop(0.3, `rgba(${tint}, 0.55)`);
-      gradient.addColorStop(0.7, `rgba(${tint}, 0.18)`);
+      const gradient = ctx!.createLinearGradient(ox, oy, ox, oy - total);
+      gradient.addColorStop(0, `rgba(${tint}, 0)`);
+      gradient.addColorStop(0.22, `rgba(${tint}, ${0.5 * strand.alpha})`);
+      gradient.addColorStop(0.65, `rgba(${tint}, ${0.85 * strand.alpha})`);
       gradient.addColorStop(1, `rgba(${tint}, 0)`);
 
       ctx!.strokeStyle = gradient;
-      ctx!.lineWidth = ray.width;
+      ctx!.lineWidth = strand.width;
       ctx!.beginPath();
-      ctx!.moveTo(ox, oy);
-      ctx!.lineTo(x, y);
+      ctx!.moveTo(x, y);
+
+      for (let s = 1; s <= SEGMENTS; s++) {
+        const along = s / SEGMENTS;
+        // A ondulação cresce da base para a ponta: a raiz fica presa e a
+        // ponta chicoteia, como uma alga presa ao fundo.
+        const wobble =
+          Math.sin(time * strand.speed + strand.phase + along * strand.wave * Math.PI * 2) *
+          strand.sway *
+          along ** 1.6;
+
+        const angle = strand.angle + strand.curl * s + wobble;
+        x += Math.cos(angle) * step;
+        y += Math.sin(angle) * step;
+        ctx!.lineTo(x, y);
+      }
+
       ctx!.stroke();
 
-      // Nós ao longo do raio — é o que dá a leitura de "rede" e não de leque
-      for (const at of ray.dots) {
-        const dx = ox + Math.cos(angle) * len * at;
-        const dy = oy + Math.sin(angle) * len * at;
-        ctx!.fillStyle = `rgba(${tint}, ${0.75 * (1 - at)})`;
-        ctx!.beginPath();
-        ctx!.arc(dx, dy, ray.width * 1.1, 0, Math.PI * 2);
-        ctx!.fill();
-      }
+      // Ponto na ponta — dá a leitura de organismo e não de risco.
+      ctx!.fillStyle = `rgba(${tint}, ${0.5 * strand.alpha})`;
+      ctx!.beginPath();
+      ctx!.arc(x, y, strand.width * 1.3, 0, Math.PI * 2);
+      ctx!.fill();
     }
   }
 
