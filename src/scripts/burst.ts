@@ -80,15 +80,23 @@ export function initBurst(): void {
     // branco sem ser preciso desenhar um brilho por cima.
     ctx!.globalCompositeOperation = 'lighter';
 
-    // Origem no fundo, ao centro: as linhas sobem como um feixe.
-    const ox = width / 2;
-    const oy = height * 1.02;
+    // A origem vagueia e o feixe inteiro baloiça. Somam-se senos de períodos
+    // incomensuráveis (0.13/0.071/0.097...) para o percurso nunca fechar num
+    // ciclo audível — é o que faz parecer vivo em vez de repetido.
+    const wanderX =
+      (Math.sin(time * 0.13) * 0.6 + Math.sin(time * 0.071 + 2.1) * 0.4) * width * 0.13;
+    const wanderY =
+      (Math.sin(time * 0.097 + 1.3) * 0.5 + Math.sin(time * 0.053) * 0.5) * height * 0.05;
+    const swing = Math.sin(time * 0.061) * 0.2 + Math.sin(time * 0.037 + 0.8) * 0.11;
+
+    const ox = width / 2 + wanderX;
+    const oy = height * 1.04 + wanderY;
     const reach = Math.min(width * 0.68, height * 1.55);
 
     for (const ray of rays) {
-      const breathe = Math.sin(time * ray.speed + ray.phase) * 0.08;
+      const breathe = Math.sin(time * ray.speed + ray.phase) * 0.1;
       const len = reach * ray.length * (1 + breathe);
-      const angle = ray.angle + Math.sin(time * 0.08 + ray.phase) * 0.012;
+      const angle = ray.angle + swing + Math.sin(time * 0.08 + ray.phase) * 0.02;
 
       const x = ox + Math.cos(angle) * len;
       const y = oy + Math.sin(angle) * len;

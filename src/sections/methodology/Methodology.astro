@@ -4,264 +4,204 @@ import { pillars } from '../../data/methodology';
 import { ctaLinks } from '../../data/site';
 
 /**
- * Metodologia — coluna fixa à esquerda, cartões a passar à direita.
+ * Metodologia — abas.
  *
- * A versão anterior fazia a grelha inteira dar zoom e derivar, e o texto que
- * explicava a metodologia só entrava no fim: durante quase toda a seção o
- * utilizador via movimento sem saber o que estava a ler. Aqui o índice fica
- * sempre visível e assinala em que passo se está — o movimento acompanha a
- * leitura em vez de a substituir.
+ * Antes eram quatro cartões empilhados com um índice a acompanhar o scroll: o
+ * indicador dependia de adivinhar qual cartão estava a ser lido, e errava
+ * sempre que dois entravam na faixa ao mesmo tempo. Agora são abas de facto —
+ * o passo ativo é o que o utilizador escolheu, e não há nada a adivinhar.
  *
- * Sem GSAP: a coluna prende-se com `position: sticky` e o passo ativo é
- * resolvido por IntersectionObserver.
+ * Só um painel de cada vez, e só o essencial dentro dele.
  */
 ---
 
 <section
   id="metodologia"
-  class="ds-dark bg-abyss relative text-white"
+  class="bg-surface-alt ds-seam-t py-20 lg:py-28"
+  style="--seam-from: var(--color-abyss-deep)"
   aria-labelledby="metodologia-titulo"
 >
-  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
-  </div>
-  <div class="ds-grain-layer" aria-hidden="true"></div>
-
-  <div class="ds-shell ds-grid relative items-start py-20 lg:py-28">
-    <!-- ── Índice fixo ───────────────────────────────────────────────── -->
-    <div class="ds-method-aside col-span-full lg:col-span-5">
-      <div class="flex items-center gap-3">
-        <span class="ds-mono text-aqua">Metodologia</span>
-        <span class="bg-abyss-line h-px w-10" aria-hidden="true"></span>
+  <div class="ds-shell ds-grid items-start">
+    <!-- ── Título e abas ─────────────────────────────────────────────── -->
+    <div class="col-span-full lg:col-span-5">
+      <div class="ds-reveal flex items-center gap-3">
+        <span class="ds-mono text-brand">Metodologia</span>
+        <span class="bg-brand-100 h-px w-10" aria-hidden="true"></span>
       </div>
 
-      <h2 id="metodologia-titulo" data-split class="text-display mt-4 font-semibold text-white">
-        Quatro decisões de ensino que mudam o seu resultado
+      <h2
+        id="metodologia-titulo"
+        data-split
+        class="text-display text-ink ds-reveal mt-4 max-w-md font-semibold"
+      >
+        Quatro decisões que mudam o seu resultado
       </h2>
 
-      <p class="text-abyss-ink mt-5 max-w-md text-[0.9375rem] leading-relaxed">
-        Uma jornada mais leve e eficaz, planejada para desenvolver sua confiança e autonomia — com
-        foco em você e no seu crescimento.
-      </p>
-
-      <!-- Trilha de passos: assinala onde a leitura está -->
-      <ol class="ds-steps" data-steps>
+      <div class="ds-tabs ds-reveal" role="tablist" aria-label="Pilares da metodologia">
         {
           pillars.map((pillar, index) => (
-            <li>
-              <button
-                type="button"
-                class="ds-step"
-                data-step={index}
-                data-goto={`pilar-${pillar.id}`}
-                aria-current="false"
-              >
-                <span class="ds-step-rail" aria-hidden="true" />
-                <span class="ds-step-index">{pillar.index}</span>
-                <span class="ds-step-label">{pillar.title}</span>
-              </button>
-            </li>
+            <button
+              type="button"
+              role="tab"
+              class="ds-tab"
+              data-step={index}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              aria-controls={`pilar-${index}`}
+              tabindex={index === 0 ? 0 : -1}
+            >
+              <span class="ds-tab-rail" aria-hidden="true" />
+              <span class="ds-tab-index">{pillar.index}</span>
+              <span class="ds-tab-label">{pillar.title}</span>
+            </button>
           ))
         }
-      </ol>
-
-      <Button href={ctaLinks.trial} size="lg" class="mt-10 hidden lg:inline-flex">
-        Agendar aula experimental
-      </Button>
+      </div>
     </div>
 
-    <!-- ── Cartões ───────────────────────────────────────────────────── -->
-    <ol class="col-span-full flex flex-col gap-4 lg:col-span-7">
+    <!-- ── Painéis ───────────────────────────────────────────────────── -->
+    <div class="ds-panels ds-reveal col-span-full lg:col-span-7">
       {
         pillars.map((pillar, index) => (
-          <li id={`pilar-${pillar.id}`} class="ds-method-card ds-reveal" data-panel={index}>
-            <div class="ds-method-card-wash" aria-hidden="true" />
-
-            <div class="relative flex h-full flex-col">
-              <header class="flex items-baseline justify-between gap-4">
-                <span class="ds-method-index">{pillar.index}</span>
-                <span class="ds-mono text-abyss-ink/50">
-                  {index + 1} de {pillars.length}
-                </span>
-              </header>
-
-              <h3 class="mt-6 text-xl leading-snug font-semibold text-white">{pillar.title}</h3>
-
-              <p class="text-abyss-ink mt-4 text-[0.9375rem] leading-relaxed">
-                {pillar.description}
-              </p>
-
-              <ul class="border-abyss-line/50 mt-auto flex flex-wrap gap-2 border-t pt-6">
-                {pillar.bullets.map((bullet) => (
-                  <li class="ds-method-chip">{bullet}</li>
-                ))}
-              </ul>
-            </div>
-          </li>
+          <div
+            id={`pilar-${index}`}
+            class="ds-panel"
+            data-panel={index}
+            data-active={index === 0 ? '' : undefined}
+            role="tabpanel"
+            aria-hidden={index === 0 ? 'false' : 'true'}
+          >
+            <span class="ds-panel-index">{pillar.index}</span>
+            <h3 class="text-title text-ink mt-6 max-w-lg font-semibold">{pillar.title}</h3>
+            <p class="text-ink-soft text-lead mt-5 max-w-xl">{pillar.description}</p>
+          </div>
         ))
       }
 
-      <li class="lg:hidden">
-        <Button href={ctaLinks.trial} size="lg" class="w-full">Agendar aula experimental</Button>
-      </li>
-    </ol>
+      <Button href={ctaLinks.trial} size="lg" class="mt-10">Agendar aula experimental</Button>
+    </div>
   </div>
 </section>
 
 <style>
-  /* ── Coluna fixa ────────────────────────────────────────────────────── */
-  @media (min-width: 1024px) {
-    .ds-method-aside {
-      position: sticky;
-      /* Altura da navbar (76px) mais respiro */
-      top: 7rem;
-      align-self: start;
-    }
+  .ds-grid {
+    row-gap: 3rem;
   }
 
-  /* ── Trilha de passos ───────────────────────────────────────────────── */
-  .ds-steps {
+  /* ── Abas ───────────────────────────────────────────────────────────── */
+  .ds-tabs {
     display: flex;
     flex-direction: column;
     margin-top: 2.5rem;
-    list-style: none;
   }
 
-  /* Em telas pequenas o índice não acrescenta nada: os cartões já estão
-     logo abaixo, numerados. */
-  @media (max-width: 1023px) {
-    .ds-steps {
-      display: none;
-    }
-  }
-
-  .ds-step {
+  .ds-tab {
     position: relative;
     display: flex;
     width: 100%;
     align-items: center;
     gap: 0.875rem;
-    padding: 0.75rem 0 0.75rem 1.25rem;
+    padding: 0.9rem 0 0.9rem 1.5rem;
     text-align: left;
     cursor: pointer;
-    color: var(--color-abyss-ink);
+    color: var(--color-ink-muted);
     transition: color var(--dur-fast) var(--ease);
   }
 
-  .ds-step:hover {
-    color: #fff;
+  .ds-tab:hover {
+    color: var(--color-ink);
   }
 
-  /* O trilho vertical acende no passo ativo — só transform, sem layout. */
-  .ds-step-rail {
+  /* Trilho contínuo à esquerda; o segmento ativo é pintado por cima. */
+  .ds-tab-rail {
     position: absolute;
     inset-block: 0;
     left: 0;
     width: 2px;
-    background-color: var(--color-abyss-line);
-    overflow: hidden;
+    background-color: var(--color-brand-100);
   }
 
-  .ds-step-rail::after {
+  .ds-tab-rail::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, var(--color-brand-400), var(--color-aqua));
+    background-color: var(--color-brand);
     transform: scaleY(0);
-    transform-origin: top center;
+    transform-origin: center top;
     transition: transform var(--dur-base) var(--ease-card);
   }
 
-  .ds-step[aria-current='true'] .ds-step-rail::after {
+  .ds-tab[aria-selected='true'] .ds-tab-rail::after {
     transform: scaleY(1);
   }
 
-  .ds-step-index {
+  .ds-tab-index {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-abyss-ink);
-    opacity: 0.5;
-    transition: opacity var(--dur-fast) var(--ease);
+    color: var(--color-ink-muted);
+    transition: color var(--dur-fast) var(--ease);
   }
 
-  .ds-step[aria-current='true'] .ds-step-index {
-    opacity: 1;
-    color: var(--color-aqua);
+  .ds-tab[aria-selected='true'] .ds-tab-index {
+    color: var(--color-brand);
   }
 
-  .ds-step-label {
+  .ds-tab-label {
     font-size: 0.9375rem;
     font-weight: 500;
   }
 
-  .ds-step[aria-current='true'] .ds-step-label {
-    color: #fff;
-  }
-
-  /* ── Cartões ────────────────────────────────────────────────────────── */
-  .ds-method-card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    min-height: 20rem;
-    padding: 1.75rem;
-    background: linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.07) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    transition: box-shadow var(--dur-slow) var(--ease-card);
-  }
-
-  @media (min-width: 1024px) {
-    .ds-method-card {
-      padding: 2.25rem;
-    }
-  }
-
-  .ds-method-card-wash {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    opacity: 0;
-    background: radial-gradient(
-      90% 80% at 85% 10%,
-      color-mix(in srgb, var(--color-brand) 30%, transparent) 0%,
-      transparent 60%
-    );
-    transition: opacity var(--dur-slow) var(--ease-card);
-  }
-
-  /* O cartão do passo ativo ganha relevo — é o que liga o índice ao conteúdo */
-  .ds-method-card[data-active] {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 0 0 1px color-mix(in srgb, var(--color-brand-400) 40%, transparent);
-  }
-
-  .ds-method-card[data-active] .ds-method-card-wash {
-    opacity: 1;
-  }
-
-  .ds-method-index {
-    font-family: var(--font-mono);
-    font-size: 2rem;
+  .ds-tab[aria-selected='true'] .ds-tab-label {
+    color: var(--color-ink);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    background-image: linear-gradient(101deg, var(--color-brand-300), var(--color-aqua));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
   }
 
-  .ds-method-chip {
-    padding: 0.3rem 0.65rem;
-    background-color: rgba(255, 255, 255, 0.06);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-abyss-line) 70%, transparent);
+  /* ── Painéis empilhados na mesma célula ─────────────────────────────── */
+  .ds-panels {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ds-panel {
+    /* Todos ocupam a mesma célula: a altura é a do maior e a troca não
+       empurra o botão que vem a seguir. */
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, 10px, 0);
+    transition:
+      opacity var(--dur-base) var(--ease-card),
+      transform var(--dur-base) var(--ease-card),
+      visibility 0s linear var(--dur-base);
+  }
+
+  .ds-panels {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .ds-panels > :last-child {
+    grid-row: 2;
+  }
+
+  .ds-panel[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity var(--dur-base) var(--ease-card),
+      transform var(--dur-base) var(--ease-card),
+      visibility 0s linear 0s;
+  }
+
+  .ds-panel-index {
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-    color: var(--color-abyss-ink);
+    font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-brand-100);
   }
 </style>

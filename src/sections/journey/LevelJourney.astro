@@ -1,233 +1,195 @@
 ---
 import SectionHeading from '../../components/ui/SectionHeading.astro';
 import { journey } from '../../data/journey';
+
+/**
+ * Trilha A1 → C2 — escada vertical.
+ *
+ * O scroll horizontal prendia a página durante quatro viewports para mostrar
+ * seis painéis que cabem numa lista. Aqui é uma escada: uma linha por nível,
+ * separadas por fios, com um degrau que cresce à esquerda. Lê-se de uma vez,
+ * funciona igual no telemóvel e não precisa de GSAP nenhum.
+ */
 ---
 
-<section
-  id="trilha"
-  class="ds-dark ds-seam-t bg-abyss relative text-white"
-  style="--seam-from: var(--color-surface)"
-  aria-labelledby="trilha-titulo"
->
-  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
-  </div>
-  <div class="ds-grain-layer" aria-hidden="true"></div>
+<section id="trilha" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="trilha-titulo">
+  <div class="ds-shell flex flex-col gap-12">
+    <SectionHeading
+      eyebrow="Trilha"
+      title="Do primeiro <em>hello</em> à proficiência certificada"
+      lead="A escala CEFR descreve o que você consegue fazer em cada nível. As horas são a referência pública do Cambridge Assessment — não uma promessa de prazo."
+      class="ds-reveal"
+      id="trilha-titulo"
+    />
 
-  <!--
-    Bloco externo estendido = linha do tempo do scroll horizontal. Só é ativado
-    em desktop e com movimento permitido; abaixo disso a trilha é uma lista
-    vertical normal, que é um estado desenhado e não um fallback partido.
-  -->
-  <div class="ds-journey-block" data-journey-block>
-    <div class="ds-journey-stage">
-      <div class="ds-shell relative flex flex-col gap-10 pt-20 lg:pt-0">
-        <SectionHeading
-          eyebrow="Trilha"
-          title="Do primeiro <em>hello</em> à proficiência certificada"
-          lead="A escala CEFR descreve o que você consegue fazer em cada nível. As horas são a referência pública do Cambridge Assessment — não uma promessa de prazo."
-          tone="dark"
-          class="ds-reveal shrink-0"
-          id="trilha-titulo"
-        />
+    <ol class="ds-ladder">
+      {
+        journey.map((stage, index) => (
+          <li class="ds-rung ds-reveal" style={`--reveal-i:${index}; --step:${index}`}>
+            <span class="ds-rung-bar" aria-hidden="true">
+              <span class="ds-rung-fill" />
+            </span>
 
-        <!-- Régua de progresso: acompanha o scrub em desktop -->
-        <div class="ds-journey-rail" aria-hidden="true">
-          <span class="ds-journey-rail-fill" data-journey-fill></span>
-        </div>
-      </div>
+            <span class="ds-rung-level">{stage.level}</span>
 
-      <div class="ds-journey-viewport">
-        <ol class="ds-journey-track ds-shell" data-journey-track>
-          {
-            journey.map((stage, index) => (
-              <li class="ds-stage" data-journey-stage>
-                <div class="ds-stage-head">
-                  <span class="ds-stage-level">{stage.level}</span>
-                  <span class="ds-mono text-abyss-ink/60">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                </div>
+            <div class="ds-rung-main">
+              <h3 class="ds-rung-name">{stage.name}</h3>
+              <p class="ds-rung-can">{stage.can}</p>
 
-                <h3 class="mt-5 text-lg font-semibold text-white">{stage.name}</h3>
-                <p class="text-abyss-ink mt-3 text-sm leading-relaxed">{stage.can}</p>
+              <ul class="ds-rung-marks">
+                {stage.milestones.map((milestone) => (
+                  <li>{milestone}</li>
+                ))}
+              </ul>
+            </div>
 
-                <ul class="mt-5 flex flex-col gap-2">
-                  {stage.milestones.map((milestone) => (
-                    <li class="text-abyss-ink/85 flex items-start gap-2 text-[0.8125rem]">
-                      <svg
-                        width="13"
-                        height="13"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                        class="text-aqua mt-1 shrink-0"
-                      >
-                        <path d="M20 6 9 17l-5-5" />
-                      </svg>
-                      {milestone}
-                    </li>
-                  ))}
-                </ul>
-
-                <div class="ds-stage-foot">
-                  <span class="ds-mono text-abyss-ink/60">{stage.hours}</span>
-                  <button type="button" class="ds-stage-course" data-scroll-to="modalidades">
-                    {stage.courseLabel}
-                  </button>
-                </div>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
-    </div>
+            <div class="ds-rung-meta">
+              <span class="ds-mono text-ink-muted">{stage.hours}</span>
+              <button type="button" class="ds-rung-course" data-scroll-to="modalidades">
+                {stage.courseLabel}
+              </button>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </section>
 
 <style>
-  /* ═══ Base: lista vertical (telemóvel, tablet, sem JS) ════════════════ */
-  .ds-journey-block {
-    position: relative;
-  }
-
-  .ds-journey-stage {
-    position: relative;
-    padding-bottom: 5rem;
-  }
-
-  .ds-journey-rail {
-    position: relative;
-    height: 2px;
-    width: 100%;
-    border-radius: var(--radius-round);
-    background-color: var(--color-abyss-line);
-    overflow: hidden;
-  }
-
-  .ds-journey-rail-fill {
-    position: absolute;
-    inset: 0;
-    transform-origin: left center;
-    transform: scaleX(var(--progress, 0));
-    background: linear-gradient(90deg, var(--color-brand-400), var(--color-aqua));
-  }
-
-  .ds-journey-viewport {
-    margin-top: 2.5rem;
-  }
-
-  .ds-journey-track {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin: 0;
-    padding-inline: clamp(1rem, 4vw, 3rem);
+  .ds-ladder {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-brand-100);
     list-style: none;
   }
 
-  @media (min-width: 640px) {
-    .ds-journey-track {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Uma linha por nível. O degrau à esquerda cresce com o índice — a escada
+     lê-se de relance, sem precisar de comparar números. */
+  .ds-rung {
+    display: grid;
+    grid-template-columns: 3px auto 1fr;
+    align-items: start;
+    gap: 1rem 1.25rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--color-brand-100);
+    transition: background-color var(--dur-base) var(--ease);
+  }
+
+  @media (min-width: 940px) {
+    .ds-rung {
+      grid-template-columns: 3px 5rem minmax(0, 1fr) 14rem;
+      gap: 2rem;
+      padding: 2rem 0;
     }
   }
 
-  .ds-stage {
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.07) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      var(--shadow-lg);
+  @media (hover: hover) {
+    .ds-rung:hover {
+      background-color: color-mix(in srgb, var(--color-brand-25) 70%, transparent);
+    }
   }
 
-  .ds-stage-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+  /* ── Degrau ─────────────────────────────────────────────────────────── */
+  .ds-rung-bar {
+    align-self: stretch;
+    display: block;
+    width: 3px;
+    background-color: var(--color-brand-100);
   }
 
-  .ds-stage-level {
+  .ds-rung-fill {
+    display: block;
+    width: 100%;
+    /* Do A1 ao C2: 30% de altura no primeiro degrau, 100% no último. */
+    height: calc(30% + var(--step) * 14%);
+    background: linear-gradient(180deg, var(--color-brand-400), var(--color-brand));
+  }
+
+  .ds-rung-level {
     font-family: var(--font-mono);
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: -0.02em;
-    background-image: linear-gradient(101deg, var(--color-brand-300), var(--color-aqua));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--color-brand);
+    line-height: 1.1;
   }
 
-  .ds-stage-foot {
+  /* ── Conteúdo ───────────────────────────────────────────────────────── */
+  .ds-rung-name {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  .ds-rung-can {
+    margin-top: 0.5rem;
+    max-width: 34rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+
+  .ds-rung-marks {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: auto;
-    padding-top: 1.25rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-abyss-line) 60%, transparent);
+    flex-wrap: wrap;
+    gap: 0.375rem 1.25rem;
+    margin-top: 0.875rem;
+    list-style: none;
   }
 
-  .ds-stage-course {
+  .ds-rung-marks li {
+    position: relative;
+    padding-left: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-ink-muted);
+  }
+
+  .ds-rung-marks li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-brand-300);
+  }
+
+  /* ── Metadados ──────────────────────────────────────────────────────── */
+  .ds-rung-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    grid-column: 2 / -1;
+  }
+
+  @media (min-width: 940px) {
+    .ds-rung-meta {
+      grid-column: auto;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.625rem;
+      text-align: right;
+    }
+  }
+
+  .ds-rung-course {
+    padding: 0.3rem 0.7rem;
+    background-color: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-aqua);
+    color: var(--color-brand-800);
     cursor: pointer;
-    transition: color var(--dur-micro) var(--ease);
+    transition:
+      color var(--dur-micro) var(--ease),
+      box-shadow var(--dur-micro) var(--ease);
   }
 
-  .ds-stage-course:hover {
-    color: #fff;
-  }
-
-  /* ═══ Desktop com JS: cena fixada e trilho horizontal ═════════════════
-     Tudo depende de data-journey-ready, posto pelo GSAP. Sem isso, fica a
-     lista vertical acima.                                                */
-  @media (min-width: 940px) {
-    .ds-journey-block[data-journey-ready] {
-      /* Uma viewport por painel, mais uma de folga para entrar e sair. */
-      height: 420vh;
-    }
-
-    [data-journey-ready] .ds-journey-stage {
-      position: sticky;
-      top: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 3rem;
-      height: 100vh;
-      padding-bottom: 0;
-      overflow: hidden;
-    }
-
-    [data-journey-ready] .ds-journey-viewport {
-      margin-top: 0;
-      overflow: hidden;
-    }
-
-    [data-journey-ready] .ds-journey-track {
-      display: flex;
-      gap: 1.25rem;
-      width: max-content;
-      max-width: none;
-      margin: 0;
-      will-change: transform;
-    }
-
-    [data-journey-ready] .ds-stage {
-      width: 22rem;
-      min-height: 22rem;
-      flex: 0 0 auto;
-    }
+  .ds-rung-course:hover {
+    color: var(--color-brand);
+    box-shadow: inset 0 0 0 1px var(--color-brand-300);
   }
 </style>

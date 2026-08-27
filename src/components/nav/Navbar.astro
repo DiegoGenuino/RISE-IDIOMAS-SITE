@@ -16,7 +16,7 @@ const navLinks = [
 const drawerLinks = [...navLinks, { label: 'Teste de nível', target: 'nivel' }];
 ---
 
-<header id="site-nav" class="fixed inset-x-0 top-0 z-50" data-nav>
+<header id="site-nav" class="ds-nav fixed inset-x-0 top-0 z-50" data-nav>
   <div class="ds-nav-surface">
     <div class="ds-shell flex h-19 items-center justify-between gap-6">
       <!-- Marca -->
@@ -201,6 +201,16 @@ const drawerLinks = [...navLinks, { label: 'Teste de nível', target: 'nivel' }]
 </header>
 
 <style>
+  /* Sai de cena ao descer e volta ao subir. Só transform — a barra continua
+     no fluxo do compositor e nada é recalculado. */
+  .ds-nav {
+    transition: transform var(--dur-base) var(--ease-card);
+  }
+
+  .ds-nav[data-hidden] {
+    transform: translate3d(0, -100%, 0);
+  }
+
   /* ── Superfície da navbar ───────────────────────────────────────────── */
   .ds-nav-surface {
     position: relative;

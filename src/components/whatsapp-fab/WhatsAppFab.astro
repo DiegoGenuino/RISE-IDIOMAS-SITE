@@ -87,6 +87,12 @@ const options = [
     align-items: flex-end;
     gap: 20px;
     z-index: 9999;
+    /* O cartão fechado é `opacity: 0` mas continua a ocupar o seu lugar aqui
+       dentro, portanto este wrapper mede ~300x400px mesmo com nada visível.
+       Sendo `fixed`, engolia todos os cliques no canto inferior — que num
+       telemóvel de 390px é praticamente metade do ecrã. Os cliques passam a
+       atravessar o wrapper; só o botão e o cartão aberto os recebem. */
+    pointer-events: none;
     font-family:
       'Inter',
       -apple-system,
@@ -197,6 +203,7 @@ const options = [
   }
 
   .min-wa-fab {
+    pointer-events: auto;
     width: 56px;
     height: 56px;
     background-color: #25d366;

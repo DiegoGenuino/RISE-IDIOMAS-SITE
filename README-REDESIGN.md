@@ -359,3 +359,65 @@ verificáveis para um formato com muito mais presença.
 - **Faixa branca entre duas seções escuras.** As costuras (`ds-seam-t`) assumem
   a cor da seção anterior; com a nova ordem, metodologia passou a vir depois de
   uma seção escura. Costura removida daí e dos depoimentos.
+
+---
+
+## v6 — correções e ajuste de seções
+
+### Bug: metade inferior do ecrã não recebia cliques (mobile)
+
+Não era o menu. Era o **FAB do WhatsApp**, herdado da branch `master`: o cartão
+fechado é `opacity: 0` mas continua a ocupar o seu lugar dentro do wrapper
+`position: fixed`, que por isso mede ~300×333 px mesmo sem nada visível. Num
+telemóvel de 390 px isso cobre de ~55% da altura para baixo e engolia todos os
+cliques.
+
+Correção: `pointer-events: none` no wrapper, `auto` no botão e no cartão aberto.
+Medido com `elementFromPoint` a 60%, 75% e 90% da altura — antes devolvia
+`div.min-wa-wrapper` nos três, agora devolve o conteúdo da página.
+
+### Navbar que se esconde
+
+Sai de cena ao descer, volta ao subir, e está sempre visível nos primeiros
+80 px e com o menu aberto. Só `transform`. Sem `requestAnimationFrame` a
+intermediar: ler `scrollY` dentro de um evento de scroll não força layout, e o
+rAF só acrescentava um ponto de falha onde ele é estrangulado.
+
+### Hero: objeto em vez do cartão
+
+O simulador de código deu lugar a uma esfera de conexões em canvas 2D — pontos
+por espiral de Fibonacci, rodados em Y com oscilação em X, ligados por linhas
+quando ficam próximos na projeção. `HeroSimulator.astro` e `simulator.ts` foram
+removidos.
+
+Deliberadamente diferente do feixe da seção "alcance": lá é um leque a partir
+de um ponto, aqui é um corpo que roda.
+
+### "Alcance": movimento vivo
+
+A origem do feixe vagueia e o conjunto baloiça, somando senos de períodos
+incomensuráveis (0.13 / 0.071 / 0.097…) para o percurso nunca fechar num ciclo
+percetível. Fundo mudado para `--color-abyss-deep` (#0D1738), o que faz a luz
+saltar mais.
+
+### Metodologia: abas a sério
+
+Eram cartões empilhados com um índice a acompanhar o scroll — e o indicador
+errava sempre que dois cartões entravam na faixa de leitura ao mesmo tempo.
+Agora são abas: o passo ativo é o que o utilizador escolheu, e não há nada a
+adivinhar. Só um painel de cada vez, com número, título e descrição — os chips
+de detalhe saíram. Fundo claro (`--color-surface-alt`).
+
+### Trilha: escada vertical
+
+O scroll horizontal prendia a página por quatro viewports para mostrar seis
+painéis que cabem numa lista. Agora é uma escada: uma linha por nível, fios a
+separar, e um degrau que cresce à esquerda. `journey.ts` removido.
+
+**Com isto o ScrollTrigger saiu do projeto** — nenhuma seção depende mais dele.
+Restam GSAP core e SplitText, só para os títulos.
+
+### FAQ
+
+Numeração mono, barra de acento a crescer no item aberto, e um cartão "ainda
+com dúvida?" na coluna fixa para quem chega ao fim sem resposta.

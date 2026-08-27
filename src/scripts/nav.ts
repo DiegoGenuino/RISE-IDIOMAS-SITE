@@ -30,6 +30,33 @@ export function initNav(): void {
     ).observe(sentinel);
   }
 
+  // ── Esconder ao descer, revelar ao subir ──────────────────────────────
+  // Direto no handler passivo, sem rAF a intermediar: ler `scrollY` durante um
+  // evento de scroll não força layout (a posição já está resolvida), e o resto
+  // é alternar um atributo. O rAF só acrescentava um ponto de falha — em
+  // contextos onde ele é estrangulado, a barra deixava de responder.
+  let lastY = window.scrollY;
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+
+      if (y <= 80 || isOpen) {
+        // Junto ao topo, e com o painel aberto, a barra está sempre visível.
+        nav?.removeAttribute('data-hidden');
+      } else if (Math.abs(delta) > 4) {
+        // A folga de 4px evita que o tremor do trackpad faça a barra piscar.
+        if (delta > 0) nav?.setAttribute('data-hidden', '');
+        else nav?.removeAttribute('data-hidden');
+      }
+
+      lastY = y;
+    },
+    { passive: true }
+  );
+
   // ── Painel mobile ─────────────────────────────────────────────────────
   let isOpen = false;
 
@@ -41,6 +68,7 @@ export function initNav(): void {
     nav?.setAttribute('data-open', '');
     toggle.setAttribute('aria-expanded', 'true');
     toggle.setAttribute('aria-label', 'Fechar menu');
+    nav?.removeAttribute('data-hidden');
     stopScroll();
   }
 

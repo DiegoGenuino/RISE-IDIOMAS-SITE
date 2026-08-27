@@ -1,53 +1,68 @@
 ---
 import SectionHeading from '../../components/ui/SectionHeading.astro';
 import { faq } from '../../data/faq';
-import { ctaLinks } from '../../data/site';
+import { ctaLinks, site } from '../../data/site';
 ---
 
 <section id="faq" class="bg-surface py-20 lg:py-28" aria-labelledby="faq-titulo">
-  <div class="ds-shell grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
-    <div class="ds-reveal flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
+  <div class="ds-shell ds-grid items-start">
+    <!-- ── Coluna fixa ───────────────────────────────────────────────── -->
+    <div class="ds-faq-aside col-span-full lg:col-span-4">
       <SectionHeading
         eyebrow="Dúvidas"
         title="Perguntas frequentes"
         lead="Se a sua pergunta não estiver aqui, a equipe responde no WhatsApp."
+        class="ds-reveal"
         id="faq-titulo"
       />
 
-      <a
-        href={ctaLinks.trial}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-brand hover:text-brand-strong inline-flex items-center gap-2 self-start text-sm font-semibold transition-colors duration-150"
-      >
-        Falar com a equipe
-        <svg
-          width="15"
-          height="15"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+      <!-- Cartão de saída: quem chega ao fim das perguntas sem resposta tem
+           para onde ir sem voltar ao topo. -->
+      <div class="ds-faq-ask ds-reveal">
+        <span class="ds-faq-ping" aria-hidden="true"></span>
+        <p class="text-ink text-sm font-semibold">Ainda com dúvida?</p>
+        <p class="text-ink-soft mt-1 text-[0.8125rem] leading-relaxed">
+          A equipe responde no WhatsApp de segunda a sábado, dentro do horário da escola.
+        </p>
+        <a
+          href={ctaLinks.trial}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-brand hover:text-brand-strong group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold"
         >
-          <path d="M5 12h13M12 5l7 7-7 7"></path>
-        </svg>
-      </a>
+          Falar com a equipe
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="ds-arrow"
+          >
+            <path d="M5 12h13M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+        <p class="ds-mono text-ink-muted/70 mt-4 text-[0.6875rem]">{site.address}</p>
+      </div>
     </div>
 
-    <ul class="ds-reveal flex flex-col">
+    <!-- ── Perguntas ─────────────────────────────────────────────────── -->
+    <ul class="ds-reveal col-span-full flex flex-col lg:col-span-8">
       {
         faq.map((item, index) => (
           <li>
             <details class="ds-faq" name="faq" open={index === 0}>
               <summary class="ds-faq-summary">
-                <span class="text-ink text-[0.9375rem] font-semibold">{item.question}</span>
+                <span class="ds-faq-num">{String(index + 1).padStart(2, '0')}</span>
+                <span class="ds-faq-q">{item.question}</span>
                 <span class="ds-faq-icon" aria-hidden="true" />
               </summary>
               <div class="ds-faq-body">
-                <p class="text-ink-soft pb-5 text-[0.9375rem] leading-relaxed">{item.answer}</p>
+                <p class="ds-faq-a">{item.answer}</p>
               </div>
             </details>
           </li>
@@ -58,33 +73,125 @@ import { ctaLinks } from '../../data/site';
 </section>
 
 <style>
+  .ds-grid {
+    row-gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .ds-faq-aside {
+      position: sticky;
+      top: 7rem;
+      align-self: start;
+    }
+  }
+
+  /* ── Cartão de contacto ─────────────────────────────────────────────── */
+  .ds-faq-ask {
+    position: relative;
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    background-color: var(--color-surface-alt);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+  }
+
+  .ds-faq-ping {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-lime);
+    box-shadow: 0 0 0 0 rgba(180, 244, 97, 0.7);
+    animation: ds-faq-ping 2.6s ease-out infinite;
+  }
+
+  @keyframes ds-faq-ping {
+    70% {
+      box-shadow: 0 0 0 8px rgba(180, 244, 97, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(180, 244, 97, 0);
+    }
+  }
+
+  /* ── Item ───────────────────────────────────────────────────────────── */
   .ds-faq {
-    border-bottom: 1px solid var(--color-brand-soft);
+    position: relative;
+    border-bottom: 1px solid var(--color-brand-100);
+    transition: background-color var(--dur-base) var(--ease);
+  }
+
+  /* Barra de acento à esquerda do item aberto — cresce em vez de aparecer */
+  .ds-faq::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1.25rem;
+    width: 2px;
+    background: linear-gradient(180deg, var(--color-brand-400), var(--color-brand));
+    transform: scaleY(0);
+    transform-origin: center top;
+    transition: transform var(--dur-base) var(--ease-card);
+  }
+
+  .ds-faq[open]::before {
+    transform: scaleY(1);
   }
 
   .ds-faq-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-block: 1.25rem;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-block: 1.375rem;
     cursor: pointer;
     list-style: none;
-    transition: color 0.15s ease;
   }
 
   .ds-faq-summary::-webkit-details-marker {
     display: none;
   }
 
-  .ds-faq-summary:hover span:first-child {
+  .ds-faq-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .ds-faq[open] .ds-faq-num {
     color: var(--color-brand);
   }
 
-  /* Sinal de +/− desenhado em CSS: sem SVG extra e anima só com transform */
+  .ds-faq-q {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .ds-faq-summary:hover .ds-faq-q {
+    color: var(--color-brand);
+  }
+
+  .ds-faq-a {
+    grid-column: 2;
+    max-width: 42rem;
+    margin-left: 3rem;
+    padding-bottom: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+
+  /* Sinal de +/− desenhado em CSS: anima só com transform */
   .ds-faq-icon {
     position: relative;
-    flex: 0 0 auto;
+    align-self: center;
     width: 14px;
     height: 14px;
   }
@@ -98,7 +205,7 @@ import { ctaLinks } from '../../data/site';
     border-radius: 2px;
     background-color: var(--color-brand);
     transform: translateY(-50%);
-    transition: transform 0.3s var(--ease-out-expo);
+    transition: transform var(--dur-base) var(--ease-card);
   }
 
   .ds-faq-icon::after {
@@ -109,16 +216,16 @@ import { ctaLinks } from '../../data/site';
     transform: translateY(-50%) rotate(0deg);
   }
 
-  /* Abertura fluida onde `interpolate-size` existe; degrada para corte seco */
+  /* Abertura fluida onde `interpolate-size` existe */
   @supports (interpolate-size: allow-keywords) {
     .ds-faq::details-content {
       block-size: 0;
       overflow: hidden;
       opacity: 0;
       transition:
-        block-size 0.35s var(--ease-out-expo),
-        content-visibility 0.35s allow-discrete,
-        opacity 0.25s ease;
+        block-size var(--dur-base) var(--ease-card),
+        content-visibility var(--dur-base) allow-discrete,
+        opacity var(--dur-fast) var(--ease);
     }
 
     .ds-faq[open]::details-content {
