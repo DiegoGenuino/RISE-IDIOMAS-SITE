@@ -421,3 +421,79 @@ Restam GSAP core e SplitText, só para os títulos.
 
 Numeração mono, barra de acento a crescer no item aberto, e um cartão "ainda
 com dúvida?" na coluna fixa para quem chega ao fim sem resposta.
+
+---
+
+## v7 — globo, mapa, rodapé e limpeza de gradientes
+
+### Globo do hero
+
+`cobe` (13 KB, ~5 KB gzip): geometria real dos continentes amostrada em pontos,
+iluminação difusa, rotação contínua e arrasto com inércia. Marcadores nos três
+lugares que a página já menciona — a escola, Cambridge e Michigan.
+
+**Por que não three.js:** um globo com textura fotográfica exigiria a biblioteca
+(~600 KB) mais os mapas de textura (~1 MB) — cerca de 300× o peso, para um
+elemento decorativo. Se a textura fotográfica for um requisito, é uma troca
+consciente a fazer, não um detalhe de implementação.
+
+⚠️ **Não verificável por screenshot aqui:** o renderizador por software do
+Chrome headless não amostra a textura do mapa do cobe — a config canónica da
+própria biblioteca também sai como esfera lisa neste ambiente. Numa GPU real os
+continentes aparecem. Se ficarem fracos, o número a mexer é `mapBrightness` em
+`src/scripts/globe.ts` (mais alto = continentes mais claros), em par com
+`--globe-base` no `Hero.astro`.
+
+### Gradientes azuis removidos
+
+Saíram: a malha WebGL do hero (`MeshGradient.astro` + `meshGradient.ts`), o
+gradiente de fundo do hero, as costuras entre seções (`ds-seam-*`, que
+desenhavam faixas de neblina nas fronteiras) e os halos radiais do quiz e do
+CTA. As seções passaram a cores chapadas.
+
+Mantidos os lavados de gradiente dos cartões do bento — foram pedidos
+explicitamente e são por cartão, não fundo de seção.
+
+### Header
+
+Some ao primeiro gesto para baixo, mas só volta depois de **140 px acumulados
+de subida**. Antes bastava qualquer recuo e a barra saltava de volta a meio da
+leitura. Sempre visível nos primeiros 80 px e com o menu aberto.
+
+### Motion dos sliders
+
+- **Um indicador que viaja** entre as abas, em vez de uma barra por aba a
+  crescer no lugar — nos depoimentos e na metodologia. Posicionado em píxeis
+  pelo JS, animado por `transform`.
+- **Transição direcional:** o painel que sai desliza no sentido oposto ao da
+  navegação. Quem avança vê o depoimento anterior sair pela esquerda.
+- **Cascata dentro do painel:** marca de citação, texto e autor entram com
+  70 ms entre si.
+- Os indicadores são reposicionados em `ResizeObserver` e após
+  `document.fonts.ready` — são medidas em píxeis e a fonte real muda a largura
+  dos rótulos.
+
+### CTA com mapa
+
+Três passos numerados (escolher idioma → agendar → começar), os dois CTAs de
+idioma, e um cartão com mapa, endereço, horários e dois botões.
+
+⚠️ **O embed do mapa precisa de um acerto.** Usa
+`maps.google.com/maps?q=…&output=embed`, que funciona sem chave de API, mas o
+pin vem da busca por "Rise Idiomas, Vila Carrão" — não do perfil verificado da
+escola. Para o pin oficial: Google Business Profile → Partilhar → Incorporar um
+mapa, e trocar a `src` do iframe em `src/sections/cta/CTA.astro`.
+
+O iframe é `loading="lazy"`: nada do Google é pedido enquanto o visitante está
+no topo da página.
+
+### Rodapé
+
+Referência: o wordmark gigante ancorado no fim da página — o gesto que Vercel,
+Linear e Framer usam para fechar o scroll com a marca. A palavra é contorno e
+preenche-se de baixo para cima ao hover (anima `background-size`, sem tocar em
+layout). O `master` já tinha essa intenção num marquee de "RISE"; aqui ela volta
+como assinatura única.
+
+Acima dela: faixa de newsletter, três colunas de links, e a barra legal com o
+relógio de São Paulo e os idiomas.

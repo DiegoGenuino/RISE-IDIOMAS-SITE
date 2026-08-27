@@ -1,131 +1,254 @@
 ---
 import Button from '../../components/ui/Button.astro';
-import { ctaLinks, site } from '../../data/site';
+import { ctaLinks, site, whatsappLink } from '../../data/site';
+
+/**
+ * CTA final com mapa.
+ *
+ * ⚠️ O embed usa `maps.google.com/maps?q=…&output=embed`, que funciona sem
+ * chave de API. Localiza a escola, mas o pin vem da busca — não do perfil da
+ * Rise. Para o pin oficial, trocar a `src` pelo código que o Google Business
+ * Profile dá em Partilhar → Incorporar um mapa. Ver README-REDESIGN.md.
+ *
+ * O iframe é `loading="lazy"`: nada do Google é pedido enquanto o visitante
+ * está no topo da página.
+ */
+const mapQuery = encodeURIComponent('Rise Idiomas, Vila Carrão, São Paulo, SP');
+const mapSrc = `https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed&hl=pt-BR`;
+
+const steps = [
+  {
+    label: 'Escolha o idioma',
+    detail: 'Inglês, espanhol ou português — e o programa que combina com o seu objetivo.',
+  },
+  {
+    label: 'Agende a experimental',
+    detail: 'Uma aula para conhecer o método e confirmar o seu nível com um professor.',
+  },
+  {
+    label: 'Comece a sua trilha',
+    detail: 'Turma ou individual, com o plano montado a partir do que você precisa.',
+  },
+];
 ---
 
-<section
-  id="contato"
-  class="ds-dark ds-seam-t bg-abyss relative overflow-hidden py-20 text-white lg:py-28"
-  style="--seam-from: var(--color-surface)"
->
-  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-50" aria-hidden="true">
+<section id="contato" class="ds-dark bg-abyss relative overflow-hidden text-white">
+  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
   </div>
-  <div class="ds-cta-glow pointer-events-none absolute" aria-hidden="true"></div>
+  <div class="ds-grain-layer" aria-hidden="true"></div>
 
-  <div
-    class="ds-shell relative grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16"
-  >
-    <!-- Chamada -->
-    <div class="ds-reveal flex flex-col items-start gap-6">
+  <div class="ds-shell ds-grid relative items-stretch py-20 lg:py-28">
+    <!-- ── Chamada ───────────────────────────────────────────────────── -->
+    <div class="ds-reveal col-span-full flex flex-col lg:col-span-6">
       <div class="flex items-center gap-3">
         <span class="ds-mono text-aqua">Próximo passo</span>
         <span class="bg-abyss-line h-px w-10" aria-hidden="true"></span>
       </div>
 
-      <h2 class="text-display max-w-xl font-semibold text-white">
+      <h2 data-split class="text-display mt-4 max-w-xl font-semibold text-white">
         Preparado para dar um salto na sua carreira?
       </h2>
 
-      <p class="text-lead text-abyss-ink max-w-lg">
-        Escolha o idioma e fale direto com a equipe. A conversa começa pelo seu objetivo — não por
-        um formulário.
-      </p>
+      <!-- Três passos: tira do CTA o ar de botão solto e diz o que acontece
+           depois do clique. -->
+      <ol class="ds-cta-steps">
+        {
+          steps.map((step, index) => (
+            <li class="ds-cta-step">
+              <span class="ds-cta-num">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <p class="text-[0.9375rem] font-semibold text-white">{step.label}</p>
+                <p class="text-abyss-ink mt-1 text-[0.8125rem] leading-relaxed">{step.detail}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
 
-      <div class="flex flex-wrap gap-3">
+      <div class="mt-9 flex flex-wrap gap-3">
         <Button href={ctaLinks.english} size="lg">Interesse em Inglês</Button>
         <Button href={ctaLinks.spanish} variant="onDark" size="lg">Interesse em Espanhol</Button>
       </div>
-
-      <p class="ds-mono text-abyss-ink/60">
-        Também ensinamos {site.languages.join(' · ')}
-      </p>
     </div>
 
-    <!-- Cartão de localização -->
-    <div class="ds-reveal">
+    <!-- ── Mapa e visita ─────────────────────────────────────────────── -->
+    <div class="ds-reveal col-span-full lg:col-span-6">
       <div class="ds-place">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <span class="ds-mono text-aqua">Unidade</span>
-            <p class="mt-2 text-lg font-semibold text-white">{site.address}</p>
-          </div>
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            class="text-brand-soft/70 shrink-0"
-          >
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
+        <div class="ds-map">
+          <iframe
+            src={mapSrc}
+            title={`Mapa da Rise Idiomas em ${site.address}`}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+          <a class="ds-map-open" href={site.mapsUrl} target="_blank" rel="noopener noreferrer">
+            Abrir no Maps
+            <svg
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 17 17 7M9 7h8v8"></path>
+            </svg>
+          </a>
         </div>
 
-        <dl class="border-abyss-line/60 mt-6 flex flex-col gap-2.5 border-t pt-5">
-          {
-            site.hours.map((entry) => (
-              <div class="flex items-center justify-between gap-4">
-                <dt class="text-abyss-ink text-sm">{entry.days}</dt>
-                <dd class="font-mono text-sm font-semibold text-white">{entry.time}</dd>
-              </div>
-            ))
-          }
-        </dl>
+        <div class="ds-place-body">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span class="ds-mono text-aqua">Venha conhecer</span>
+              <p class="mt-2 text-lg font-semibold text-white">{site.address}</p>
+            </div>
+            <span class="ds-place-open">
+              <span class="ds-place-dot" aria-hidden="true"></span>
+              Presencial
+            </span>
+          </div>
 
-        <Button href={site.mapsUrl} variant="onDark" class="mt-6 w-full">
-          Ver no mapa
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M7 17 17 7M9 7h8v8"></path>
-          </svg>
-        </Button>
+          <dl class="border-abyss-line/60 mt-5 flex flex-col gap-2.5 border-t pt-5">
+            {
+              site.hours.map((entry) => (
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-abyss-ink text-sm">{entry.days}</dt>
+                  <dd class="font-mono text-sm font-semibold text-white">{entry.time}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <div class="mt-auto flex flex-wrap gap-2 pt-6">
+            <Button href={site.mapsUrl} variant="onDark" size="sm">Como chegar</Button>
+            <Button
+              href={whatsappLink('Olá, vim pelo site e quero agendar uma visita à escola.')}
+              variant="onDark"
+              size="sm"
+            >
+              Agendar uma visita
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .ds-cta-glow {
-    right: -8%;
-    bottom: -40%;
-    width: 42rem;
-    max-width: 85vw;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(83, 58, 253, 0.4) 0%, transparent 62%);
-    filter: blur(40px);
+  .ds-grid {
+    row-gap: 3rem;
   }
 
-  :global(html[data-audience='young']) .ds-cta-glow {
-    background: radial-gradient(circle, rgba(234, 34, 97, 0.32) 0%, transparent 62%);
+  /* ── Passos ─────────────────────────────────────────────────────────── */
+  .ds-cta-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+    list-style: none;
   }
 
+  .ds-cta-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-abyss-line) 60%, transparent);
+  }
+
+  .ds-cta-step:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .ds-cta-num {
+    flex: 0 0 auto;
+    padding-top: 0.15rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-aqua);
+  }
+
+  /* ── Cartão do lugar ────────────────────────────────────────────────── */
   .ds-place {
-    padding: 1.75rem;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      var(--shadow-float);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-abyss-line) 80%, transparent);
+  }
+
+  .ds-map {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background-color: var(--color-abyss-mid);
+  }
+
+  .ds-map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    /* O mapa do Google é claro e berrante ao lado de uma seção escura.
+       Dessaturar e escurecer alinha-o com o resto sem esconder ruas nem
+       rótulos. */
+    filter: grayscale(0.35) contrast(1.05) brightness(0.82) saturate(0.9);
+  }
+
+  .ds-map-open {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.7rem;
+    background-color: color-mix(in srgb, var(--color-abyss-deep) 88%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-abyss-line) 90%, transparent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+
+  .ds-map-open:hover {
+    background-color: var(--color-brand);
+  }
+
+  .ds-place-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .ds-place-open {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    background-color: rgba(180, 244, 97, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(180, 244, 97, 0.3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-lime);
+  }
+
+  .ds-place-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-lime);
   }
 </style>

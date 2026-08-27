@@ -1,8 +1,18 @@
 ---
-import riseLogo from '../../assets/shared/rise-logo.svg';
 import NewsletterForm from '../../components/newsletter/NewsletterForm.astro';
 import { site, socialLinks, whatsappLink } from '../../data/site';
 
+/**
+ * Rodapé.
+ *
+ * Referência: o padrão de wordmark gigante ancorado no fim da página — o gesto
+ * que Vercel, Linear e Framer usam para fechar o scroll com a marca em vez de
+ * uma linha de copyright. A versão anterior era quatro colunas de links e mais
+ * nada, e o site acabava sem assinatura.
+ *
+ * O `master` já tinha essa intenção num marquee de "RISE" em contorno; aqui ela
+ * volta como uma palavra só, à largura do container, que se preenche ao hover.
+ */
 const currentYear = new Date().getFullYear();
 
 const columns = [
@@ -20,9 +30,9 @@ const columns = [
     title: 'Explorar',
     links: [
       { label: 'Metodologia', href: '/#metodologia' },
+      { label: 'Trilha A1–C2', href: '/#trilha' },
       { label: 'Teste de nível', href: '/#nivel' },
       { label: 'Planos', href: '/#planos' },
-      { label: 'Depoimentos', href: '/#depoimentos' },
       { label: 'Blog', href: '/blog' },
     ],
   },
@@ -48,28 +58,34 @@ const socialPaths: Record<string, string> = {
 };
 ---
 
-<footer class="ds-dark border-abyss-line/50 bg-abyss-deep border-t text-white">
-  <div
-    class="ds-shell grid gap-12 py-16 lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,1fr))] lg:gap-10 lg:py-20"
-  >
-    <!-- Marca -->
-    <div class="flex flex-col gap-5">
-      <a href="/" class="flex w-fit items-center gap-3" aria-label="Rise Idiomas — início">
-        <span class="grid h-10 w-10 place-items-center rounded-sm bg-white">
-          <img src={riseLogo.src} alt="" width="24" height="20" class="h-5 w-auto" loading="lazy" />
-        </span>
-        <span class="text-[0.9375rem] font-bold tracking-tight text-white">Rise Idiomas</span>
-      </a>
+<footer class="ds-dark bg-abyss-deep relative overflow-hidden text-white">
+  <div class="ds-grain-layer" aria-hidden="true"></div>
 
+  <!-- ── Newsletter ────────────────────────────────────────────────────── -->
+  <div class="border-abyss-line/40 relative border-b">
+    <div class="ds-shell ds-grid items-center py-14">
+      <div class="col-span-full lg:col-span-6">
+        <p class="text-title max-w-sm font-semibold text-white">
+          Uma dose de idioma na sua caixa de entrada
+        </p>
+        <p class="text-abyss-ink mt-3 max-w-sm text-sm leading-relaxed">
+          Vocabulário, cultura e método — o que a equipe escreve entre uma turma e outra. Sem spam.
+        </p>
+      </div>
+
+      <div class="col-span-full flex lg:col-span-6 lg:justify-end">
+        <NewsletterForm />
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Links ─────────────────────────────────────────────────────────── -->
+  <div class="ds-shell ds-grid relative items-start py-14">
+    <div class="col-span-full flex flex-col gap-6 lg:col-span-3">
       <p class="text-abyss-ink max-w-xs text-sm leading-relaxed">
         Transformamos a maneira como você aprende uma segunda língua — uma jornada mais leve e
         eficaz, com foco em você e no seu crescimento.
       </p>
-
-      <div class="flex flex-col gap-2">
-        <span class="ds-mono text-abyss-ink/60">Newsletter</span>
-        <NewsletterForm />
-      </div>
 
       <ul class="flex gap-2">
         {
@@ -80,7 +96,7 @@ const socialPaths: Record<string, string> = {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                class="text-abyss-ink ring-abyss-line/70 grid h-9 w-9 place-items-center rounded-sm ring-1 transition-[color,background-color] duration-200 ring-inset hover:bg-white/10 hover:text-white"
+                class="ds-social"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -98,11 +114,10 @@ const socialPaths: Record<string, string> = {
       </ul>
     </div>
 
-    <!-- Colunas de links -->
     {
       columns.map((column) => (
-        <nav aria-label={column.title} class="flex flex-col gap-4">
-          <h2 class="ds-mono text-abyss-ink/60">{column.title}</h2>
+        <nav aria-label={column.title} class="col-span-2 flex flex-col gap-4 lg:col-span-3">
+          <h2 class="ds-mono text-abyss-ink/50">{column.title}</h2>
           <ul class="flex flex-col gap-2.5">
             {column.links.map((link) => {
               const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
@@ -112,7 +127,7 @@ const socialPaths: Record<string, string> = {
                     href={link.href}
                     target={external ? '_blank' : undefined}
                     rel={external ? 'noopener noreferrer' : undefined}
-                    class="text-abyss-ink text-sm transition-colors duration-150 hover:text-white"
+                    class="ds-foot-link"
                   >
                     {link.label}
                   </a>
@@ -125,22 +140,27 @@ const socialPaths: Record<string, string> = {
     }
   </div>
 
-  <!-- Rodapé legal -->
-  <div class="border-abyss-line/50 border-t">
+  <!-- ── Assinatura ─────────────────────────────────────────────────────
+       Puro contorno; o preenchimento acende de baixo para cima ao hover.
+       `aria-hidden` porque o nome da marca já está no link do topo — aqui
+       é ornamento, não conteúdo.                                        -->
+  <div class="ds-wordmark-wrap">
+    <p class="ds-wordmark" aria-hidden="true">RISE</p>
+  </div>
+
+  <!-- ── Legal ─────────────────────────────────────────────────────────── -->
+  <div class="border-abyss-line/40 relative border-t">
     <div
-      class="ds-shell flex flex-col items-center justify-between gap-4 py-6 text-center sm:flex-row sm:text-left"
+      class="ds-shell flex flex-col items-center justify-between gap-3 py-6 text-center sm:flex-row sm:text-left"
     >
-      <p class="ds-mono text-abyss-ink/60">
-        © {currentYear} Rise Idiomas · {site.address}
-      </p>
+      <p class="ds-mono text-abyss-ink/50">© {currentYear} Rise Idiomas · {site.address}</p>
 
       <div class="flex items-center gap-5">
-        <span class="ds-mono text-abyss-ink/60 flex items-center gap-2">
+        <span class="ds-mono text-abyss-ink/50 flex items-center gap-2">
           <span class="ds-clock-dot" aria-hidden="true"></span>
           São Paulo <span id="rise-clock" class="text-white">--:--</span>
         </span>
-
-        <span class="ds-mono text-abyss-ink/60" title="Idiomas ensinados na Rise">
+        <span class="ds-mono text-abyss-ink/50" title="Idiomas ensinados na Rise">
           {site.languages.map((language) => language.slice(0, 3).toUpperCase()).join(' / ')}
         </span>
       </div>
@@ -167,6 +187,102 @@ const socialPaths: Record<string, string> = {
 </script>
 
 <style>
+  .ds-grid {
+    row-gap: 2.5rem;
+  }
+
+  /* ── Social ─────────────────────────────────────────────────────────── */
+  .ds-social {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--color-abyss-ink);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-abyss-line) 80%, transparent);
+    transition:
+      color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease),
+      transform var(--dur-base) var(--ease-card);
+  }
+
+  .ds-social:hover {
+    color: var(--color-abyss-deep);
+    background-color: #fff;
+    transform: translate3d(0, -2px, 0);
+  }
+
+  /* ── Links ──────────────────────────────────────────────────────────── */
+  .ds-foot-link {
+    position: relative;
+    display: inline-block;
+    font-size: 0.875rem;
+    color: var(--color-abyss-ink);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  /* Sublinhado que cresce da esquerda — só transform. */
+  .ds-foot-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-base) var(--ease-card);
+  }
+
+  .ds-foot-link:hover {
+    color: #fff;
+  }
+
+  .ds-foot-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* ── Wordmark ───────────────────────────────────────────────────────── */
+  .ds-wordmark-wrap {
+    position: relative;
+    padding-inline: clamp(1rem, 4vw, 3rem);
+    overflow: hidden;
+  }
+
+  .ds-wordmark {
+    margin: 0;
+    /* Acompanha a largura da janela em vez de ter um tamanho fixo. */
+    font-size: clamp(5rem, 27vw, 22rem);
+    line-height: 0.85;
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    text-align: center;
+    user-select: none;
+
+    color: transparent;
+    -webkit-text-stroke: 1.25px color-mix(in srgb, var(--color-brand-400) 55%, transparent);
+    /* O preenchimento é uma faixa de altura zero ancorada em baixo; no hover
+       ela sobe até cobrir a palavra. Anima background-size, que não mexe em
+       layout nenhum. */
+    background-image: linear-gradient(180deg, var(--color-brand-400), var(--color-aqua));
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 100% 0%;
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+    transition:
+      background-size var(--dur-scene) var(--ease-card),
+      -webkit-text-stroke-color var(--dur-base) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .ds-wordmark-wrap:hover .ds-wordmark {
+      background-size: 100% 100%;
+      -webkit-text-stroke-color: transparent;
+    }
+  }
+
+  /* ── Relógio ────────────────────────────────────────────────────────── */
   .ds-clock-dot {
     width: 6px;
     height: 6px;

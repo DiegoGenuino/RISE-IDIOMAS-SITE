@@ -338,69 +338,6 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
-/* Costura entre seções: em vez de duas cores a bater numa linha reta, a cor
-   da seção anterior entra alguns rem na seguinte e dissolve. É o que dá
-   continuidade vertical ao scroll na Stripe. A cor de origem chega em
-   --seam-from, definida no próprio elemento. */
-@utility ds-seam {
-  position: relative;
-}
-
-@utility ds-seam-t {
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 7rem;
-    /* Rampa em três paradas em vez de linear: uma interpolação linear entre
-       cor e transparente lê-se como uma faixa chapada de neblina. Cair mais
-       depressa no meio dá a dissolução suave. */
-    background: linear-gradient(
-      to bottom,
-      var(--seam-from, transparent) 0%,
-      color-mix(in srgb, var(--seam-from, transparent) 38%, transparent) 42%,
-      transparent 100%
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-}
-
-@utility ds-seam-b {
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: 7rem;
-    background: linear-gradient(
-      to top,
-      var(--seam-to, transparent) 0%,
-      color-mix(in srgb, var(--seam-to, transparent) 38%, transparent) 42%,
-      transparent 100%
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-}
-
-/* Dissolve a fronteira entre uma seção e a seguinte, em vez de as encostar
-   numa linha reta. É o que dá continuidade vertical ao scroll. */
-@utility ds-fade-b {
-  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
-}
-
-@utility ds-fade-t {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
-}
-
 /* ═════════════════════════════════════════════════════════════════════════
    CARTÕES
    Um só lugar define o material dos cartões — superfície, borda de 1px por

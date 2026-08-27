@@ -8,12 +8,7 @@ import { ctaLinks } from '../../data/site';
 const hasPrices = plans.some((plan) => plan.priceMonthly !== null);
 ---
 
-<section
-  id="planos"
-  class="bg-surface-alt ds-seam-t py-20 lg:py-28"
-  aria-labelledby="planos-titulo"
-  style="--seam-from: var(--color-abyss)"
->
+<section id="planos" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="planos-titulo">
   <div class="ds-shell flex flex-col gap-12">
     <div class="ds-reveal flex flex-col items-center gap-7">
       <SectionHeading

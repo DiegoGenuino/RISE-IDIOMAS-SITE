@@ -1,10 +1,9 @@
 import { initAudience } from './audience';
 import { initBurst } from './burst';
-import { initMeshGradient } from './meshGradient';
 import { initMethodology } from './methodology';
 import { initModals } from './modals';
 import { initNav } from './nav';
-import { initOrbit } from './orbit';
+import { initGlobe } from './globe';
 import { initPricing } from './pricing';
 import { initReveal } from './reveal';
 import { initQuotes } from './quotes';
@@ -23,10 +22,9 @@ export function initHome(): void {
   document.documentElement.classList.remove('no-js');
 
   initAudience();
-  initMeshGradient();
   initSmoothScroll();
   initNav();
-  initOrbit();
+  initGlobe();
   initModals();
   initPricing();
   initSpotlight();

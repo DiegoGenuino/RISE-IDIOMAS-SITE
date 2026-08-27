@@ -31,28 +31,38 @@ export function initNav(): void {
   }
 
   // ── Esconder ao descer, revelar ao subir ──────────────────────────────
-  // Direto no handler passivo, sem rAF a intermediar: ler `scrollY` durante um
-  // evento de scroll não força layout (a posição já está resolvida), e o resto
-  // é alternar um atributo. O rAF só acrescentava um ponto de falha — em
-  // contextos onde ele é estrangulado, a barra deixava de responder.
+  // A barra some ao primeiro gesto para baixo, mas só volta depois de um
+  // gesto de subida com intenção: acumula-se a distância percorrida para cima
+  // e a barra só reaparece ao passar de UP_TO_REVEAL. Sem isso, o mais leve
+  // recuo do scroll fazia a barra saltar de volta a meio da leitura.
+  const UP_TO_REVEAL = 140;
+  const HOME_ZONE = 80;
+
   let lastY = window.scrollY;
+  let upTravel = 0;
 
   window.addEventListener(
     'scroll',
     () => {
       const y = window.scrollY;
       const delta = y - lastY;
+      lastY = y;
 
-      if (y <= 80 || isOpen) {
-        // Junto ao topo, e com o painel aberto, a barra está sempre visível.
+      // Junto ao topo, e com o painel aberto, a barra está sempre visível.
+      if (y <= HOME_ZONE || isOpen) {
+        upTravel = 0;
         nav?.removeAttribute('data-hidden');
-      } else if (Math.abs(delta) > 4) {
-        // A folga de 4px evita que o tremor do trackpad faça a barra piscar.
-        if (delta > 0) nav?.setAttribute('data-hidden', '');
-        else nav?.removeAttribute('data-hidden');
+        return;
       }
 
-      lastY = y;
+      if (delta > 0) {
+        // Desceu: esconde já e zera o crédito de subida.
+        upTravel = 0;
+        nav?.setAttribute('data-hidden', '');
+      } else if (delta < 0) {
+        upTravel -= delta;
+        if (upTravel >= UP_TO_REVEAL) nav?.removeAttribute('data-hidden');
+      }
     },
     { passive: true }
   );

@@ -1,5 +1,4 @@
 ---
-import MeshGradient from '../../components/hero/MeshGradient.astro';
 import Button from '../../components/ui/Button.astro';
 import AudienceSwitch from '../../components/ui/AudienceSwitch.astro';
 import { audiences, ctaLinks } from '../../data/site';
@@ -10,8 +9,6 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
 ---
 
 <section id="inicio" class="ds-hero relative isolate overflow-hidden">
-  <MeshGradient />
-
   <div class="ds-shell ds-grid relative items-center pt-30 pb-16 lg:pt-36 lg:pb-24">
     <!-- ── Mensagem ──────────────────────────────────────────────────── -->
     <div
@@ -94,9 +91,10 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
       </ul>
     </div>
 
-    <!-- ── Objeto ────────────────────────────────────────────────────── -->
-    <div class="ds-hero-object col-span-full lg:col-span-5" aria-hidden="true">
-      <canvas class="ds-orbit" data-orbit></canvas>
+    <!-- ── Globo ─────────────────────────────────────────────────────── -->
+    <div class="ds-hero-object col-span-full lg:col-span-5">
+      <canvas class="ds-globe" data-globe aria-label="Globo com a escola e as certificadoras"
+      ></canvas>
     </div>
   </div>
 </section>
@@ -130,46 +128,30 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
   .ds-hero-object {
     position: relative;
     aspect-ratio: 1;
-    /* Reserva o espaço antes do canvas medir — CLS em zero. */
-    min-height: 22rem;
+    /* Reserva o quadrado antes do canvas medir — CLS em zero. */
+    min-height: 20rem;
     animation: ds-hero-sim-in var(--dur-scene) var(--ease-card) 160ms both;
   }
 
-  /* Halo por trás do corpo: dá-lhe volume sem custar mais um frame de canvas */
-  .ds-hero-object::before {
-    content: '';
-    position: absolute;
-    inset: 12%;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-brand) 22%, transparent) 0%,
-      transparent 68%
-    );
-    filter: blur(24px);
-  }
-
-  :global(html[data-audience='young']) .ds-hero-object::before {
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-magenta) 24%, transparent) 0%,
-      transparent 68%
-    );
-  }
-
-  .ds-orbit {
-    position: absolute;
-    inset: 0;
+  .ds-globe {
     width: 100%;
     height: 100%;
-    /* Cores lidas pelo script; trocam com o perfil. */
-    --orbit-core: 127, 125, 252;
-    --orbit-edge: 69, 209, 255;
+    aspect-ratio: 1;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity var(--dur-scene) var(--ease);
+    /* Lidas pelo script. */
+    --globe-base: 216, 221, 250;
+    --globe-marker: 83, 58, 253;
+    --globe-glow: 243, 245, 255;
   }
 
-  :global(html[data-audience='young']) .ds-orbit {
-    --orbit-core: 249, 107, 238;
-    --orbit-edge: 255, 207, 94;
+  .ds-globe[data-globe-ready] {
+    opacity: 1;
+  }
+
+  :global(html[data-audience='young']) .ds-globe {
+    --globe-marker: 234, 34, 97;
   }
 
   @keyframes ds-hero-in {

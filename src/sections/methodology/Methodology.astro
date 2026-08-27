@@ -17,8 +17,7 @@ import { ctaLinks } from '../../data/site';
 
 <section
   id="metodologia"
-  class="bg-surface-alt ds-seam-t py-20 lg:py-28"
-  style="--seam-from: var(--color-abyss-deep)"
+  class="bg-surface-alt py-20 lg:py-28"
   aria-labelledby="metodologia-titulo"
 >
   <div class="ds-shell ds-grid items-start">
@@ -38,6 +37,8 @@ import { ctaLinks } from '../../data/site';
       </h2>
 
       <div class="ds-tabs ds-reveal" role="tablist" aria-label="Pilares da metodologia">
+        <span class="ds-tab-track" aria-hidden="true"></span>
+        <span class="ds-tab-thumb" data-tab-thumb aria-hidden="true"></span>
         {
           pillars.map((pillar, index) => (
             <button
@@ -49,7 +50,6 @@ import { ctaLinks } from '../../data/site';
               aria-controls={`pilar-${index}`}
               tabindex={index === 0 ? 0 : -1}
             >
-              <span class="ds-tab-rail" aria-hidden="true" />
               <span class="ds-tab-index">{pillar.index}</span>
               <span class="ds-tab-label">{pillar.title}</span>
             </button>
@@ -70,9 +70,15 @@ import { ctaLinks } from '../../data/site';
             role="tabpanel"
             aria-hidden={index === 0 ? 'false' : 'true'}
           >
-            <span class="ds-panel-index">{pillar.index}</span>
-            <h3 class="text-title text-ink mt-6 max-w-lg font-semibold">{pillar.title}</h3>
-            <p class="text-ink-soft text-lead mt-5 max-w-xl">{pillar.description}</p>
+            <span style="--i:0" class="ds-panel-index">
+              {pillar.index}
+            </span>
+            <h3 style="--i:1" class="text-title text-ink mt-6 max-w-lg font-semibold">
+              {pillar.title}
+            </h3>
+            <p style="--i:2" class="text-ink-soft text-lead mt-5 max-w-xl">
+              {pillar.description}
+            </p>
           </div>
         ))
       }
@@ -89,9 +95,39 @@ import { ctaLinks } from '../../data/site';
 
   /* ── Abas ───────────────────────────────────────────────────────────── */
   .ds-tabs {
+    position: relative;
     display: flex;
     flex-direction: column;
     margin-top: 2.5rem;
+  }
+
+  /* Trilho contínuo mais um único indicador que viaja entre os passos —
+     em vez de uma barra por aba a crescer no lugar. */
+  .ds-tab-track {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 2px;
+    background-color: var(--color-brand-100);
+  }
+
+  .ds-tab-thumb {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: var(--thumb-h, 0);
+    background-color: var(--color-brand);
+    transform: translate3d(0, var(--thumb-y, 0), 0);
+    transition:
+      transform var(--dur-base) var(--ease-card),
+      height var(--dur-base) var(--ease-card),
+      opacity var(--dur-fast) var(--ease);
+    will-change: transform;
+  }
+
+  .ds-tabs:not([data-ready]) .ds-tab-thumb {
+    opacity: 0;
   }
 
   .ds-tab {
@@ -109,29 +145,6 @@ import { ctaLinks } from '../../data/site';
 
   .ds-tab:hover {
     color: var(--color-ink);
-  }
-
-  /* Trilho contínuo à esquerda; o segmento ativo é pintado por cima. */
-  .ds-tab-rail {
-    position: absolute;
-    inset-block: 0;
-    left: 0;
-    width: 2px;
-    background-color: var(--color-brand-100);
-  }
-
-  .ds-tab-rail::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-brand);
-    transform: scaleY(0);
-    transform-origin: center top;
-    transition: transform var(--dur-base) var(--ease-card);
-  }
-
-  .ds-tab[aria-selected='true'] .ds-tab-rail::after {
-    transform: scaleY(1);
   }
 
   .ds-tab-index {
@@ -169,11 +182,18 @@ import { ctaLinks } from '../../data/site';
     grid-area: 1 / 1;
     opacity: 0;
     visibility: hidden;
-    transform: translate3d(0, 10px, 0);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-fast) var(--ease),
+      visibility 0s linear var(--dur-base);
+  }
+
+  .ds-panel > * {
+    opacity: 0;
+    transform: translate3d(1.25rem, 0, 0);
     transition:
       opacity var(--dur-base) var(--ease-card),
-      transform var(--dur-base) var(--ease-card),
-      visibility 0s linear var(--dur-base);
+      transform var(--dur-base) var(--ease-card);
   }
 
   .ds-panels {
@@ -189,11 +209,16 @@ import { ctaLinks } from '../../data/site';
   .ds-panel[data-active] {
     opacity: 1;
     visibility: visible;
-    transform: translate3d(0, 0, 0);
+    pointer-events: auto;
     transition:
-      opacity var(--dur-base) var(--ease-card),
-      transform var(--dur-base) var(--ease-card),
+      opacity var(--dur-fast) var(--ease),
       visibility 0s linear 0s;
+  }
+
+  .ds-panel[data-active] > * {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition-delay: calc(var(--i, 0) * 70ms);
   }
 
   .ds-panel-index {

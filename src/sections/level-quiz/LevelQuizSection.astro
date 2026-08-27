@@ -7,13 +7,11 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
 <section
   id="nivel"
-  class="ds-dark ds-seam-t bg-abyss relative overflow-hidden py-20 text-white lg:py-28"
-  style="--seam-from: var(--color-surface-alt)"
+  class="ds-dark bg-abyss relative overflow-hidden py-20 text-white lg:py-28"
   aria-labelledby="nivel-titulo"
 >
   <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
   </div>
-  <div class="ds-quiz-glow pointer-events-none absolute" aria-hidden="true"></div>
 
   <div
     class="ds-shell relative grid items-center gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16"
@@ -58,15 +56,4 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   </div>
 </section>
 
-<style>
-  .ds-quiz-glow {
-    top: -20%;
-    left: -10%;
-    width: 40rem;
-    max-width: 80vw;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(83, 58, 253, 0.35) 0%, transparent 65%);
-    filter: blur(40px);
-  }
-</style>
+<style></style>
