@@ -243,13 +243,25 @@ depender de onde o ruído calhou de estar.
 Revelação caractere a caractere com blur, como pedido. Três diferenças em
 relação ao exemplo de referência:
 
-1. O `visibility: hidden` é armado por um script inline no `<head>` **com
-   failsafe de 2,5 s**. Sem isso, uma falha no bundle deixaria os títulos
-   invisíveis para sempre.
+1. O estado inicial é `visibility: hidden` **estático em CSS**, e quem revela é
+   o GSAP ao marcar `data-split-done` no momento em que parte o texto. Assim o
+   título nunca chega a ser pintado antes da animação. As três guardas vivem no
+   próprio seletor, sem depender de JS nenhum:
+
+   ```css
+   @media (prefers-reduced-motion: no-preference) {
+     html:not(.no-js):not(.ds-split-off) [data-split]:not([data-split-done]) {
+       visibility: hidden;
+     }
+   }
+   ```
+
+   `:not(.no-js)` cobre JS desativado, a media query cobre movimento reduzido, e
+   `.ds-split-off` é ligada pelo TS se o GSAP não carregar.
 2. `aria: 'auto'` mantém o título legível por leitores de ecrã.
-3. O split é revertido no fim e há um segundo failsafe que força
-   `timeline.progress(1)` após 4 s — a timeline avança por `requestAnimationFrame`,
-   e há contextos em que o rAF não corre.
+3. O split é revertido no fim e há um failsafe que força `timeline.progress(1)`
+   após 4 s — a timeline avança por `requestAnimationFrame`, e há contextos em
+   que o rAF não corre.
 
 O acento do H1 passou a ser cor sólida: `background-clip: text` não sobrevive ao
 `filter: blur()` por caractere, que cria um novo contexto de pintura. Títulos
@@ -262,8 +274,10 @@ porque o título do hero — que é o elemento de LCP — depende deles. O bundl
 entrada é 35 KB; ScrollTrigger (43 KB) continua fora, carregado só quando as
 cenas de scroll se aproximam.
 
-**Isto atrasa o LCP**: o H1 fica invisível até o GSAP chegar. É o preço da
-animação pedida. Para reverter, basta remover `data-split` do H1 em
+O H1 fica invisível até o GSAP chegar, portanto o LCP passa a ser marcado no
+momento em que o título aparece. Na prática isso depende de quão rápido o GSAP
+carrega — em cache quente é imperceptível. Para tirar o hero da equação sem
+perder o resto, basta remover `data-split` do H1 em
 `src/sections/hero/Hero.astro` — os títulos de seção continuariam animando sem
 custo de LCP, porque só carregam ao entrar na viewport.
 

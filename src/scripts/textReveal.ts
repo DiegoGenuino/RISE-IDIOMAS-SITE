@@ -1,31 +1,20 @@
 /**
  * Revelação de títulos caractere a caractere (GSAP SplitText).
  *
- * Cada título entra desfocado e deslocado, e os caracteres resolvem em
- * cascata. O hero corre no load; os títulos de seção correm ao entrar na
- * viewport, uma vez só.
+ * Os títulos nascem `visibility: hidden` por CSS estático — nunca chegam a ser
+ * pintados antes do split. Quem os revela é o próprio `animate()`, ao marcar
+ * `data-split-done`, que é o atributo que desliga a regra. Não há classe armada
+ * por JS nem script no <head>: o estado inicial é do CSS, e o GSAP só o levanta.
  *
- * Três cuidados que o exemplo de referência não tem:
- *
- *  1. `visibility: hidden` é armado por um script inline no <head>, com um
- *     failsafe de 2,5 s que o remove. Sem isso, qualquer falha no bundle
- *     deixaria os títulos permanentemente invisíveis.
- *  2. `aria: 'auto'` mantém o texto legível por leitores de ecrã — sem isso o
- *     título passa a ser uma sopa de <div> por caractere.
- *  3. O split é revertido no fim de cada animação: o `filter: blur()` por
- *     caractere é caro e não faz sentido continuar a existir depois de zerar.
+ * A regra em global.css já cobre sozinha os casos em que não deve haver
+ * animação nenhuma (sem JS, `prefers-reduced-motion`), portanto aqui só é
+ * preciso tratar a falha do GSAP.
  */
 
 import type { gsap as GsapType } from 'gsap';
 
-const ARMED = 'ds-split-armed';
-
-declare global {
-  interface Window {
-    /** Posto pelo script inline do <head> quando o failsafe de 2,5 s dispara. */
-    __riseSplitTimedOut?: boolean;
-  }
-}
+/** Posta em <html> quando o GSAP não vem — desliga a regra de esconder. */
+const OFF = 'ds-split-off';
 
 type Gsap = typeof GsapType;
 
@@ -46,12 +35,14 @@ function followers(scope: HTMLElement): HTMLElement[] {
 
 function animate(target: HTMLElement): void {
   if (!gsapRef || !SplitTextRef || target.dataset.splitDone === 'true') return;
-  target.dataset.splitDone = 'true';
 
   const gsap = gsapRef;
   const isHero = target.dataset.split === 'hero';
 
-  target.style.visibility = 'visible';
+  // Este atributo é o que revela o elemento: desliga a regra de CSS que o
+  // mantinha invisível. Tudo o que vem a seguir corre na mesma tarefa, sem
+  // paint pelo meio, portanto o texto nunca aparece por inteiro antes do split.
+  target.dataset.splitDone = 'true';
 
   const split = SplitTextRef.create(target, {
     type: 'chars',
@@ -61,8 +52,8 @@ function animate(target: HTMLElement): void {
 
   const after = followers(target);
 
-  // O custo de pintura do blur é proporcional ao raio ao quadrado; 12px já
-  // entrega a leitura de "foco a resolver" a uma fração do preço de 18px.
+  // O custo de pintura do blur cresce com o raio; 12px já entrega a leitura de
+  // "foco a resolver" a uma fração do preço de 18px.
   gsap.set(split.chars, {
     opacity: 0,
     filter: `blur(${isHero ? 12 : 9}px)`,
@@ -78,14 +69,13 @@ function animate(target: HTMLElement): void {
       // O blur por caractere já cumpriu o papel — devolver o DOM ao normal.
       gsap.set(split.chars, { clearProps: 'filter' });
       split.revert();
-      target.style.visibility = '';
     },
   });
 
-  // Rede de segurança: a timeline avança por requestAnimationFrame, e há
-  // contextos onde o rAF não corre (aba em segundo plano no momento do load,
-  // extensões que o bloqueiam, browsers embutidos). Nesses casos o título
-  // ficaria preso a opacidade zero — o que é pior do que não animar de todo.
+  // A timeline avança por requestAnimationFrame, e há contextos onde o rAF não
+  // corre (aba em segundo plano no load, extensões que o bloqueiam, browsers
+  // embutidos). Aí os caracteres ficariam a opacidade zero dentro de um título
+  // já revelado — pior do que não animar de todo.
   const guard = window.setTimeout(() => {
     if (timeline.progress() < 1) timeline.progress(1);
   }, 4000);
@@ -106,85 +96,50 @@ function animate(target: HTMLElement): void {
 export async function initTextReveal(): Promise<void> {
   const root = document.documentElement;
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    root.classList.remove(ARMED);
-    return;
-  }
-
-  const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-split]'));
-  if (targets.length === 0) {
-    root.classList.remove(ARMED);
-    return;
-  }
-
   try {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-split]'));
+    if (targets.length === 0) return;
+
+    // Com movimento reduzido a regra de CSS nem chega a aplicar-se: os títulos
+    // já estão visíveis e não há nada a animar.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const [gsapMod, splitMod] = await Promise.all([import('gsap'), import('gsap/SplitText')]);
 
     gsapRef = gsapMod.gsap;
     SplitTextRef = splitMod.SplitText;
     gsapRef.registerPlugin(SplitTextRef);
+
+    // O hero anima no load; os restantes esperam entrar na viewport.
+    for (const target of targets) {
+      if (target.dataset.split === 'hero' && isVisible(target)) animate(target);
+    }
+
+    const scoped = targets.filter((target) => target.dataset.split !== 'hero');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          animate(entry.target as HTMLElement);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.01 }
+    );
+
+    for (const target of scoped) observer.observe(target);
+
+    // A troca de perfil revela um título diferente — vale reanimar.
+    window.addEventListener('rise:audiencechange', () => {
+      for (const target of targets) {
+        if (target.dataset.split !== 'hero' || !isVisible(target)) continue;
+        target.dataset.splitDone = '';
+        animate(target);
+      }
+    });
   } catch {
     // Sem GSAP não há animação — mas o texto tem de aparecer.
-    root.classList.remove(ARMED);
-    return;
+    root.classList.add(OFF);
   }
-
-  // A classe sai agora: daqui em diante quem controla a visibilidade é o GSAP,
-  // elemento a elemento, e não mais a regra global do <head>.
-  root.classList.remove(ARMED);
-  for (const target of targets) {
-    if (target.dataset.split !== 'hero') target.style.visibility = 'hidden';
-  }
-
-  // Se o failsafe já revelou os títulos, animar agora seria pior do que não
-  // animar: o utilizador veria o texto desaparecer e voltar.
-  const tooLate = window.__riseSplitTimedOut === true;
-
-  const hero = targets.filter((target) => target.dataset.split === 'hero' && isVisible(target));
-  if (!tooLate) {
-    for (const target of hero) animate(target);
-  } else {
-    for (const target of hero) target.dataset.splitDone = 'true';
-  }
-
-  const scoped = targets.filter((target) => target.dataset.split !== 'hero');
-
-  // IntersectionObserver em vez de ScrollTrigger: um título que aparece não
-  // depende do ciclo de refresh do ScrollTrigger nem de o GSAP estar a tickar,
-  // e dispensa carregar o plugin só por causa disto.
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        observer.unobserve(entry.target);
-        animate(entry.target as HTMLElement);
-      }
-    },
-    { rootMargin: '0px 0px -12% 0px', threshold: 0.01 }
-  );
-
-  for (const target of scoped) observer.observe(target);
-
-  // Rede de segurança: qualquer título que já devia estar visível e continua
-  // escondido passados 5 s é revelado sem animação. Um título invisível é um
-  // defeito; um título sem animação é apenas menos bonito.
-  window.setTimeout(() => {
-    for (const target of scoped) {
-      if (target.dataset.splitDone === 'true') continue;
-      if (target.getBoundingClientRect().top > window.innerHeight * 1.5) continue;
-      observer.unobserve(target);
-      target.style.visibility = '';
-      target.dataset.splitDone = 'true';
-    }
-  }, 5000);
-
-  // A troca de perfil revela um título diferente — vale reanimar.
-  window.addEventListener('rise:audiencechange', () => {
-    for (const target of targets) {
-      if (target.dataset.split !== 'hero') continue;
-      if (!isVisible(target)) continue;
-      target.dataset.splitDone = '';
-      animate(target);
-    }
-  });
 }

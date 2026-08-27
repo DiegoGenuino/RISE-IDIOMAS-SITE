@@ -20,8 +20,8 @@
 @theme {
   /* ══ TIPOGRAFIA ═══════════════════════════════════════════════════════ */
   --font-sans:
-    'Instrument Sans Variable', 'Instrument Sans', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', sans-serif;
+    'Instrument Sans Variable', 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   --font-mono:
     'Source Code Pro Variable', 'SFMono-Regular', ui-monospace, 'Menlo', 'Consolas', monospace;
 
@@ -512,12 +512,24 @@
 
 /* ═════════════════════════════════════════════════════════════════════════
    REVELAÇÃO DE TÍTULOS (GSAP SplitText)
-   A classe .ds-split-armed é posta por um script inline no <head> e removida
-   assim que o GSAP assume — ou por failsafe. Enquanto está lá, os títulos
-   ficam invisíveis para não haver flash do texto antes do split.
+
+   Os títulos nascem invisíveis e é o GSAP que os levanta, ao marcar
+   `data-split-done` no momento em que parte o texto em caracteres. Como o
+   estado inicial vive aqui, no CSS, o título nunca chega a ser pintado antes
+   da animação — não há o lampejo do texto inteiro a aparecer e a desaparecer.
+
+   `visibility: hidden` (e não `opacity`) porque preserva o espaço no layout:
+   a reserva de altura é feita na mesma e o CLS fica em zero.
+
+   As três guardas estão no próprio seletor, sem depender de JS:
+     :not(.no-js)                → sem JS, o título aparece normalmente
+     @media (no-preference)      → com movimento reduzido, idem
+     :not(.ds-split-off)         → o TS liga isto se o GSAP não carregar
    ═════════════════════════════════════════════════════════════════════════ */
-html.ds-split-armed [data-split] {
-  visibility: hidden;
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.no-js):not(.ds-split-off) [data-split]:not([data-split-done]) {
+    visibility: hidden;
+  }
 }
 
 .ds-char {

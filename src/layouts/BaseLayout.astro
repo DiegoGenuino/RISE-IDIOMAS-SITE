@@ -84,21 +84,6 @@ import monoLatin from '@fontsource-variable/source-code-pro/files/source-code-pr
         } catch {
           /* storage bloqueado — fica o perfil por omissão */
         }
-
-        // Arma o estado escondido dos títulos antes do primeiro paint, para o
-        // SplitText não piscar o texto inteiro antes de o partir em caracteres.
-        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!still) {
-          root.classList.add('ds-split-armed');
-          // Failsafe: se o bundle não chegar, ou falhar antes de assumir a
-          // animação, os títulos aparecem na mesma.
-          setTimeout(function () {
-            root.classList.remove('ds-split-armed');
-            // Sinaliza que o texto já foi mostrado sem animação. Se o GSAP
-            // chegar depois disto, animar seria piscar o título de novo.
-            window.__riseSplitTimedOut = true;
-          }, 2500);
-        }
       })();
     </script>
 
