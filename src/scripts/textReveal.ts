@@ -44,8 +44,14 @@ function animate(target: HTMLElement): void {
   // paint pelo meio, portanto o texto nunca aparece por inteiro antes do split.
   target.dataset.splitDone = 'true';
 
+  // `words,chars` e não só `chars`: cada caractere vira um inline-block, e um
+  // inline-block é um ponto de quebra de linha válido. Só com `chars` o browser
+  // passa a poder quebrar entre quaisquer duas letras, e o título parte no meio
+  // das palavras. Envolver as palavras devolve as quebras ao sítio certo — a
+  // animação continua a correr sobre `split.chars`.
   const split = SplitTextRef.create(target, {
-    type: 'chars',
+    type: 'words,chars',
+    wordsClass: 'ds-word',
     charsClass: 'ds-char',
     aria: 'auto',
   });

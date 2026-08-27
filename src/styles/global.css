@@ -532,11 +532,26 @@
   }
 }
 
+.ds-word {
+  /* A palavra é a unidade de quebra. Sem ela, cada caractere inline-block
+     seria um ponto de quebra e o título partiria no meio das palavras. */
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .ds-char {
   display: inline-block;
   /* Sem `will-change`: promover cada caractere a camada própria custa mais do
      que a animação poupa — um título de 45 letras viraria 45 camadas com
      filtro. O browser decide melhor sozinho neste caso. */
+}
+
+/* `text-wrap: balance` mede oportunidades de quebra para igualar as linhas.
+   Enquanto o título está partido, essas oportunidades são outras, e o
+   resultado é um recorte diferente do que o utilizador vê no fim. Fixar o
+   modo normal durante o split mantém a quebra estável do princípio ao fim. */
+[data-split][data-split-done] {
+  text-wrap: wrap;
 }
 
 /* ═════════════════════════════════════════════════════════════════════════

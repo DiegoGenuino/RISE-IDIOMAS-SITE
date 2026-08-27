@@ -26,13 +26,16 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
         filter:blur() por caractere, e um filtro cria um novo contexto de
         pintura que quebra o recorte do gradiente no texto. Sólido também é
         mais fiel à Stripe, cujos títulos nunca são gradiente.
+
+        O ponto final vive dentro do <span>: fora dele, o SplitText trata-o
+        como uma palavra à parte, que poderia cair sozinha numa linha nova.
       -->
       <h1 class="text-hero text-ink font-semibold" id="audience-region" aria-live="polite">
         <span data-aud="tech" data-split="hero">
-          O inglês que destrava a sua <span class="text-brand">carreira internacional</span>.
+          O inglês que destrava a sua <span class="text-brand">carreira internacional.</span>
         </span>
         <span data-aud="young" data-split="hero">
-          O inglês que abre o mundo <span class="text-ruby">antes dos 18</span>.
+          O inglês que abre o mundo <span class="text-ruby">antes dos 18.</span>
         </span>
       </h1>
 
