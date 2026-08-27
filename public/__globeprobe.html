@@ -1,0 +1,38 @@
+<!doctype html><meta charset=utf-8><body style="font:13px monospace;white-space:pre;padding:8px">
+<div id=o>a carregar…</div>
+<iframe id=f src="/" width="1440" height="1200" style="position:absolute;left:-9999px"></iframe>
+<script>
+const log = [];
+const f = document.getElementById('f');
+f.onload = () => {
+  const w = f.contentWindow, d = f.contentDocument;
+  w.addEventListener('error', e => log.push('ERRO: ' + e.message));
+  const c = d.querySelector('[data-globe]');
+  log.push('canvas existe: ' + !!c);
+  if (c) {
+    const cs = w.getComputedStyle(c);
+    log.push('client ' + c.clientWidth + 'x' + c.clientHeight);
+    log.push('attr   ' + c.width + 'x' + c.height);
+    log.push('globeReady: ' + c.dataset.globeReady);
+    log.push('opacity: ' + cs.opacity);
+    log.push('--globe-base: [' + cs.getPropertyValue('--globe-base') + ']');
+    let ctx = null;
+    try { ctx = c.getContext('webgl') || c.getContext('experimental-webgl'); } catch (e) { log.push('getContext lançou: ' + e.message); }
+    log.push('webgl ctx: ' + !!ctx + (ctx ? ' lost=' + ctx.isContextLost() : ''));
+    // Algum pixel não-transparente?
+    try {
+      const t = document.createElement('canvas');
+      t.width = c.width; t.height = c.height;
+      t.getContext('2d').drawImage(c, 0, 0);
+      const px = t.getContext('2d').getImageData(0, 0, t.width, t.height).data;
+      let painted = 0;
+      for (let i = 3; i < px.length; i += 4 * 97) if (px[i] > 8) painted++;
+      log.push('amostras pintadas: ' + painted + ' de ' + Math.ceil(px.length / (4 * 97)));
+    } catch (e) { log.push('leitura de pixels falhou: ' + e.message); }
+  }
+  log.push('cobe no bundle: ' + (w.performance.getEntriesByType('resource').filter(r => /cobe/i.test(r.name)).length > 0));
+  const errs = w.performance.getEntriesByType('resource').filter(r => r.responseStatus >= 400);
+  log.push('recursos com erro: ' + errs.map(e => e.name.split('/').pop() + ':' + e.responseStatus).join(', '));
+  document.getElementById('o').textContent = log.join('\n');
+};
+</script>

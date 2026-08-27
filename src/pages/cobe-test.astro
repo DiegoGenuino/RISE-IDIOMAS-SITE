@@ -1,0 +1,32 @@
+---
+export const prerender = false;
+---
+<html><body style="margin:0;background:#f6f7ff;font:13px monospace">
+<canvas id="c" style="width:360px;height:360px"></canvas>
+<pre id="o">…</pre>
+<script>
+  import createGlobe from 'cobe';
+  const out = [];
+  const cfg = {
+    devicePixelRatio: 2, width: 720, height: 720,
+    phi: 4.1, theta: 0.2, dark: 0, diffuse: 1.2,
+    mapSamples: 16000, mapBrightness: 0.9,
+    baseColor: [0.86, 0.87, 1], markerColor: [0.33, 0.23, 0.99], glowColor: [0.84, 0.86, 1],
+    markers: [{ location: [-23.54, -46.55], size: 0.1 }], onRender: () => {},
+  };
+  const c = document.getElementById('c');
+  try {
+    const g1 = createGlobe(c, cfg);
+    out.push('1.º createGlobe: ok');
+    // Reproduz o que a troca de perfil faz.
+    g1.destroy();
+    out.push('destroy: ok');
+    const g2 = createGlobe(c, { ...cfg, markerColor: [0.92, 0.13, 0.38] });
+    out.push('2.º createGlobe no mesmo canvas: ok');
+    void g2;
+  } catch (e) {
+    out.push('EXCEÇÃO: ' + e.message);
+  }
+  document.getElementById('o').textContent = out.join('\n');
+</script>
+</body></html>
