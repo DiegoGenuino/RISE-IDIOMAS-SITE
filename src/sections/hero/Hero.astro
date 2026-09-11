@@ -93,8 +93,12 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
 
     <!-- ── Globo ─────────────────────────────────────────────────────── -->
     <div class="ds-hero-object col-span-full lg:col-span-5">
-      <canvas class="ds-globe" data-globe aria-label="Globo com a escola e as certificadoras"
-      ></canvas>
+      <canvas
+        class="ds-globe"
+        data-globe
+        data-lenis-prevent
+        role="img"
+        aria-label="Globo terrestre 3D"></canvas>
     </div>
   </div>
 </section>
@@ -157,19 +161,12 @@ const trust = ['Aulas 100% no idioma', 'Cambridge & Michigan', 'Vila Carrão, S�
     cursor: grab;
     opacity: 0;
     transition: opacity var(--dur-scene) var(--ease);
-    /* Lidas pelo script. Base escura e pontos claros — é o contraste que faz
-       os continentes existirem. */
-    --globe-base: 28, 30, 84;
-    --globe-marker: 124, 224, 255;
-    --globe-glow: 214, 217, 252;
+    touch-action: none;
+    user-select: none;
   }
 
   .ds-globe[data-globe-ready] {
     opacity: 1;
-  }
-
-  :global(html[data-audience='young']) .ds-globe {
-    --globe-marker: 249, 140, 200;
   }
 
   @keyframes ds-hero-in {

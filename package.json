@@ -49,11 +49,13 @@
     "sanity": "^5.14.1",
     "shiki": "^4.0.2",
     "tailwindcss": "^4.1.18",
+    "three": "^0.186.0",
     "typescript": "^5.9.3",
     "typewriter-effect": "^2.22.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/three": "^0.186.0",
     "eslint": "^10.3.0",
     "eslint-plugin-astro": "^1.7.0",
     "prettier": "^3.8.3",

@@ -24,7 +24,7 @@ export function initHome(): void {
   initAudience();
   initSmoothScroll();
   initNav();
-  initGlobe();
+  void initGlobe();
   initModals();
   initPricing();
   initSpotlight();
