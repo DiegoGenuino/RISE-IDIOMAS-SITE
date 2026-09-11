@@ -1,0 +1,76 @@
+﻿---
+import riseLogo from '../../assets/shared/rise-logo.svg';
+import Button from '../ui/Button.astro';
+import { ctaLinks } from '../../data/site';
+---
+
+<header class="blog-nav">
+  <div class="ds-shell blog-nav-inner">
+    <a href="/" class="blog-brand" aria-label="Rise Idiomas — início">
+      <img src={riseLogo.src} alt="" width="34" height="28" />
+      <span>Rise Idiomas</span>
+    </a>
+    <nav aria-label="Navegação principal">
+      <a href="/" class="home-link">Início</a>
+      <a href="/blog" aria-current="page">Blog</a>
+      <Button href={ctaLinks.trial} size="sm">Aula experimental</Button>
+    </nav>
+  </div>
+</header>
+<style>
+  .blog-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--color-neutral-50);
+  }
+  .blog-nav-inner {
+    min-height: 4.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .blog-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+  }
+  .blog-brand img {
+    width: 2.125rem;
+    height: auto;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+  }
+  nav > a[aria-current] {
+    color: var(--color-brand);
+  }
+  nav > a:hover {
+    color: var(--color-brand);
+  }
+  @media (max-width: 600px) {
+    nav {
+      gap: 0.75rem;
+    }
+    .home-link {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    .blog-brand span {
+      display: none;
+    }
+  }
+</style>

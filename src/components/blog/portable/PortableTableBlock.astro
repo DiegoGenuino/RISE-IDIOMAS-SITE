@@ -42,7 +42,7 @@ if (headers.length === 0 || rows.length === 0) {
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    border: 1px solid rgba(17, 17, 32, 0.1);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
   }
 
   .portable-table {
@@ -56,39 +56,39 @@ if (headers.length === 0 || rows.length === 0) {
     caption-side: top;
     text-align: left;
     padding: 12px 14px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.16em;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: rgba(17, 17, 32, 0.62);
+    color: color-mix(in srgb, var(--color-ink) 62%, transparent);
   }
 
   .portable-table th,
   .portable-table td {
-    border: 1px solid rgba(17, 17, 32, 0.1);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
     padding: 12px;
     text-align: left;
     font-size: 14px;
     line-height: 1.55;
-    color: rgba(17, 17, 32, 0.84);
+    color: color-mix(in srgb, var(--color-ink) 84%, transparent);
   }
 
   .portable-table thead th {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.14em;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: rgba(17, 17, 32, 0.05);
+    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
   }
 
   .portable-table tbody tr:nth-child(2n) td {
-    background: rgba(17, 17, 32, 0.02);
+    background: color-mix(in srgb, var(--color-ink) 2%, transparent);
   }
 
   @media (max-width: 600px) {
     .portable-table caption {
       padding: 10px 11px;
-      font-size: 10px;
+      font-size: 0.75rem;
     }
 
     .portable-table th,
@@ -98,7 +98,7 @@ if (headers.length === 0 || rows.length === 0) {
     }
 
     .portable-table thead th {
-      font-size: 10px;
+      font-size: 0.75rem;
     }
   }
 </style>

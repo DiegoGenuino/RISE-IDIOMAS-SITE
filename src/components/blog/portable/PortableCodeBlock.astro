@@ -42,7 +42,7 @@ try {
 <style>
   .portable-code-block {
     margin: 34px 0;
-    border: 1px solid rgba(17, 17, 32, 0.16);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
     background: #0f1222;
     border-radius: 6px;
     overflow: hidden;
@@ -58,9 +58,9 @@ try {
     padding: 9px 12px;
     background: rgba(255, 255, 255, 0.06);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.16em;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.78);
   }
@@ -78,13 +78,13 @@ try {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     tab-size: 2;
-    font-family: 'Geist Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
     line-height: 1.6;
   }
 
   .portable-code-content :global(code) {
-    font-family: 'Geist Mono', monospace;
+    font-family: var(--font-mono);
   }
 
   :global(.portable-code-fallback) {

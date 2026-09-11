@@ -22,26 +22,26 @@ const contentBlocks = block.content || [];
   .portable-callout {
     margin: 30px 0;
     padding: 20px 24px;
-    border-left: 2px solid #2b2ba8;
-    background: rgba(43, 43, 168, 0.05);
+    border-left: 2px solid var(--color-brand);
+    background: color-mix(in srgb, var(--color-brand) 5%, transparent);
   }
 
   .portable-callout-title {
     margin-bottom: 8px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
   }
 
   .tone-info {
-    border-left-color: #2b2ba8;
-    background: rgba(43, 43, 168, 0.06);
+    border-left-color: var(--color-brand);
+    background: color-mix(in srgb, var(--color-brand) 6%, transparent);
   }
 
   .tone-info .portable-callout-title {
-    color: #2b2ba8;
+    color: var(--color-brand);
   }
 
   .tone-warning {
@@ -63,12 +63,12 @@ const contentBlocks = block.content || [];
   }
 
   .tone-neutral {
-    border-left-color: rgba(17, 17, 32, 0.32);
-    background: rgba(17, 17, 32, 0.06);
+    border-left-color: color-mix(in srgb, var(--color-ink) 32%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
   }
 
   .tone-neutral .portable-callout-title {
-    color: rgba(17, 17, 32, 0.72);
+    color: color-mix(in srgb, var(--color-ink) 72%, transparent);
   }
 
   @media (max-width: 900px) {
@@ -90,7 +90,7 @@ const contentBlocks = block.content || [];
 
     .portable-callout-title {
       margin-bottom: 6px;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.04em;
     }
   }
 </style>
