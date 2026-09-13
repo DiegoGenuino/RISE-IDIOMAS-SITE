@@ -3,14 +3,13 @@ import SectionHeading from '../../components/ui/SectionHeading.astro';
 import { journey } from '../../data/journey';
 
 /**
- * Trilha A1 → C2 — escada vertical.
+ * Trilha A1 → C2 em cards sticky.
  *
- * O scroll horizontal prendia a página durante quatro viewports para mostrar
- * seis painéis que cabem numa lista. Aqui é uma escada: uma linha por nível,
- * ligadas por um fio contínuo, com o quadrado do nível a escurecer do A1 ao
- * C2 — a progressão vê-se sem ler. Funciona igual no telemóvel e não precisa
- * de GSAP nenhum.
+ * Cada nível entra sobre o anterior durante o scroll. A cor ganha profundidade
+ * conforme a proficiência avança, transformando a escala CEFR numa narrativa
+ * visual — sem bloquear o scroll e com fallback linear no mobile.
  */
+const levels = journey.map((stage) => stage.level);
 ---
 
 <section id="trilha" class="bg-surface-alt py-20 lg:py-28" aria-labelledby="trilha-titulo">
@@ -22,49 +21,97 @@ import { journey } from '../../data/journey';
       id="trilha-titulo"
     />
 
-    <ol class="ds-ladder">
+    <ol class="ds-level-stack" data-level-stack>
       {
         journey.map((stage, index) => (
           <li
-            class="ds-rung ds-reveal"
+            class="ds-level-stage ds-reveal"
             style={`--reveal-i:${index}; --step:${index}`}
             data-dark={index >= 3}
           >
-            <div class="ds-rung-mark">
-              <span class="ds-rung-badge">{stage.level}</span>
-            </div>
+            <article class="ds-level-card">
+              <div class="ds-level-glow" aria-hidden="true" />
+              <span class="ds-level-watermark" aria-hidden="true">
+                {stage.level}
+              </span>
 
-            <div class="ds-rung-main">
-              <h3 class="ds-rung-name">{stage.name}</h3>
-              <p class="ds-rung-can">{stage.can}</p>
+              <header class="ds-level-head">
+                <div class="ds-level-id">
+                  <span class="ds-level-badge">{stage.level}</span>
+                  <div>
+                    <span class="ds-level-kicker">Nível CEFR</span>
+                    <span class="ds-level-sequence">
+                      Etapa {String(index + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+                </div>
+                <span class="ds-level-count">{String(index + 1).padStart(2, '0')} / 06</span>
+              </header>
 
-              <ul class="ds-rung-marks">
-                {stage.milestones.map((milestone) => (
-                  <li>{milestone}</li>
+              <div class="ds-level-layout">
+                <div class="ds-level-intro">
+                  <p class="ds-level-label">Sua evolução</p>
+                  <h3 class="ds-level-name">{stage.name}</h3>
+                  <p class="ds-level-can">{stage.can}</p>
+                </div>
+
+                <div class="ds-level-outcomes">
+                  <p class="ds-level-label">O que você passa a fazer</p>
+                  <ul>
+                    {stage.milestones.map((milestone) => (
+                      <li>
+                        <svg viewBox="0 0 20 20" aria-hidden="true">
+                          <path d="m5 10 3.2 3.2L15 6.8" />
+                        </svg>
+                        {milestone}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <aside class="ds-level-meta">
+                  <div>
+                    <span class="ds-level-label">Carga de referência</span>
+                    <strong>{stage.hours}</strong>
+                    <small>horas guiadas acumuladas</small>
+                  </div>
+                  <button type="button" class="ds-level-course" data-scroll-to="modalidades">
+                    <span>
+                      <small>Trilha recomendada</small>
+                      {stage.courseLabel}
+                    </span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      class="ds-arrow"
+                    >
+                      <path d="M5 12h13M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </aside>
+              </div>
+
+              <footer class="ds-level-progress" aria-label={`Progresso até o nível ${stage.level}`}>
+                {levels.map((level, levelIndex) => (
+                  <span
+                    class:list={[
+                      'ds-progress-step',
+                      { 'is-complete': levelIndex <= index, 'is-current': levelIndex === index },
+                    ]}
+                  >
+                    <i aria-hidden="true" />
+                    <small>{level}</small>
+                  </span>
                 ))}
-              </ul>
-            </div>
-
-            <div class="ds-rung-meta">
-              <span class="ds-rung-hours">{stage.hours}</span>
-              <button type="button" class="ds-rung-course" data-scroll-to="modalidades">
-                {stage.courseLabel}
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  class="ds-arrow"
-                >
-                  <path d="M5 12h13M12 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
+              </footer>
+            </article>
           </li>
         ))
       }
@@ -73,194 +120,578 @@ import { journey } from '../../data/journey';
 </section>
 
 <style>
-  .ds-ladder {
-    display: flex;
-    flex-direction: column;
+  .ds-level-stack {
+    position: relative;
+    display: grid;
+    gap: 1rem;
     list-style: none;
   }
 
-  /* Uma linha por nível. O quadrado do nível escurece do A1 ao C2 — a escada
-     lê-se de relance, sem precisar de comparar números. */
-  .ds-rung {
+  .ds-level-stage {
+    --accent: var(--color-brand-400);
+    --stack-depth: 0;
     position: relative;
-    display: grid;
-    grid-template-columns: 3.5rem minmax(0, 1fr);
-    align-items: start;
-    gap: 1rem 1.25rem;
-    padding: 1.5rem 0;
-    border-top: 1px solid var(--color-brand-100);
-    transition: background-color var(--dur-base) var(--ease);
+    z-index: calc(10 + var(--step));
+    list-style: none;
   }
 
-  .ds-rung:last-child {
-    border-bottom: 1px solid var(--color-brand-100);
+  .ds-level-stage:nth-child(2) {
+    --accent: #776bff;
   }
 
-  @media (min-width: 940px) {
-    .ds-rung {
-      grid-template-columns: 5rem minmax(0, 1fr) 13rem;
-      gap: 2.5rem;
-      padding: 2rem 0;
-    }
+  .ds-level-stage:nth-child(3) {
+    --accent: var(--color-brand);
   }
 
-  @media (hover: hover) {
-    .ds-rung:hover {
-      background-color: color-mix(in srgb, var(--color-brand-25) 80%, transparent);
-    }
+  .ds-level-stage:nth-child(4),
+  .ds-level-stage:nth-child(5) {
+    --accent: var(--color-aqua);
   }
 
-  /* ── Nível ──────────────────────────────────────────────────────────── */
-  .ds-rung-mark {
+  .ds-level-stage:nth-child(6) {
+    --accent: var(--color-lime);
+  }
+
+  .ds-level-card {
     position: relative;
-    align-self: stretch;
-    display: flex;
-    justify-content: center;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 25rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--color-brand-100);
+    background: var(--color-surface);
+    box-shadow: 0 20px 55px -28px rgba(13, 23, 56, 0.35);
+    transform: scale(calc(1 - var(--stack-depth) * 0.035));
+    transform-origin: top center;
+    transition:
+      transform 180ms linear,
+      box-shadow var(--dur-base) var(--ease-card);
   }
 
-  /* Fio contínuo a ligar os quadrados: é o que faz a coluna ler como uma
-     trilha e não como seis linhas independentes. */
-  .ds-rung-mark::before {
-    content: '';
+  .ds-level-stage:nth-child(2) .ds-level-card {
+    background: #f6f5ff;
+  }
+
+  .ds-level-stage:nth-child(3) .ds-level-card {
+    background: #e9e7ff;
+  }
+
+  .ds-level-stage:nth-child(4) .ds-level-card {
+    border-color: #4b47b5;
+    background: #353097;
+  }
+
+  .ds-level-stage:nth-child(5) .ds-level-card {
+    border-color: #35318c;
+    background: #211d67;
+  }
+
+  .ds-level-stage:nth-child(6) .ds-level-card {
+    border-color: #28336f;
+    background: #101633;
+  }
+
+  .ds-level-card::before {
     position: absolute;
-    top: -1.5rem;
-    bottom: -1.5rem;
-    left: 50%;
-    width: 1px;
-    background-color: var(--color-brand-100);
-    transform: translateX(-50%);
+    inset: 0 auto auto 0;
+    z-index: 2;
+    width: 100%;
+    height: 3px;
+    content: '';
+    background: linear-gradient(
+      90deg,
+      var(--accent),
+      color-mix(in srgb, var(--accent) 30%, transparent)
+    );
   }
 
-  @media (min-width: 940px) {
-    .ds-rung-mark::before {
-      top: -2rem;
-      bottom: -2rem;
-    }
+  .ds-level-glow {
+    position: absolute;
+    z-index: -1;
+    top: -12rem;
+    right: -8rem;
+    width: 34rem;
+    height: 34rem;
+    border-radius: 50%;
+    opacity: 0.18;
+    background: radial-gradient(circle, var(--accent), transparent 66%);
+    filter: blur(8px);
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease);
   }
 
-  /* O fio não deve sair para fora da escada nas pontas. */
-  .ds-rung:first-child .ds-rung-mark::before {
-    top: 1.6rem;
+  .ds-level-stage.is-active .ds-level-glow {
+    opacity: 0.3;
   }
 
-  .ds-rung:last-child .ds-rung-mark::before {
-    bottom: auto;
-    height: 1.6rem;
+  .ds-level-watermark {
+    position: absolute;
+    z-index: -1;
+    right: clamp(1rem, 5vw, 4rem);
+    bottom: -0.24em;
+    font-family: var(--font-mono);
+    font-size: clamp(8rem, 18vw, 15rem);
+    font-weight: 700;
+    line-height: 0.8;
+    letter-spacing: -0.12em;
+    color: var(--color-brand-900);
+    opacity: 0.035;
+    pointer-events: none;
+    user-select: none;
   }
 
-  .ds-rung-badge {
+  [data-dark='true'] .ds-level-watermark {
+    color: #fff;
+    opacity: 0.035;
+  }
+
+  .ds-level-head {
     position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-brand-100) 72%, transparent);
+  }
+
+  .ds-level-id {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .ds-level-badge {
     display: grid;
-    place-items: center;
     width: 3.25rem;
     height: 3.25rem;
+    place-items: center;
+    background: var(--accent);
+    box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--accent) 68%, transparent);
     font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--color-brand-800);
-    /* Do A1 (lavado) ao C2 (marca cheia). */
-    background-color: color-mix(
-      in srgb,
-      var(--color-brand) calc(10% + var(--step) * 18%),
-      var(--color-surface)
-    );
-    box-shadow: inset 0 0 0 1px var(--color-brand-100);
-    transition: transform var(--dur-slow) var(--ease-card);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-brand-950);
   }
 
-  .ds-rung[data-dark='true'] .ds-rung-badge {
+  .ds-level-stage:nth-child(-n + 3) .ds-level-badge {
     color: #fff;
-    box-shadow: none;
   }
 
-  @media (hover: hover) {
-    .ds-rung:hover .ds-rung-badge {
-      transform: scale(1.06);
-    }
+  .ds-level-kicker,
+  .ds-level-sequence,
+  .ds-level-count,
+  .ds-level-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 650;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
   }
 
-  /* ── Conteúdo ───────────────────────────────────────────────────────── */
-  .ds-rung-name {
-    font-size: 1.125rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
+  .ds-level-kicker,
+  .ds-level-label {
+    color: var(--color-ink-muted);
+  }
+
+  .ds-level-sequence {
+    margin-top: 0.2rem;
     color: var(--color-ink);
   }
 
-  .ds-rung-can {
-    margin-top: 0.5rem;
+  .ds-level-count {
+    color: var(--color-brand-400);
+  }
+
+  .ds-level-layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 2rem;
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .ds-level-name {
+    margin-top: 0.6rem;
+    font-size: clamp(1.75rem, 3vw, 2.6rem);
+    font-weight: 650;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--color-ink);
+  }
+
+  .ds-level-can {
     max-width: 34rem;
-    font-size: 0.9375rem;
+    margin-top: 1rem;
+    font-size: clamp(0.95rem, 1.4vw, 1.125rem);
     line-height: 1.6;
     color: var(--color-ink-soft);
   }
 
-  .ds-rung-marks {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
+  .ds-level-outcomes {
+    padding-left: 2rem;
+    border-left: 1px solid color-mix(in srgb, var(--color-brand-100) 72%, transparent);
+  }
+
+  .ds-level-outcomes ul {
+    display: grid;
+    gap: 0.8rem;
     margin-top: 1rem;
     list-style: none;
   }
 
-  .ds-rung-marks li {
-    padding: 0.25rem 0.625rem;
-    background-color: var(--color-surface);
-    box-shadow: inset 0 0 0 1px var(--color-brand-100);
-    font-size: 0.75rem;
+  .ds-level-outcomes li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 0.825rem;
+    line-height: 1.45;
     color: var(--color-ink-soft);
   }
 
-  /* ── Metadados ──────────────────────────────────────────────────────── */
-  .ds-rung-meta {
+  .ds-level-outcomes svg {
+    flex: 0 0 auto;
+    width: 1.15rem;
+    height: 1.15rem;
+    padding: 0.18rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    stroke: var(--accent);
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  .ds-level-meta {
+    grid-column: 1 / -1;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-    grid-column: 2;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-brand-100) 72%, transparent);
   }
 
-  @media (min-width: 940px) {
-    .ds-rung-meta {
-      grid-column: auto;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.75rem;
-      text-align: right;
-    }
+  .ds-level-meta strong,
+  .ds-level-meta small {
+    display: block;
   }
 
-  .ds-rung-hours {
+  .ds-level-meta strong {
+    margin-top: 0.4rem;
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--color-ink);
+  }
+
+  .ds-level-meta > div > small {
+    margin-top: 0.4rem;
+    font-size: 0.675rem;
     color: var(--color-ink-muted);
   }
 
-  .ds-rung-course {
+  .ds-level-course {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    padding: 0.4rem 0.75rem;
-    background-color: var(--color-surface);
-    box-shadow: inset 0 0 0 1px var(--color-brand-100);
-    font-size: 0.75rem;
-    font-weight: 600;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-width: min(100%, 14rem);
+    padding: 0.75rem 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--color-brand-200) 80%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 74%, transparent);
+    font-size: 0.78rem;
+    font-weight: 650;
+    text-align: left;
     color: var(--color-brand-800);
     cursor: pointer;
     transition:
-      color var(--dur-micro) var(--ease),
-      box-shadow var(--dur-micro) var(--ease);
+      border-color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
   }
 
-  .ds-rung-course:hover {
-    color: var(--color-brand);
-    box-shadow: inset 0 0 0 1px var(--color-brand-300);
+  .ds-level-course small {
+    margin-bottom: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
   }
 
-  .ds-rung-course:hover .ds-arrow {
-    transform: translate3d(3px, 0, 0);
+  .ds-level-course:hover {
+    border-color: var(--accent);
+    background: var(--color-surface);
+  }
+
+  .ds-level-progress {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .ds-progress-step {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    color: var(--color-neutral-300);
+  }
+
+  .ds-progress-step::before,
+  .ds-progress-step::after {
+    position: absolute;
+    top: 0.3rem;
+    width: 50%;
+    height: 1px;
+    content: '';
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .ds-progress-step::before {
+    left: 0;
+  }
+
+  .ds-progress-step::after {
+    right: 0;
+  }
+
+  .ds-progress-step:first-child::before,
+  .ds-progress-step:last-child::after {
+    display: none;
+  }
+
+  .ds-progress-step i {
+    position: relative;
+    z-index: 1;
+    width: 0.65rem;
+    height: 0.65rem;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    background: var(--color-surface);
+  }
+
+  .ds-progress-step small {
+    font-family: var(--font-mono);
+    font-size: 0.575rem;
+    font-weight: 650;
+    letter-spacing: 0.05em;
+  }
+
+  .ds-progress-step.is-complete {
+    color: var(--accent);
+  }
+
+  .ds-progress-step.is-complete i {
+    background: currentColor;
+  }
+
+  .ds-progress-step.is-current i {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent);
+    transform: scale(1.12);
+  }
+
+  [data-dark='true'] .ds-level-head,
+  [data-dark='true'] .ds-level-outcomes,
+  [data-dark='true'] .ds-level-meta {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  [data-dark='true'] .ds-level-kicker,
+  [data-dark='true'] .ds-level-label,
+  [data-dark='true'] .ds-level-meta > div > small,
+  [data-dark='true'] .ds-level-course small {
+    color: rgba(218, 228, 248, 0.62);
+  }
+
+  [data-dark='true'] .ds-level-sequence,
+  [data-dark='true'] .ds-level-name,
+  [data-dark='true'] .ds-level-meta strong {
+    color: #fff;
+  }
+
+  [data-dark='true'] .ds-level-can,
+  [data-dark='true'] .ds-level-outcomes li {
+    color: rgba(225, 233, 250, 0.82);
+  }
+
+  [data-dark='true'] .ds-level-course {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  [data-dark='true'] .ds-level-course:hover {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.13);
+  }
+
+  [data-dark='true'] .ds-progress-step {
+    color: rgba(255, 255, 255, 0.24);
+  }
+
+  [data-dark='true'] .ds-progress-step.is-complete {
+    color: var(--accent);
+  }
+
+  [data-dark='true'] .ds-progress-step i {
+    background: #211d67;
+  }
+
+  .ds-level-stage:nth-child(4) .ds-progress-step i {
+    background: #353097;
+  }
+
+  .ds-level-stage:nth-child(6) .ds-progress-step i {
+    background: #101633;
+  }
+
+  [data-dark='true'] .ds-progress-step.is-complete i {
+    background: currentColor;
+  }
+
+  @media (min-width: 940px) {
+    .ds-level-stack {
+      display: block;
+      padding-bottom: 4rem;
+    }
+
+    .ds-level-stage {
+      position: sticky;
+      top: calc(clamp(5.5rem, 8vh, 7.5rem) + var(--step) * 0.7rem);
+      margin-bottom: clamp(8rem, 22vh, 14rem);
+    }
+
+    .ds-level-stage:last-child {
+      margin-bottom: 0;
+    }
+
+    .ds-level-card {
+      min-height: 27rem;
+    }
+
+    .ds-level-layout {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr) minmax(12rem, 0.7fr);
+    }
+
+    .ds-level-meta {
+      grid-column: auto;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-between;
+      padding-top: 0;
+      padding-left: 2rem;
+      border-top: 0;
+      border-left: 1px solid color-mix(in srgb, var(--color-brand-100) 72%, transparent);
+    }
+
+    [data-dark='true'] .ds-level-meta {
+      border-top: 0;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .ds-level-card {
+      min-height: 0;
+      padding: 1.5rem;
+    }
+
+    .ds-level-layout {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+      padding-block: 2rem;
+    }
+
+    .ds-level-outcomes {
+      padding-top: 1.5rem;
+      padding-left: 0;
+      border-top: 1px solid color-mix(in srgb, var(--color-brand-100) 72%, transparent);
+      border-left: 0;
+    }
+
+    .ds-level-meta {
+      grid-column: auto;
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .ds-level-course {
+      width: 100%;
+    }
+
+    .ds-level-watermark {
+      right: 1rem;
+      bottom: 0.05em;
+      font-size: 8rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-level-card {
+      transform: none !important;
+      transition: none;
+    }
   }
 </style>
+
+<script>
+  const initializeLevelStacks = () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLOListElement>('[data-level-stack]').forEach((stack) => {
+      const stages = [...stack.querySelectorAll<HTMLElement>('.ds-level-stage')];
+      let frame = 0;
+
+      const update = () => {
+        frame = 0;
+        const desktop = window.matchMedia('(min-width: 940px)').matches;
+        let activeIndex = 0;
+        const geometry = stages.map((stage) => ({
+          rect: stage.getBoundingClientRect(),
+          stickyTop: Number.parseFloat(getComputedStyle(stage).top) || 0,
+        }));
+
+        geometry.forEach(({ rect, stickyTop }, index) => {
+          if (rect.top <= Math.max(stickyTop + 4, window.innerHeight * 0.42)) activeIndex = index;
+        });
+
+        stages.forEach((stage, index) => {
+          const { rect, stickyTop } = geometry[index];
+          let depth = 0;
+          const nextGeometry = geometry[index + 1];
+          if (desktop && !reduceMotion && nextGeometry) {
+            const nextTop = nextGeometry.rect.top;
+            const animationStart = window.innerHeight * 0.72;
+            const animationEnd = stickyTop + 40;
+            depth = Math.min(
+              1,
+              Math.max(0, (animationStart - nextTop) / (animationStart - animationEnd))
+            );
+          }
+
+          stage.style.setProperty('--stack-depth', depth.toFixed(3));
+          stage.classList.toggle('is-stuck', desktop && rect.top <= stickyTop + 1);
+          stage.classList.toggle('is-active', index === activeIndex);
+        });
+      };
+
+      const requestUpdate = () => {
+        if (!frame) frame = window.requestAnimationFrame(update);
+      };
+
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate, { passive: true });
+      update();
+    });
+  };
+
+  initializeLevelStacks();
+</script>
