@@ -31,6 +31,7 @@
     "@portabletext/to-html": "^5.0.2",
     "@sanity/client": "^7.11.0",
     "@sanity/preview-url-secret": "^4.0.5",
+    "@sanity/visual-editing-standalone": "^2.0.1",
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

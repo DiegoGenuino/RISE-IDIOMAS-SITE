@@ -1,7 +1,9 @@
 ---
+import { previewAttribute } from '../../lib/sanity.preview-attribute';
+import LivePreview from '../../components/blog/LivePreview.astro';
+import { isPreviewSession } from '../../lib/sanity.preview';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import Footer from '../../sections/footer/Footer.astro';
 import BlogHeader from '../../components/blog/BlogHeader.astro';
 import type { BlogPost } from '../../types/blog';
 import type { SanityPortableBodyNode, SanityPortableTextBlock } from '../../lib/sanity.types';
@@ -74,19 +76,27 @@ function buildBodyTocItems(body: SanityPortableBodyNode[] | undefined): ArticleT
 }
 
 const { slug } = Astro.params;
-const isPreview = Astro.cookies.get('sanity-preview')?.value === '1';
+const isPreview = isPreviewSession(Astro.cookies);
 
 const {
   post,
   relatedPosts,
   errorMessage: blogErrorMessage,
 } = slug
-  ? await getBlogPostBySlug(slug, isPreview)
+  ? await getBlogPostBySlug(
+      slug,
+      isPreview && Astro.cookies.get('rise-perspective')?.value !== 'published'
+    )
   : {
       post: undefined,
       relatedPosts: [],
       errorMessage: null,
     };
+
+if (isPreview) {
+  Astro.response.headers.set('Cache-Control', 'private, no-store');
+  Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+}
 
 // Log API errors as exceptions for better debugging visibility
 if (blogErrorMessage) {
@@ -209,7 +219,7 @@ const articleJsonLd = JSON.stringify({
               <span class="ah-read">{currentPost.readingTimeMinutes} min de leitura</span>
             </div>
 
-            <h1 class="ah-title">
+            <h1 class="ah-title" data-sanity={previewAttribute(isPreview, currentPost.id)}>
               {
                 titleLines.map((line) => (
                   <span class="ah-title-row">
@@ -1979,7 +1989,7 @@ const articleJsonLd = JSON.stringify({
       }
     }
     /* Blog articles share the home page's typography, surfaces, and spacing scale. */
-.blog-shell {
+    .blog-shell {
       --cream: var(--color-surface);
       --ink: var(--color-ink);
       --blue: var(--color-brand);
@@ -2263,4 +2273,5 @@ const articleJsonLd = JSON.stringify({
       }
     }
   </style>
+  <LivePreview enabled={isPreview} />
 </BaseLayout>

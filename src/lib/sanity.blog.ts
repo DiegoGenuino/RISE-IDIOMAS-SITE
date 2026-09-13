@@ -31,23 +31,29 @@ export interface BlogDetailResult {
   errorMessage: string | null;
 }
 
-async function fetchPublishedPostCards(): Promise<SanityPostCardDocument[]> {
+async function fetchPublishedPostCards(isPreview = false): Promise<SanityPostCardDocument[]> {
   if (!sanityClient) {
     return [];
   }
 
-  return sanityClient.fetch<SanityPostCardDocument[]>(BLOG_POST_LIST_QUERY);
+  return sanityClient
+    .withConfig({ perspective: isPreview ? 'drafts' : 'published', useCdn: !isPreview })
+    .fetch<SanityPostCardDocument[]>(BLOG_POST_LIST_QUERY);
 }
 
-async function fetchPublishedCategoryFilters(): Promise<SanityCategoryFilterDocument[]> {
+async function fetchPublishedCategoryFilters(
+  isPreview = false
+): Promise<SanityCategoryFilterDocument[]> {
   if (!sanityClient) {
     return [];
   }
 
-  return sanityClient.fetch<SanityCategoryFilterDocument[]>(BLOG_CATEGORY_FILTERS_QUERY);
+  return sanityClient
+    .withConfig({ perspective: isPreview ? 'drafts' : 'published', useCdn: !isPreview })
+    .fetch<SanityCategoryFilterDocument[]>(BLOG_CATEGORY_FILTERS_QUERY);
 }
 
-export async function getBlogList(): Promise<BlogListResult> {
+export async function getBlogList(isPreview = false): Promise<BlogListResult> {
   if (!isSanityConfigured || !sanityClient) {
     return {
       posts: [],
@@ -58,8 +64,8 @@ export async function getBlogList(): Promise<BlogListResult> {
 
   try {
     const [sanityPosts, sanityCategoryFilters] = await Promise.all([
-      fetchPublishedPostCards(),
-      fetchPublishedCategoryFilters().catch((error) => {
+      fetchPublishedPostCards(isPreview),
+      fetchPublishedCategoryFilters(isPreview).catch((error) => {
         // eslint-disable-next-line no-console
         console.error('Erro ao buscar categorias de filtro no Sanity', error);
         return [];
@@ -110,11 +116,18 @@ export async function getBlogSlugs(): Promise<string[]> {
   }
 }
 
-async function getAutomaticRelatedPosts(post: SanityPostDocument): Promise<BlogPost[]> {
+async function getAutomaticRelatedPosts(
+  post: SanityPostDocument,
+  isPreview = false
+): Promise<BlogPost[]> {
   if (!sanityClient || !post.slug) {
     return [];
   }
 
+  const client = sanityClient.withConfig({
+    perspective: isPreview ? 'drafts' : 'published',
+    useCdn: !isPreview,
+  });
   const params = {
     slug: post.slug,
     categoryRef: post.categoryRef || '',
@@ -122,7 +135,7 @@ async function getAutomaticRelatedPosts(post: SanityPostDocument): Promise<BlogP
     limit: 3,
   };
 
-  const relatedCards = await sanityClient.fetch<SanityPostCardDocument[]>(
+  const relatedCards = await client.fetch<SanityPostCardDocument[]>(
     BLOG_RELATED_POSTS_QUERY,
     params
   );
@@ -131,7 +144,7 @@ async function getAutomaticRelatedPosts(post: SanityPostDocument): Promise<BlogP
     return relatedCards.map(mapSanityPostCard).slice(0, 3);
   }
 
-  const recentCards = await sanityClient.fetch<SanityPostCardDocument[]>(BLOG_RECENT_POSTS_QUERY, {
+  const recentCards = await client.fetch<SanityPostCardDocument[]>(BLOG_RECENT_POSTS_QUERY, {
     slug: post.slug,
     limit: 3,
   });
@@ -154,7 +167,7 @@ export async function getBlogPostBySlug(
   try {
     const sanityPost = await sanityClient
       .withConfig({
-        perspective: isPreview ? 'previewDrafts' : 'published',
+        perspective: isPreview ? 'drafts' : 'published',
         useCdn: !isPreview,
       })
       .fetch<SanityPostDocument | null>(BLOG_POST_BY_SLUG_QUERY, {
@@ -170,7 +183,7 @@ export async function getBlogPostBySlug(
     }
 
     const post = mapSanityPost(sanityPost);
-    const relatedPosts: BlogPost[] = await getAutomaticRelatedPosts(sanityPost);
+    const relatedPosts: BlogPost[] = await getAutomaticRelatedPosts(sanityPost, isPreview);
 
     return {
       post,

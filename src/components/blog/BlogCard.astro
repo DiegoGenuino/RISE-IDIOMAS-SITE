@@ -1,4 +1,6 @@
 ---
+import { isPreviewSession } from '../../lib/sanity.preview';
+import { previewAttribute } from '../../lib/sanity.preview-attribute';
 import type { BlogPost } from '../../types/blog';
 import { Image } from 'astro:assets';
 
@@ -35,6 +37,7 @@ const cardIllustrationSvg = renderCardIllustration(categoryKey);
 <article
   class="card"
   role="listitem"
+  data-sanity={previewAttribute(isPreviewSession(Astro.cookies), post.id)}
   data-article-card
   data-category-key={categoryKey}
   data-tag-keys={tagKeys.join(',')}
@@ -86,7 +89,7 @@ const cardIllustrationSvg = renderCardIllustration(categoryKey);
 </article>
 
 <style>
-  ﻿.card {
+  .card {
     border: 1px solid var(--color-neutral-50);
     border-radius: var(--radius-lg);
     overflow: hidden;

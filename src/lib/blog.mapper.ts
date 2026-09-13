@@ -92,6 +92,7 @@ function mapBasePostData(post: SanityPostCardDocument): BlogPost {
   const description = post.description || 'Novo conteudo em breve.';
 
   return {
+    id: post._id,
     slug: post.slug || 'sem-slug',
     title: post.title || 'Post sem titulo',
     featured: Boolean(post.featured),

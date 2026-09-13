@@ -1,0 +1,152 @@
+---
+interface Props {
+  enabled: boolean;
+}
+const { enabled } = Astro.props;
+---
+
+{
+  enabled && (
+    <div
+      class="rise-live-preview-status"
+      data-rise-live-preview
+      data-state="connecting"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="rise-live-preview-dot" aria-hidden="true" />
+      <span data-live-preview-label>Connecting</span>
+      <span class="rise-live-preview-cursor" aria-hidden="true" />
+    </div>
+  )
+}
+<script>
+  import { enableVisualEditing } from '@sanity/visual-editing-standalone';
+
+  const liveStatus = document.querySelector<HTMLElement>('[data-rise-live-preview]');
+  if (liveStatus) {
+    const liveLabel = liveStatus.querySelector<HTMLElement>('[data-live-preview-label]');
+    const setLiveState = (state: 'connecting' | 'live' | 'offline') => {
+      liveStatus.dataset.state = state;
+      if (liveLabel) {
+        liveLabel.textContent =
+          state === 'live' ? 'Live preview' : state === 'offline' ? 'Reconnecting' : 'Connecting';
+      }
+    };
+
+    let refreshTimer: ReturnType<typeof setTimeout>;
+    const refreshPreview = () => {
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => window.location.reload(), 150);
+    };
+
+    // Presentation covers the selected document. This authenticated stream also
+    // covers referenced documents and edits made from another Studio window.
+    const mutationEvents = new EventSource('/api/preview-events');
+    mutationEvents.addEventListener('ready', () => setLiveState('live'));
+    mutationEvents.addEventListener('mutation', refreshPreview);
+    mutationEvents.addEventListener('error', () => setLiveState('offline'));
+    window.addEventListener('pagehide', () => mutationEvents.close(), { once: true });
+
+    enableVisualEditing({
+      refresh: async () => {
+        refreshPreview();
+      },
+      onPerspectiveChange: (perspective) => {
+        const next = perspective === 'published' ? 'published' : 'drafts';
+        const current =
+          document.cookie
+            .split('; ')
+            .find((entry) => entry.startsWith('rise-perspective='))
+            ?.split('=')[1] || 'drafts';
+        if (current === next) return;
+        const secure = location.protocol === 'https:';
+        document.cookie =
+          'rise-perspective=' +
+          next +
+          '; Path=/; SameSite=' +
+          (secure ? 'None; Secure; Partitioned' : 'Lax');
+        window.location.reload();
+      },
+      history: {
+        subscribe: (notify) => {
+          const report = () => notify({ type: 'push', url: window.location.href });
+          report();
+          window.addEventListener('popstate', report);
+          return () => window.removeEventListener('popstate', report);
+        },
+        update: (update) => {
+          if (update.type === 'pop') {
+            window.history.back();
+            return;
+          }
+          const url = new URL(update.url, window.location.href);
+          if (url.origin !== window.location.origin || url.href === window.location.href) return;
+          if (update.type === 'replace') window.location.replace(url.href);
+          else window.location.assign(url.href);
+        },
+      },
+    });
+  }
+</script>
+
+<style>
+  .rise-live-preview-status {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2147483646;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid color-mix(in srgb, #fff 20%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, #111 88%, transparent);
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
+    color: #fff;
+    font: 600 0.7rem/1 var(--font-mono, monospace);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .rise-live-preview-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #f0c44a;
+    box-shadow: 0 0 0.6rem currentColor;
+  }
+
+  [data-state='live'] .rise-live-preview-dot {
+    color: #35d07f;
+    background: currentColor;
+  }
+
+  [data-state='offline'] .rise-live-preview-dot {
+    color: #ff6b6b;
+    background: currentColor;
+  }
+
+  .rise-live-preview-cursor {
+    width: 0.12rem;
+    height: 0.9rem;
+    margin-left: 0.05rem;
+    background: currentColor;
+    animation: rise-live-cursor 0.8s steps(1, end) infinite;
+  }
+
+  @keyframes rise-live-cursor {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rise-live-preview-cursor {
+      animation: none;
+    }
+  }
+</style>

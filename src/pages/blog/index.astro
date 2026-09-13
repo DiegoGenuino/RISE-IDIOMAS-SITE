@@ -1,6 +1,9 @@
 ---
 export const prerender = false; // habilita ssr
 
+import { previewAttribute } from '../../lib/sanity.preview-attribute';
+import LivePreview from '../../components/blog/LivePreview.astro';
+import { isPreviewSession } from '../../lib/sanity.preview';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogHeader from '../../components/blog/BlogHeader.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
@@ -8,7 +11,18 @@ import Footer from '../../sections/footer/Footer.astro';
 import { getBlogList } from '../../lib/sanity.blog';
 import { Image } from 'astro:assets';
 
-const { posts, categoryFilters, errorMessage: blogErrorMessage } = await getBlogList();
+const isPreview = isPreviewSession(Astro.cookies);
+
+const {
+  posts,
+  categoryFilters,
+  errorMessage: blogErrorMessage,
+} = await getBlogList(isPreview && Astro.cookies.get('rise-perspective')?.value !== 'published');
+
+if (isPreview) {
+  Astro.response.headers.set('Cache-Control', 'private, no-store');
+  Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+}
 
 // Log API errors as exceptions for better debugging visibility
 if (blogErrorMessage) {
@@ -259,7 +273,9 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
                   <span class="feat-read">{featuredPost.readingTimeMinutes} min de leitura</span>
                 </div>
 
-                <h2 class="feat-title">{featuredPost.title}</h2>
+                <h2 class="feat-title" data-sanity={previewAttribute(isPreview, featuredPost.id)}>
+                  {featuredPost.title}
+                </h2>
                 <p class="feat-excerpt">{featuredPost.description}</p>
               </div>
 
@@ -567,10 +583,11 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
       applyFilter(initialFilters.category, initialFilters.tag);
     })();
   </script>
+  <LivePreview enabled={isPreview} />
 </BaseLayout>
 
 <style>
-  ﻿.blog-page {
+  .blog-page {
     min-height: 100vh;
     background: var(--color-surface);
     color: var(--color-ink);
