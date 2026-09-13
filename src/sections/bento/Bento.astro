@@ -7,15 +7,14 @@ import { site } from '../../data/site';
 /**
  * Bento grid "O que está incluído".
  *
- * Cartões no estilo da Stripe: cantos vivos, borda de 1px, e um lavado de
- * gradiente que entra por um canto diferente em cada cartão. Os gradientes
- * saem todos das rampas do design system — brand, aqua, ruby, magenta e
- * amber — para o conjunto ler como uma família e não como cinco enfeites.
+ * Bento de benefícios com uma anatomia comum: identificação, mensagem e
+ * evidência visual. O card escuro ancora a composição; os demais compartilham
+ * a mesma superfície, cor de destaque e ritmo de espaçamento.
  */
 const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 ---
 
-<section id="incluido" class="bg-surface py-20 lg:py-28" aria-labelledby="incluido-titulo">
+<section id="incluido" class="ds-bento-section py-20 lg:py-28" aria-labelledby="incluido-titulo">
   <div class="ds-shell flex flex-col gap-12">
     <SectionHeading
       title="Uma estrutura inteira por trás de cada aula"
@@ -26,13 +25,16 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
     <div class="ds-bento" data-spotlight>
       <!-- ── Tile principal ────────────────────────────────────────────── -->
-      <article class="ds-tile ds-tile--hero ds-dark ds-reveal" data-grad="hero">
+      <article class="ds-tile ds-tile--hero ds-dark ds-reveal">
         <div class="ds-tile-wash" aria-hidden="true"></div>
         <div class="ds-grain-layer" aria-hidden="true"></div>
 
         <div class="ds-tile-body">
           <header class="ds-tile-head">
-            <BentoIcon name="imersao" class="text-aqua" />
+            <div class="ds-tile-identity ds-tile-identity--dark">
+              <span class="ds-tile-icon"><BentoIcon name="imersao" /></span>
+              <span class="ds-tile-kicker">Imersão total</span>
+            </div>
             <span class="ds-tile-mark" aria-hidden="true">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path d="M6 2H2v4M10 14h4v-4M14 6V2h-4M2 10v4h4" stroke-linecap="round"></path>
@@ -40,49 +42,59 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
             </span>
           </header>
 
-          <h3 class="text-title mt-6 max-w-sm font-semibold text-white">
-            Aulas conduzidas 100% no idioma, desde a primeira
-          </h3>
-          <p class="text-abyss-ink mt-4 max-w-md text-sm leading-relaxed">
+          <h3 class="ds-hero-title">Aulas conduzidas 100% no idioma, desde a primeira</h3>
+          <p class="ds-hero-copy">
             O bloqueio de falar cai porque não existe rota de fuga para o português. A correção
             acontece no momento, dentro da conversa — não numa lista de erros no fim.
           </p>
 
-          <div class="ds-demo">
-            <span class="ds-demo-bubble">
-              The staging env is down <s class="ds-demo-strike">since ontem</s>
-            </span>
-            <span class="ds-demo-fix">
-              <svg
-                viewBox="0 0 24 24"
-                width="12"
-                height="12"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-              since <strong>yesterday</strong>
-            </span>
+          <div class="ds-demo" aria-label="Exemplo de correção em contexto">
+            <div class="ds-demo-head">
+              <span>Correção em contexto</span>
+              <span class="ds-demo-status"><i></i> ao vivo</span>
+            </div>
+            <div class="ds-demo-content">
+              <span class="ds-demo-bubble">
+                The staging env is down <s class="ds-demo-strike">since ontem</s>
+              </span>
+              <span class="ds-demo-arrow" aria-hidden="true">↓</span>
+              <span class="ds-demo-fix">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                since <strong>yesterday</strong>
+              </span>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- ── Trilha ────────────────────────────────────────────────────── -->
-      <article class="ds-tile ds-reveal" data-grad="trilha">
+      <article class="ds-tile ds-reveal">
         <div class="ds-tile-wash" aria-hidden="true"></div>
 
         <div class="ds-tile-body">
           <header class="ds-tile-head">
-            <BentoIcon name="trilha" class="text-brand" />
+            <div class="ds-tile-identity">
+              <span class="ds-tile-icon"><BentoIcon name="trilha" /></span>
+              <span class="ds-tile-kicker">Progressão</span>
+            </div>
+            <span class="ds-tile-number">01</span>
           </header>
 
           <h3 class="ds-tile-title">Do A1 ao C2, sem pular etapas</h3>
+          <p class="ds-tile-copy">Uma trilha contínua, com objetivos claros para cada nível.</p>
 
-          <ol class="mt-auto flex items-end gap-1 pt-6" aria-label="Níveis do A1 ao C2">
+          <ol class="ds-levels" aria-label="Níveis do A1 ao C2">
             {
               levels.map((level, index) => (
                 <li class="flex flex-1 flex-col items-center gap-1.5">
@@ -102,44 +114,58 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
       </article>
 
       <!-- ── Certificação ──────────────────────────────────────────────── -->
-      <article class="ds-tile ds-reveal" data-grad="certificacao">
+      <article class="ds-tile ds-reveal">
         <div class="ds-tile-wash" aria-hidden="true"></div>
 
         <div class="ds-tile-body">
           <header class="ds-tile-head">
-            <BentoIcon name="certificacao" class="text-ruby" />
+            <div class="ds-tile-identity">
+              <span class="ds-tile-icon"><BentoIcon name="certificacao" /></span>
+              <span class="ds-tile-kicker">Certificações</span>
+            </div>
+            <span class="ds-tile-number">02</span>
           </header>
 
           <h3 class="ds-tile-title">Cambridge e Michigan</h3>
-          <p class="text-ink-soft mt-2 text-sm leading-relaxed">
+          <p class="ds-tile-copy">
             Simulados, técnicas de prova e material didático oficial das certificadoras.
           </p>
 
-          <div class="mt-auto flex gap-2 pt-6">
-            {['Cambridge', 'Michigan'].map((badge) => <span class="ds-tile-badge">{badge}</span>)}
+          <div class="ds-badges">
+            {
+              ['Cambridge', 'Michigan'].map((badge) => (
+                <span class="ds-tile-badge">
+                  <i aria-hidden="true" />
+                  {badge}
+                </span>
+              ))
+            }
           </div>
         </div>
       </article>
 
       <!-- ── Idiomas ───────────────────────────────────────────────────── -->
-      <article class="ds-tile ds-reveal" data-grad="idiomas">
+      <article class="ds-tile ds-reveal">
         <div class="ds-tile-wash" aria-hidden="true"></div>
 
         <div class="ds-tile-body">
           <header class="ds-tile-head">
-            <BentoIcon name="idiomas" class="text-brand-500" />
+            <div class="ds-tile-identity">
+              <span class="ds-tile-icon"><BentoIcon name="idiomas" /></span>
+              <span class="ds-tile-kicker">Idiomas</span>
+            </div>
+            <span class="ds-tile-number">03</span>
           </header>
 
           <h3 class="ds-tile-title">Três, não só inglês</h3>
+          <p class="ds-tile-copy">O mesmo padrão de ensino para objetivos diferentes.</p>
 
-          <ul class="mt-auto flex flex-col gap-2 pt-6">
+          <ul class="ds-language-list">
             {
               site.languages.map((language) => (
-                <li class="border-brand-50 text-ink-soft flex items-center justify-between border-b pb-2 text-sm last:border-0">
+                <li>
                   {language}
-                  <span class="ds-mono text-brand/70 text-[0.625rem]">
-                    {language.slice(0, 2).toUpperCase()}
-                  </span>
+                  <span class="ds-language-code">{language.slice(0, 2).toUpperCase()}</span>
                 </li>
               ))
             }
@@ -148,17 +174,22 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
       </article>
 
       <!-- ── Programas ─────────────────────────────────────────────────── -->
-      <article class="ds-tile ds-reveal" data-grad="programas">
+      <article class="ds-tile ds-reveal">
         <div class="ds-tile-wash" aria-hidden="true"></div>
 
         <div class="ds-tile-body">
           <header class="ds-tile-head">
-            <BentoIcon name="programas" class="text-magenta" />
+            <div class="ds-tile-identity">
+              <span class="ds-tile-icon"><BentoIcon name="programas" /></span>
+              <span class="ds-tile-kicker">Programas</span>
+            </div>
+            <span class="ds-tile-number">04</span>
           </header>
 
           <h3 class="ds-tile-title">Seis trilhas, dos 5 anos ao C-level</h3>
+          <p class="ds-tile-copy">Formação direcionada para cada fase e ambição.</p>
 
-          <ul class="mt-auto flex flex-wrap gap-1.5 pt-6">
+          <ul class="ds-chip-list">
             {courses.map((course) => <li class="ds-tile-chip">{course.title}</li>)}
           </ul>
         </div>
@@ -168,15 +199,22 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 </section>
 
 <style>
-  /* ═══ Grelha ═══════════════════════════════════════════════════════════
-     Cantos vivos e um fio de 1px a separar: os cartões encostam-se num
-     bloco só, como na Stripe, em vez de flutuarem soltos.                */
+  /* Sistema unificado dos cards */
+  .ds-bento-section {
+    background:
+      radial-gradient(circle at 50% 45%, rgba(83, 58, 253, 0.035), transparent 34rem),
+      var(--color-surface);
+  }
+
   .ds-bento {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1px;
-    background-color: var(--color-brand-100);
-    border: 1px solid var(--color-brand-100);
+    overflow: hidden;
+    border: 1px solid;
+    border-color: color-mix(in srgb, var(--color-brand-100) 72%, var(--color-neutral-100));
+    background-color: color-mix(in srgb, var(--color-brand-100) 72%, var(--color-neutral-100));
+    box-shadow: var(--shadow-lg);
   }
 
   @media (min-width: 640px) {
@@ -188,7 +226,7 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   @media (min-width: 940px) {
     .ds-bento {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-auto-rows: minmax(14rem, auto);
+      grid-auto-rows: minmax(17rem, auto);
     }
 
     .ds-tile--hero {
@@ -197,15 +235,43 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
     }
   }
 
-  /* ═══ Cartão ═══════════════════════════════════════════════════════════ */
   .ds-tile {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background-color: var(--color-surface);
-    /* Sem border-radius: cantos vivos, como pedido. */
     border-radius: 0;
-    transition: background-color var(--dur-slow) var(--ease-card);
+    background: var(--color-surface);
+  }
+
+  .ds-tile:not(.ds-tile--hero)::after {
+    position: absolute;
+    inset: 0 auto auto 0;
+    z-index: 2;
+    width: 100%;
+    height: 2px;
+    content: '';
+    background: linear-gradient(90deg, var(--color-brand), var(--color-aqua));
+    opacity: 0.7;
+  }
+
+  .ds-tile .ds-tile-wash {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.82;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(83, 58, 253, 0.09), transparent 44%),
+      linear-gradient(150deg, rgba(248, 250, 253, 0.82), rgba(255, 255, 255, 0) 52%);
+    transform: none;
+    transition: opacity var(--dur-slow) var(--ease-card);
+  }
+
+  .ds-tile--hero .ds-tile-wash {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 4% 0%, rgba(102, 94, 253, 0.7), transparent 34%),
+      radial-gradient(circle at 100% 100%, rgba(114, 50, 241, 0.62), transparent 34%),
+      linear-gradient(145deg, #171a50 0%, #101735 55%, #19184d 100%);
   }
 
   .ds-tile-body {
@@ -214,36 +280,113 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
     display: flex;
     height: 100%;
     flex-direction: column;
-    padding: 1.75rem;
+    padding: clamp(1.5rem, 2vw, 1.9rem);
   }
 
   .ds-tile--hero .ds-tile-body {
-    padding: 2rem;
+    padding: clamp(1.75rem, 3vw, 2.4rem);
+  }
+
+  .ds-tile-head,
+  .ds-tile-identity {
+    display: flex;
+    align-items: center;
   }
 
   .ds-tile-head {
-    display: flex;
-    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
+  }
+
+  .ds-tile-identity {
+    min-width: 0;
+    gap: 0.75rem;
+  }
+
+  .ds-tile-icon {
+    display: grid;
+    flex: 0 0 auto;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    color: var(--color-brand);
+    background: var(--color-brand-25);
+    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+    transition:
+      color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+
+  .ds-tile-identity--dark .ds-tile-icon {
+    color: var(--color-aqua);
+    background: rgba(69, 209, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(69, 209, 255, 0.22);
+  }
+
+  .ds-tile-kicker,
+  .ds-tile-number {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .ds-tile-kicker {
+    color: var(--color-neutral-600);
+  }
+
+  .ds-tile-number {
+    color: var(--color-neutral-300);
+  }
+
+  .ds-tile-identity--dark .ds-tile-kicker {
+    color: rgba(224, 234, 255, 0.72);
   }
 
   .ds-tile-title {
     margin-top: 1.5rem;
     font-size: 1.0625rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--color-ink);
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
   }
 
-  /* Marca de "expandir" do canto, como nos cartões da Stripe */
+  .ds-tile-copy {
+    max-width: 25rem;
+    margin-top: 0.65rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+
+  .ds-hero-title {
+    max-width: 28rem;
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+    font-weight: 650;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .ds-hero-copy {
+    max-width: 30rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-abyss-ink);
+  }
+
   .ds-tile-mark {
     display: grid;
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
     place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    color: rgba(255, 255, 255, 0.55);
-    background-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.58);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     transition:
       color var(--dur-fast) var(--ease),
       background-color var(--dur-fast) var(--ease);
@@ -254,132 +397,196 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
     height: 0.75rem;
   }
 
-  .ds-tile--hero:hover .ds-tile-mark {
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.16);
-  }
-
-  /* ═══ Lavado de gradiente ══════════════════════════════════════════════
-     Um por cartão, cada um entrando por um canto e com um par de cores
-     diferente — todas das rampas do sistema. É o que dá variedade sem
-     partir a família.                                                     */
-  .ds-tile-wash {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.5;
-    transition:
-      opacity var(--dur-slow) var(--ease-card),
-      transform var(--dur-slow) var(--ease-card);
-    transform: scale(1);
-  }
-
-  @media (hover: hover) {
-    .ds-tile:hover .ds-tile-wash {
-      opacity: 0.85;
-      transform: scale(1.08);
-    }
-  }
-
-  [data-grad='hero'] .ds-tile-wash {
-    opacity: 1;
-    background:
-      radial-gradient(90% 70% at 12% 8%, var(--color-brand-700) 0%, transparent 60%),
-      radial-gradient(70% 60% at 92% 96%, var(--color-violet) 0%, transparent 62%),
-      linear-gradient(158deg, var(--color-abyss) 0%, var(--color-abyss-deep) 100%);
-  }
-
-  [data-grad='trilha'] .ds-tile-wash {
-    background: radial-gradient(
-      120% 100% at 100% 0%,
-      color-mix(in srgb, var(--color-brand) 22%, transparent) 0%,
-      transparent 62%
-    );
-  }
-
-  [data-grad='certificacao'] .ds-tile-wash {
-    background: radial-gradient(
-      110% 100% at 0% 100%,
-      color-mix(in srgb, var(--color-ruby) 16%, transparent) 0%,
-      transparent 58%
-    );
-  }
-
-  [data-grad='idiomas'] .ds-tile-wash {
-    background: linear-gradient(
-      205deg,
-      color-mix(in srgb, var(--color-aqua) 24%, transparent) 0%,
-      transparent 55%
-    );
-  }
-
-  [data-grad='programas'] .ds-tile-wash {
-    background: radial-gradient(
-      100% 110% at 88% 92%,
-      color-mix(in srgb, var(--color-magenta) 18%, transparent) 0%,
-      transparent 60%
-    );
-  }
-
-  /* ═══ Conteúdo do tile principal ═══════════════════════════════════════ */
   .ds-demo {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    display: block;
     margin-top: auto;
     padding-top: 2rem;
   }
 
+  .ds-demo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0;
+    background: rgba(5, 11, 36, 0.28);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(223, 232, 255, 0.62);
+  }
+
+  .ds-demo-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #dff7b4;
+  }
+
+  .ds-demo-status i,
+  .ds-tile-badge i {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  .ds-demo-content {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(7, 13, 41, 0.44);
+  }
+
+  .ds-demo-bubble,
+  .ds-demo-fix {
+    margin-left: 0;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.72rem;
+  }
+
   .ds-demo-bubble {
-    padding: 0.5rem 0.75rem;
-    background-color: rgba(83, 58, 253, 0.3);
-    box-shadow: inset 0 0 0 1px rgba(127, 125, 252, 0.55);
-    font-size: 0.8125rem;
     color: #eef0ff;
+    background: rgba(102, 94, 253, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(154, 154, 254, 0.28);
   }
 
   .ds-demo-strike {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.48);
     text-decoration-color: var(--color-ruby);
     text-decoration-thickness: 1.5px;
+  }
+
+  .ds-demo-arrow {
+    color: rgba(255, 255, 255, 0.36);
+    transform: rotate(-90deg);
   }
 
   .ds-demo-fix {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    margin-left: 1.5rem;
-    padding: 0.3rem 0.6rem;
-    background-color: rgba(180, 244, 97, 0.14);
-    box-shadow: inset 0 0 0 1px rgba(180, 244, 97, 0.35);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
     color: var(--color-lime);
+    background: rgba(180, 244, 97, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(180, 244, 97, 0.24);
   }
 
   .ds-demo-fix strong {
-    color: #dff7b4;
+    color: #e8ffc8;
   }
 
-  /* ═══ Detalhes ═════════════════════════════════════════════════════════ */
+  .ds-levels,
+  .ds-badges,
+  .ds-language-list,
+  .ds-chip-list {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .ds-levels {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+
+  .ds-badges {
+    display: grid;
+    gap: 0.45rem;
+  }
+
   .ds-tile-badge {
-    padding: 0.375rem 0.75rem;
-    background-color: var(--color-surface-alt);
-    box-shadow: inset 0 0 0 1px var(--color-brand-100);
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.7rem;
+    background: var(--color-surface-alt);
+    box-shadow: inset 0 0 0 1px var(--color-neutral-50);
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.035em;
     color: var(--color-brand-800);
+  }
+
+  .ds-tile-badge i {
+    color: var(--color-brand-500);
+  }
+
+  .ds-language-list {
+    display: grid;
+    gap: 0;
+  }
+
+  .ds-language-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--color-neutral-50);
+    font-size: 0.78rem;
+    color: var(--color-ink-soft);
+  }
+
+  .ds-language-list li:last-child {
+    border-bottom: 0;
+  }
+
+  .ds-language-code {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-500);
+  }
+
+  .ds-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
 
   .ds-tile-chip {
-    padding: 0.25rem 0.625rem;
-    background-color: var(--color-brand-25);
-    box-shadow: inset 0 0 0 1px var(--color-brand-100);
-    font-size: 0.75rem;
-    font-weight: 500;
+    padding: 0.35rem 0.55rem;
+    background: var(--color-surface-alt);
+    box-shadow: inset 0 0 0 1px var(--color-neutral-50);
+    font-size: 0.68rem;
+    font-weight: 550;
+    line-height: 1.25;
     color: var(--color-brand-800);
+  }
+
+  @media (hover: hover) {
+    .ds-tile:not(.ds-tile--hero):hover .ds-tile-wash {
+      opacity: 1;
+      transform: none;
+    }
+
+    .ds-tile:not(.ds-tile--hero):hover .ds-tile-icon {
+      color: #fff;
+      background: var(--color-brand);
+    }
+
+    .ds-tile--hero:hover .ds-tile-mark {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .ds-demo-content {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .ds-demo-arrow {
+      margin-left: 0.75rem;
+      transform: none;
+    }
   }
 </style>
