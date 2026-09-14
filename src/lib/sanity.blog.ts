@@ -8,6 +8,8 @@ import {
   BLOG_RECENT_POSTS_QUERY,
 } from './sanity.queries';
 import { isSanityConfigured, sanityClient } from './sanity.client';
+import { loadSanityQuery } from './sanity.loader';
+import { stegaClean } from '@sanity/client/stega';
 import type {
   SanityCategoryFilterDocument,
   SanityPostCardDocument,
@@ -36,9 +38,7 @@ async function fetchPublishedPostCards(isPreview = false): Promise<SanityPostCar
     return [];
   }
 
-  return sanityClient
-    .withConfig({ perspective: isPreview ? 'drafts' : 'published', useCdn: !isPreview })
-    .fetch<SanityPostCardDocument[]>(BLOG_POST_LIST_QUERY);
+  return loadSanityQuery<SanityPostCardDocument[]>(BLOG_POST_LIST_QUERY, {}, isPreview);
 }
 
 async function fetchPublishedCategoryFilters(
@@ -48,9 +48,11 @@ async function fetchPublishedCategoryFilters(
     return [];
   }
 
-  return sanityClient
-    .withConfig({ perspective: isPreview ? 'drafts' : 'published', useCdn: !isPreview })
-    .fetch<SanityCategoryFilterDocument[]>(BLOG_CATEGORY_FILTERS_QUERY);
+  return loadSanityQuery<SanityCategoryFilterDocument[]>(
+    BLOG_CATEGORY_FILTERS_QUERY,
+    {},
+    isPreview
+  );
 }
 
 export async function getBlogList(isPreview = false): Promise<BlogListResult> {
@@ -106,7 +108,7 @@ export async function getBlogSlugs(): Promise<string[]> {
   }
 
   try {
-    const slugDocuments = await sanityClient.fetch<SanitySlugDocument[]>(BLOG_POST_SLUGS_QUERY);
+    const slugDocuments = await loadSanityQuery<SanitySlugDocument[]>(BLOG_POST_SLUGS_QUERY);
     const slugs = slugDocuments.map((item) => item.slug).filter(Boolean) as string[];
     return slugs;
   } catch (error) {
@@ -124,30 +126,31 @@ async function getAutomaticRelatedPosts(
     return [];
   }
 
-  const client = sanityClient.withConfig({
-    perspective: isPreview ? 'drafts' : 'published',
-    useCdn: !isPreview,
-  });
   const params = {
-    slug: post.slug,
-    categoryRef: post.categoryRef || '',
-    tagRefs: post.tagRefs || [],
+    slug: stegaClean(post.slug),
+    categoryRef: stegaClean(post.categoryRef || ''),
+    tagRefs: (post.tagRefs || []).map((tagRef) => stegaClean(tagRef)),
     limit: 3,
   };
 
-  const relatedCards = await client.fetch<SanityPostCardDocument[]>(
+  const relatedCards = await loadSanityQuery<SanityPostCardDocument[]>(
     BLOG_RELATED_POSTS_QUERY,
-    params
+    params,
+    isPreview
   );
 
   if (relatedCards.length > 0) {
     return relatedCards.map(mapSanityPostCard).slice(0, 3);
   }
 
-  const recentCards = await client.fetch<SanityPostCardDocument[]>(BLOG_RECENT_POSTS_QUERY, {
-    slug: post.slug,
-    limit: 3,
-  });
+  const recentCards = await loadSanityQuery<SanityPostCardDocument[]>(
+    BLOG_RECENT_POSTS_QUERY,
+    {
+      slug: stegaClean(post.slug),
+      limit: 3,
+    },
+    isPreview
+  );
 
   return recentCards.map(mapSanityPostCard).slice(0, 3);
 }
@@ -165,14 +168,13 @@ export async function getBlogPostBySlug(
   }
 
   try {
-    const sanityPost = await sanityClient
-      .withConfig({
-        perspective: isPreview ? 'drafts' : 'published',
-        useCdn: !isPreview,
-      })
-      .fetch<SanityPostDocument | null>(BLOG_POST_BY_SLUG_QUERY, {
+    const sanityPost = await loadSanityQuery<SanityPostDocument | null>(
+      BLOG_POST_BY_SLUG_QUERY,
+      {
         slug,
-      });
+      },
+      isPreview
+    );
 
     if (!sanityPost) {
       return {

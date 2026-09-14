@@ -3,21 +3,30 @@ interface Props {
   enabled: boolean;
 }
 const { enabled } = Astro.props;
+const returnTo = Astro.url.pathname + Astro.url.search;
 ---
 
 {
   enabled && (
-    <div
-      class="rise-live-preview-status"
-      data-rise-live-preview
-      data-state="connecting"
-      role="status"
-      aria-live="polite"
-    >
-      <span class="rise-live-preview-dot" aria-hidden="true" />
-      <span data-live-preview-label>Connecting</span>
-      <span class="rise-live-preview-cursor" aria-hidden="true" />
-    </div>
+    <details class="rise-live-preview-status" data-rise-live-preview data-state="connecting">
+      <summary class="rise-live-preview-trigger">
+        <span class="rise-live-preview-dot" aria-hidden="true" />
+        <span data-live-preview-label role="status" aria-live="polite">
+          Conectando
+        </span>
+        <svg class="rise-live-preview-chevron" viewBox="0 0 12 12" aria-hidden="true">
+          <path d="m3 4.5 3 3 3-3" />
+        </svg>
+      </summary>
+      <div class="rise-live-preview-menu">
+        <strong>Edição visual ativada</strong>
+        <p>Você está visualizando rascunhos com a edição por clique ativada.</p>
+        <form action="/api/preview-disable" method="post">
+          <input type="hidden" name="redirectTo" value={returnTo} />
+          <button type="submit">Desativar edição visual e rascunhos</button>
+        </form>
+      </div>
+    </details>
   )
 }
 <script>
@@ -30,7 +39,7 @@ const { enabled } = Astro.props;
       liveStatus.dataset.state = state;
       if (liveLabel) {
         liveLabel.textContent =
-          state === 'live' ? 'Live preview' : state === 'offline' ? 'Reconnecting' : 'Connecting';
+          state === 'live' ? 'Prévia ao vivo' : state === 'offline' ? 'Reconectando' : 'Conectando';
       }
     };
 
@@ -96,20 +105,40 @@ const { enabled } = Astro.props;
     right: 1rem;
     bottom: 1rem;
     z-index: 2147483646;
-    display: inline-flex;
+    color: #fff;
+    font: 600 0.7rem/1 var(--font-mono, monospace);
+    letter-spacing: 0.08em;
+  }
+
+  .rise-live-preview-trigger {
+    display: flex;
     align-items: center;
     gap: 0.45rem;
+    min-height: 2.25rem;
     padding: 0.55rem 0.75rem;
     border: 1px solid color-mix(in srgb, #fff 20%, transparent);
     border-radius: 999px;
     background: color-mix(in srgb, #111 88%, transparent);
     box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
-    color: #fff;
-    font: 600 0.7rem/1 var(--font-mono, monospace);
-    letter-spacing: 0.08em;
     text-transform: uppercase;
-    pointer-events: none;
+    cursor: pointer;
+    list-style: none;
     backdrop-filter: blur(10px);
+  }
+
+  .rise-live-preview-trigger::-webkit-details-marker {
+    display: none;
+  }
+
+  .rise-live-preview-trigger:hover,
+  .rise-live-preview-trigger:focus-visible {
+    border-color: color-mix(in srgb, #fff 45%, transparent);
+    background: color-mix(in srgb, #242424 94%, transparent);
+  }
+
+  .rise-live-preview-trigger:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
   }
 
   .rise-live-preview-dot {
@@ -130,23 +159,65 @@ const { enabled } = Astro.props;
     background: currentColor;
   }
 
-  .rise-live-preview-cursor {
-    width: 0.12rem;
-    height: 0.9rem;
-    margin-left: 0.05rem;
-    background: currentColor;
-    animation: rise-live-cursor 0.8s steps(1, end) infinite;
+  .rise-live-preview-chevron {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-left: 0.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+    transition: transform 160ms ease;
   }
 
-  @keyframes rise-live-cursor {
-    50% {
-      opacity: 0;
-    }
+  .rise-live-preview-status[open] .rise-live-preview-chevron {
+    transform: rotate(180deg);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .rise-live-preview-cursor {
-      animation: none;
-    }
+  .rise-live-preview-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.5rem);
+    width: min(18rem, calc(100vw - 2rem));
+    padding: 1rem;
+    border: 1px solid color-mix(in srgb, #fff 20%, transparent);
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, #111 94%, transparent);
+    box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 28%);
+    letter-spacing: normal;
+    backdrop-filter: blur(12px);
+  }
+
+  .rise-live-preview-menu strong {
+    display: block;
+    font-size: 0.78rem;
+  }
+
+  .rise-live-preview-menu p {
+    margin: 0.45rem 0 0.85rem;
+    color: color-mix(in srgb, #fff 72%, transparent);
+    font: 400 0.72rem/1.45 var(--font-mono, monospace);
+  }
+
+  .rise-live-preview-menu button {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid color-mix(in srgb, #ff8787 52%, transparent);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, #c92a2a 28%, transparent);
+    color: #fff;
+    font: 600 0.7rem/1.2 var(--font-mono, monospace);
+    cursor: pointer;
+  }
+
+  .rise-live-preview-menu button:hover,
+  .rise-live-preview-menu button:focus-visible {
+    background: color-mix(in srgb, #c92a2a 52%, transparent);
+  }
+
+  .rise-live-preview-menu button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
   }
 </style>
