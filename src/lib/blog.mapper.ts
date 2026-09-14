@@ -5,6 +5,7 @@ import type {
   SanityPostDocument,
 } from './sanity.types';
 import type { BlogAuthor, BlogPostHeroImage, BlogPost } from '../types/blog';
+import { stegaClean } from '@sanity/client/stega';
 
 const DATE_MONTH_LABELS = [
   'Jan',
@@ -37,7 +38,7 @@ function formatPublishDate(isoDate?: string): { date: string; label: string } {
     };
   }
 
-  const parsed = new Date(isoDate);
+  const parsed = new Date(stegaClean(isoDate));
   if (Number.isNaN(parsed.getTime())) {
     return {
       date: new Date().toISOString().slice(0, 10),
@@ -56,17 +57,24 @@ function formatPublishDate(isoDate?: string): { date: string; label: string } {
 }
 
 function mapAuthor(author?: SanityAuthor): BlogAuthor {
-  if (!author?.name || !author.position || !author.nickname || !author.bio) {
+  if (!author?.name || !author.position || !author.bio) {
     return defaultAuthor;
   }
+
+  const fallbackNickname = stegaClean(author.name)
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('');
 
   return {
     name: author.name,
     position: author.position,
-    nickname: author.nickname,
+    nickname: author.nickname || fallbackNickname,
     bio: author.bio,
-    linkedin: author.linkedin,
-    avatar: mapHeroImage(author.avatar, `Foto de ${author.name}`),
+    linkedin: author.linkedin ? stegaClean(author.linkedin) : undefined,
+    avatar: mapHeroImage(author.avatar, `Foto de ${stegaClean(author.name)}`),
   };
 }
 
@@ -79,8 +87,8 @@ function mapHeroImage(
   }
 
   return {
-    alt: heroImage.alt || fallbackAlt,
-    url: heroImage.url,
+    alt: stegaClean(heroImage.alt || fallbackAlt),
+    url: stegaClean(heroImage.url),
     width: heroImage.width,
     height: heroImage.height,
   };
@@ -93,7 +101,7 @@ function mapBasePostData(post: SanityPostCardDocument): BlogPost {
 
   return {
     id: post._id,
-    slug: post.slug || 'sem-slug',
+    slug: post.slug ? stegaClean(post.slug) : 'sem-slug',
     title: post.title || 'Post sem titulo',
     featured: Boolean(post.featured),
     description,
@@ -101,7 +109,7 @@ function mapBasePostData(post: SanityPostCardDocument): BlogPost {
     publishDate: publishDate.date,
     publishDateLabel: publishDate.label,
     readingTimeMinutes: post.readingTimeMinutes || 1,
-    image: mapHeroImage(post.image, `Capa do post ${post.title || 'artigo'}`),
+    image: mapHeroImage(post.image, `Capa do post ${stegaClean(post.title || 'artigo')}`),
     portableBody: [],
     author: mapAuthor(post.author),
     tags: (post.tags || []).filter(Boolean),
@@ -119,10 +127,11 @@ export function mapSanityPost(post: SanityPostDocument): BlogPost {
     ...baseData,
     portableBody: post.body && post.body.length > 0 ? post.body : [],
     callToAction:
-      post.callToAction?.title && post.callToAction?.url
+      post.callToAction?.label && post.callToAction?.url
         ? {
-            title: post.callToAction.title,
-            url: post.callToAction.url,
+            label: post.callToAction.label,
+            url: stegaClean(post.callToAction.url),
+            openInNewTab: Boolean(post.callToAction.openInNewTab),
           }
         : undefined,
   };

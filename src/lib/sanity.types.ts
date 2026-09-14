@@ -72,7 +72,6 @@ export interface SanityPtCodeBlock {
   _key?: string;
   language?: string;
   filename?: string;
-  showLineNumbers?: boolean;
   code?: string;
 }
 
@@ -118,80 +117,12 @@ export type SanityPortableBodyNode =
   | SanityPtEmbedBlock
   | SanityPtDividerBlock;
 
-export interface SanityNumberedListItem {
-  title?: string;
-  description?: string;
-}
-
-export interface SanityParagraphBlock {
-  _type: 'paragraphBlock';
-  content?: SanityPortableText;
-}
-
-export interface SanitySubheadingBlock {
-  _type: 'subheadingBlock';
-  content?: string;
-}
-
-export interface SanityCalloutBlock {
-  _type: 'calloutBlock';
-  label?: string;
-  content?: SanityPortableText;
-}
-
-export interface SanityPullquoteBlock {
-  _type: 'pullquoteBlock';
-  quote?: string;
-  attribution?: string;
-}
-
-export interface SanityNumberedListBlock {
-  _type: 'numberedListBlock';
-  items?: SanityNumberedListItem[];
-}
-
-export interface SanityDividerBlock {
-  _type: 'dividerBlock';
-}
-
-export type SanitySectionBlock =
-  | SanityParagraphBlock
-  | SanitySubheadingBlock
-  | SanityCalloutBlock
-  | SanityPullquoteBlock
-  | SanityNumberedListBlock
-  | SanityDividerBlock;
-
-export interface SanitySection {
-  tocLabel?: string;
-  sectionAnchor?: {
-    current?: string;
-  };
-  heading?: string;
-  headingHighlight?: string;
-  blocks?: SanitySectionBlock[];
-}
-
-export interface SanitySidebarCta {
-  label?: string;
-  text?: string;
-  buttonText?: string;
-  buttonUrl?: string;
-}
-
-export interface SanityFooterStat {
-  label?: string;
-  value?: string;
-  emphasis?: string;
-}
-
 export interface SanityPostCardDocument {
   _id: string;
   title?: string;
   slug?: string;
   description?: string;
   category?: string;
-  categorySlug?: string;
   publishedAt?: string;
   readingTimeMinutes?: number;
   image?: SanityHeroImage;
@@ -205,8 +136,9 @@ export interface SanityPostDocument extends SanityPostCardDocument {
   categoryRef?: string;
   tagRefs?: string[];
   callToAction?: {
-    title?: string;
+    label?: string;
     url?: string;
+    openInNewTab?: boolean;
   };
 }
 

@@ -9,6 +9,8 @@ import type { BlogPost } from '../../types/blog';
 import type { SanityPortableBodyNode, SanityPortableTextBlock } from '../../lib/sanity.types';
 import { getBlogPostBySlug } from '../../lib/sanity.blog';
 import PortableRichContent from '../../components/blog/portable/PortableRichContent.astro';
+import { stegaClean } from '@sanity/client/stega';
+import BlogPostCTA from '../../components/blog/BlogPostCTA.astro';
 
 export const prerender = false;
 
@@ -21,7 +23,7 @@ interface ArticleTocItem {
 }
 
 function slugifyHeadingValue(value: string): string {
-  return value
+  return stegaClean(value)
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -120,7 +122,7 @@ const defaultStats = [
 ];
 const heroImageAlt = currentPost.image?.alt || `Imagem do post ${currentPost.title}`;
 const hasAuthorAvatar = Boolean(currentPost.author.avatar?.url);
-const authorAvatarAlt = currentPost.author.avatar?.alt || currentPost.author.name;
+const authorAvatarAlt = stegaClean(currentPost.author.avatar?.alt || currentPost.author.name);
 const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
   Astro.url.href
 )}`;
@@ -128,18 +130,19 @@ const articleImageUrl = currentPost.image?.url
   ? new URL(currentPost.image.url, Astro.url).toString()
   : new URL('/favicon.svg', Astro.url).toString();
 const articleTags = currentPost.tags.slice(0, 6);
+const cleanArticleTags = articleTags.map((tag) => stegaClean(tag));
 const articlePublishedIso = `${currentPost.publishDate}T00:00:00.000Z`;
 const articleJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: currentPost.title,
-  description: currentPost.description,
+  headline: stegaClean(currentPost.title),
+  description: stegaClean(currentPost.description),
   image: [articleImageUrl],
   datePublished: articlePublishedIso,
   dateModified: articlePublishedIso,
   author: {
     '@type': 'Person',
-    name: currentPost.author.name,
+    name: stegaClean(currentPost.author.name),
   },
   publisher: {
     '@type': 'Organization',
@@ -150,16 +153,16 @@ const articleJsonLd = JSON.stringify({
     },
   },
   mainEntityOfPage: Astro.url.href,
-  articleSection: currentPost.category,
-  keywords: currentPost.tags.join(', '),
+  articleSection: stegaClean(currentPost.category),
+  keywords: currentPost.tags.map((tag) => stegaClean(tag)).join(', '),
   wordCount: Math.max(currentPost.readingTimeMinutes * 200, 200),
 });
 ---
 
 <BaseLayout
   seo={{
-    title: currentPost.title,
-    description: currentPost.description,
+    title: stegaClean(currentPost.title),
+    description: stegaClean(currentPost.description),
     type: 'article',
     image: currentPost.image?.url || '/favicon.svg',
     canonicalUrl: undefined,
@@ -168,11 +171,11 @@ const articleJsonLd = JSON.stringify({
   <Fragment slot="head">
     <meta property="article:published_time" content={articlePublishedIso} />
     <meta property="og:article:published_time" content={articlePublishedIso} />
-    <meta property="article:section" content={currentPost.category} />
-    <meta property="og:article:section" content={currentPost.category} />
-    <meta property="article:author" content={currentPost.author.name} />
+    <meta property="article:section" content={stegaClean(currentPost.category)} />
+    <meta property="og:article:section" content={stegaClean(currentPost.category)} />
+    <meta property="article:author" content={stegaClean(currentPost.author.name)} />
     {
-      articleTags.map((tag) => (
+      cleanArticleTags.map((tag) => (
         <Fragment>
           <meta property="article:tag" content={tag} />
           <meta property="og:article:tag" content={tag} />
@@ -261,7 +264,7 @@ const articleJsonLd = JSON.stringify({
                       class="ah-author-linkedin"
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`LinkedIn do ${currentPost.author.name}`}
+                      aria-label={`LinkedIn do ${stegaClean(currentPost.author.name)}`}
                     >
                       <svg
                         class="block h-auto w-8"
@@ -351,7 +354,7 @@ const articleJsonLd = JSON.stringify({
               <span class="art-tags-label">Tags</span>
               {
                 currentPost.tags.map((tag) => (
-                  <a class="atag" href={`/blog?tag=${encodeURIComponent(tag)}`}>
+                  <a class="atag" href={`/blog?tag=${encodeURIComponent(stegaClean(tag))}`}>
                     {tag}
                   </a>
                 ))
@@ -381,18 +384,6 @@ const articleJsonLd = JSON.stringify({
               )
             }
 
-            {
-              currentPost.callToAction && (
-                <div class="sb-cta">
-                  <div class="sb-cta-label">Veja mais</div>
-                  <p class="sb-cta-text">{currentPost.callToAction.title}</p>
-                  <a href={currentPost.callToAction.url} class="sb-cta-btn">
-                    <span>Acessar</span>
-                  </a>
-                </div>
-              )
-            }
-
             <div class="sb-rel-label">Leia também</div>
             {
               relatedPosts.map((relatedPost) => (
@@ -404,6 +395,8 @@ const articleJsonLd = JSON.stringify({
             }
           </aside>
         </div>
+
+        <BlogPostCTA action={currentPost.callToAction} />
 
         <div class="author-bio">
           <div class="bio-left">
@@ -434,7 +427,7 @@ const articleJsonLd = JSON.stringify({
                     class="bio-linkedin"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`LinkedIn de ${currentPost.author.name}`}
+                    aria-label={`LinkedIn de ${stegaClean(currentPost.author.name)}`}
                   >
                     <svg
                       class="block h-auto w-8"

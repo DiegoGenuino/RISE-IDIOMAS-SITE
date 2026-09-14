@@ -6,7 +6,6 @@ const BLOG_CARD_PROJECTION = `
   "slug": slug.current,
   "description": description,
   "category": category->title,
-  "categorySlug": category->slug.current,
   publishedAt,
   readingTimeMinutes,
   "image": image{
@@ -16,7 +15,6 @@ const BLOG_CARD_PROJECTION = `
     "height": image.asset->metadata.dimensions.height
   },
   featured,
-  status,
   "author": author->{
     name,
     position,

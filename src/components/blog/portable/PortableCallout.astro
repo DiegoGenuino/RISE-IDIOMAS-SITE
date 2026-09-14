@@ -1,13 +1,14 @@
 ---
 import type { SanityPtCalloutBlock } from '../../../lib/sanity.types';
 import PortableTextBlock from './PortableTextBlock.astro';
+import { stegaClean } from '@sanity/client/stega';
 
 interface Props {
   block: SanityPtCalloutBlock;
 }
 
 const { block } = Astro.props;
-const tone = block.tone || 'info';
+const tone = stegaClean(block.tone || 'info');
 const contentBlocks = block.content || [];
 ---
 

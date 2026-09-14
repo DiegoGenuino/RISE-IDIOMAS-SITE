@@ -1,6 +1,7 @@
 ---
 import { codeToHtml } from 'shiki';
 import type { SanityPtCodeBlock } from '../../../lib/sanity.types';
+import { stegaClean } from '@sanity/client/stega';
 
 interface Props {
   block: SanityPtCodeBlock;
@@ -18,7 +19,7 @@ function escapeHtml(value: string): string {
 }
 
 const code = block.code || '';
-const language = (block.language || 'text').toLowerCase();
+const language = stegaClean(block.language || 'text').toLowerCase();
 
 let highlightedCode: string;
 try {
@@ -31,7 +32,7 @@ try {
 }
 ---
 
-<figure class="portable-code-block" data-show-lines={String(Boolean(block.showLineNumbers))}>
+<figure class="portable-code-block">
   <figcaption class="portable-code-meta">
     <span class="portable-code-lang">{language}</span>
     {block.filename && <span class="portable-code-filename">{block.filename}</span>}

@@ -1,0 +1,186 @@
+---
+import { whatsappLink } from '../../data/site';
+
+interface Props {
+  action?: {
+    label: string;
+    url: string;
+    openInNewTab: boolean;
+  };
+}
+
+const { action } = Astro.props;
+const href = action?.url ?? whatsappLink('Olá, vim pelo blog e quero saber mais sobre os cursos.');
+const label = action?.label ?? 'Fale com a Rise';
+const opensInNewTab = action?.openInNewTab ?? true;
+---
+
+<aside class="post-cta" aria-labelledby="post-cta-title">
+  <div class="post-cta-copy">
+    <p class="post-cta-eyebrow">Seu próximo passo</p>
+    <h2 id="post-cta-title">Transforme o que você aprendeu em fluência de verdade.</h2>
+    <p class="post-cta-description">
+      Conheça uma trilha de aprendizado feita para o seu nível, sua rotina e seus objetivos.
+    </p>
+  </div>
+
+  <a
+    class="post-cta-link"
+    href={href}
+    target={opensInNewTab ? '_blank' : undefined}
+    rel={opensInNewTab ? 'noopener noreferrer' : undefined}
+  >
+    <span>{label}</span>
+    <span class="post-cta-arrow" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 16 16 4M7 4h9v9" stroke="currentColor" stroke-width="1.7"></path>
+      </svg>
+    </span>
+  </a>
+
+  <span class="post-cta-orbit post-cta-orbit-one" aria-hidden="true"></span>
+  <span class="post-cta-orbit post-cta-orbit-two" aria-hidden="true"></span>
+</aside>
+
+<style>
+  .post-cta {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: clamp(2rem, 6vw, 6rem);
+    margin: clamp(2rem, 5vw, 4.5rem) auto;
+    padding: clamp(2rem, 5vw, 4.5rem);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--color-abyss);
+    color: white;
+  }
+
+  .post-cta::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+      linear-gradient(color-mix(in srgb, white 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, white 7%, transparent) 1px, transparent 1px);
+    background-size: 3rem 3rem;
+    content: '';
+    mask-image: linear-gradient(90deg, black, transparent 76%);
+  }
+
+  .post-cta-copy {
+    max-width: 46rem;
+  }
+
+  .post-cta-eyebrow {
+    margin: 0 0 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-aqua);
+  }
+
+  .post-cta h2 {
+    max-width: 44rem;
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 4rem);
+    font-weight: 600;
+    line-height: 1.03;
+    letter-spacing: -0.045em;
+    color: white;
+  }
+
+  .post-cta-description {
+    max-width: 36rem;
+    margin: 1.5rem 0 0;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.7;
+    color: var(--color-abyss-ink);
+  }
+
+  .post-cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: max-content;
+    padding: 0.75rem 0.75rem 0.75rem 1.25rem;
+    border-radius: var(--radius-md);
+    background: var(--color-brand);
+    box-shadow: var(--shadow-brand);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: white;
+    transition:
+      transform var(--dur-base) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+
+  .post-cta-link:hover {
+    transform: translateY(-2px);
+    background: var(--color-brand-strong);
+  }
+
+  .post-cta-link:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+  }
+
+  .post-cta-arrow {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border-radius: calc(var(--radius-md) - 2px);
+    background: color-mix(in srgb, white 16%, transparent);
+  }
+
+  .post-cta-arrow svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .post-cta-orbit {
+    position: absolute;
+    z-index: -1;
+    border: 1px solid color-mix(in srgb, var(--color-aqua) 24%, transparent);
+    border-radius: 50%;
+  }
+
+  .post-cta-orbit-one {
+    top: -10rem;
+    right: -5rem;
+    width: 22rem;
+    height: 22rem;
+  }
+
+  .post-cta-orbit-two {
+    right: 7rem;
+    bottom: -13rem;
+    width: 19rem;
+    height: 19rem;
+  }
+
+  @media (max-width: 760px) {
+    .post-cta {
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 2rem;
+    }
+
+    .post-cta-link {
+      width: 100%;
+      min-width: 0;
+      justify-content: space-between;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-cta-link {
+      transition: none;
+    }
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import type { SanityPortableTextBlock, SanityPortableTextMarkDef } from '../../../lib/sanity.types';
+import { stegaClean } from '@sanity/client/stega';
 
 interface Props {
   block: SanityPortableTextBlock;
@@ -18,7 +19,7 @@ function escapeHtml(value: string): string {
 }
 
 function slugifyValue(value: string): string {
-  return value
+  return stegaClean(value)
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -32,14 +33,16 @@ function sanitizeHref(href?: string): string | null {
     return null;
   }
 
-  if (href.startsWith('/') || href.startsWith('#')) {
-    return href;
+  const cleanHref = stegaClean(href);
+
+  if (cleanHref.startsWith('/') || cleanHref.startsWith('#')) {
+    return cleanHref;
   }
 
   try {
-    const parsed = new URL(href);
+    const parsed = new URL(cleanHref);
     if (['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol)) {
-      return href;
+      return cleanHref;
     }
   } catch {
     return null;
@@ -84,7 +87,7 @@ function applyMarkDef(markDef: SanityPortableTextMarkDef, html: string): string 
       return html;
     }
 
-    return `<a href="/blog/${escapeHtml(markDef.slug)}">${html}</a>`;
+    return `<a href="/blog/${escapeHtml(stegaClean(markDef.slug))}">${html}</a>`;
   }
 
   return html;
@@ -128,15 +131,16 @@ function buildBlockHtml(portableBlock: SanityPortableTextBlock): string {
   const contentHtml = renderSpans(portableBlock);
   const compactClass = compact ? ' portable-compact' : '';
 
-  if (portableBlock.listItem === 'number') {
+  const listItem = portableBlock.listItem ? stegaClean(portableBlock.listItem) : undefined;
+  if (listItem === 'number') {
     return `<ol class="portable-list-number${compactClass}"><li>${contentHtml}</li></ol>`;
   }
 
-  if (portableBlock.listItem === 'bullet') {
+  if (listItem === 'bullet') {
     return `<ul class="portable-list-bullet${compactClass}"><li>${contentHtml}</li></ul>`;
   }
 
-  const style = portableBlock.style || 'normal';
+  const style = stegaClean(portableBlock.style || 'normal');
   if (style === 'h2' || style === 'h3' || style === 'h4') {
     const headingId = resolveHeadingId(portableBlock, contentHtml);
     return `<${style} id="${headingId}" class="portable-heading portable-${style}${compactClass}">${contentHtml}</${style}>`;

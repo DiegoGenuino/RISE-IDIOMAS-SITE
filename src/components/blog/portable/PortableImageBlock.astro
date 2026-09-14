@@ -1,5 +1,6 @@
 ---
 import type { SanityPtImageBlock } from '../../../lib/sanity.types';
+import { stegaClean } from '@sanity/client/stega';
 
 interface Props {
   block: SanityPtImageBlock;
@@ -7,9 +8,9 @@ interface Props {
 
 const { block } = Astro.props;
 const image = block.image;
-const layout = image?.layout || 'inline';
-const imageUrl = image?.url;
-const alt = image?.alt || '';
+const layout = stegaClean(image?.layout || 'inline');
+const imageUrl = image?.url ? stegaClean(image.url) : undefined;
+const alt = stegaClean(image?.alt || '');
 const caption = image?.caption;
 const width = image?.width;
 const height = image?.height;

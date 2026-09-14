@@ -10,6 +10,7 @@ import BlogCard from '../../components/blog/BlogCard.astro';
 import Footer from '../../sections/footer/Footer.astro';
 import { getBlogList } from '../../lib/sanity.blog';
 import { Image } from 'astro:assets';
+import { stegaClean } from '@sanity/client/stega';
 
 const isPreview = isPreviewSession(Astro.cookies);
 
@@ -40,7 +41,7 @@ const featuredCoverImageAlt = featuredPost
   : 'Capa do post';
 
 function createCategoryKey(categoryLabel: string): string {
-  return categoryLabel
+  return stegaClean(categoryLabel)
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
     .toLowerCase()

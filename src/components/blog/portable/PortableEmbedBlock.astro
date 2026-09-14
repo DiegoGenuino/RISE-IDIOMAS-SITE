@@ -1,5 +1,6 @@
 ---
 import type { SanityPtEmbedBlock } from '../../../lib/sanity.types';
+import { stegaClean } from '@sanity/client/stega';
 
 interface Props {
   block: SanityPtEmbedBlock;
@@ -62,8 +63,8 @@ function resolveEmbedUrl(embed: SanityPtEmbedBlock): string | null {
   }
 
   try {
-    const sourceUrl = new URL(embed.url);
-    const provider = embed.provider || 'youtube';
+    const sourceUrl = new URL(stegaClean(embed.url));
+    const provider = stegaClean(embed.provider || 'youtube');
 
     if (provider === 'youtube') {
       return getYoutubeEmbedUrl(sourceUrl);
@@ -96,8 +97,9 @@ const aspectRatioMap: Record<string, { paddingTop: string; aspectRatio: string }
   '1:1': { paddingTop: '100%', aspectRatio: '1 / 1' },
 };
 
-const resolvedAspectRatio = aspectRatioMap[block.aspectRatio || '16:9'] || aspectRatioMap['16:9'];
-const title = block.title || 'Conteudo incorporado';
+const aspectRatio = stegaClean(block.aspectRatio || '16:9');
+const resolvedAspectRatio = aspectRatioMap[aspectRatio] || aspectRatioMap['16:9'];
+const title = stegaClean(block.title || 'Conteudo incorporado');
 ---
 
 <div
