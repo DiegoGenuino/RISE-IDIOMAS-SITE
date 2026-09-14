@@ -23,3 +23,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# local AI assistant permissions
+.claude/settings.local.json
+
+# local scratch and browser profiles
+.tmp-*/
