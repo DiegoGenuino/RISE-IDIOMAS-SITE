@@ -11,6 +11,8 @@ import Lenis from 'lenis';
 
 let lenis: Lenis | null = null;
 const listeners = new Set<() => void>();
+// Temporary switch: restore smooth scrolling by changing this back to `true`.
+const SMOOTH_SCROLL_ENABLED = false;
 
 export function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,6 +29,8 @@ export function getLenis(): Lenis | null {
 }
 
 export function initSmoothScroll(): Lenis | null {
+  if (!SMOOTH_SCROLL_ENABLED) return null;
+
   // Sem scroll sintético para quem pediu menos movimento: o browser conduz.
   if (prefersReducedMotion()) return null;
 
@@ -66,7 +70,10 @@ export function scrollToId(id: string): void {
   }
 
   const top = target.getBoundingClientRect().top + window.scrollY + offset;
-  window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  window.scrollTo({
+    top,
+    behavior: SMOOTH_SCROLL_ENABLED && !prefersReducedMotion() ? 'smooth' : 'auto',
+  });
 }
 
 export function stopScroll(): void {
