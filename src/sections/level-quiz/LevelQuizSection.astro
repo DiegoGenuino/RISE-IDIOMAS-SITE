@@ -10,7 +10,11 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   class="ds-dark bg-abyss relative overflow-hidden py-20 text-white lg:py-28"
   aria-labelledby="nivel-titulo"
 >
-  <div class="ds-grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
+  <div
+    class="ds-dots ds-dots-dark ds-dots-fade pointer-events-none absolute inset-0 opacity-75"
+    style="--dot-origin: 18% 48%;"
+    aria-hidden="true"
+  >
   </div>
 
   <div
@@ -18,8 +22,8 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   >
     <div class="ds-reveal flex flex-col gap-8">
       <SectionHeading
-        title="Descubra onde você está em 1 minuto"
-        lead="Seis perguntas — gramática, vocabulário de trabalho e produção oral. No fim você recebe o nível estimado na escala CEFR e a trilha da Rise que faz sentido para você."
+        title="Descubra sua faixa em 2 minutos"
+        lead="Dez perguntas combinam uso da língua e leitura com autoavaliação de escuta e interação. No fim você recebe uma faixa CEFR provável e uma trilha coerente com o seu objetivo."
         tone="dark"
         id="nivel-titulo"
       />
@@ -44,8 +48,8 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
       </div>
 
       <p class="text-abyss-ink/80 max-w-md text-sm leading-relaxed">
-        O resultado é orientativo e serve para começar a conversa no lugar certo. O diagnóstico
-        definitivo acontece na aula experimental, com um professor.
+        É uma triagem, não uma certificação. Fala, escrita e pronúncia são confirmadas na aula
+        experimental com um professor.
       </p>
     </div>
 

@@ -1,26 +1,22 @@
 import { useMemo, useState } from 'react';
-import { QUIZ_MAX_SCORE, quizSteps, resolveResult } from '../../data/quiz';
+import { quizSteps, resolveResult, type QuizAnswer, type QuizOption } from '../../data/quiz';
 import { ctaLinks } from '../../data/site';
 
 /**
- * Teste de nível em etapas.
- *
- * Ilha React isolada: todo o estado é local ao componente, portanto responder
- * uma pergunta não re-renderiza nada fora deste cartão. Hidratada com
- * `client:visible` — não custa nada até chegar à viewport.
+ * Triagem em etapas. O resultado combina itens objetivos com duas
+ * autoavaliações e deixa explícito o que ainda precisa ser observado.
  */
 export default function LevelQuiz() {
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [step, setStep] = useState(0);
 
   const finished = answers.length === quizSteps.length;
-  const score = useMemo(() => answers.reduce((total, value) => total + value, 0), [answers]);
-  const result = useMemo(() => resolveResult(score), [score]);
+  const result = useMemo(() => (finished ? resolveResult(answers) : null), [answers, finished]);
+  const progress = answers.length / quizSteps.length;
+  const current = quizSteps[step];
 
-  const progress = finished ? 1 : step / quizSteps.length;
-
-  function answer(value: number) {
-    const next = [...answers.slice(0, step), value];
+  function answer(option: QuizOption) {
+    const next = [...answers.slice(0, step), { stepId: current.id, value: option.value }];
     setAnswers(next);
     if (step < quizSteps.length - 1) setStep(step + 1);
   }
@@ -36,23 +32,20 @@ export default function LevelQuiz() {
     setStep(0);
   }
 
-  const current = quizSteps[step];
-
   return (
     <div className="bg-surface shadow-float relative overflow-hidden p-6 sm:p-8">
-      {/* Barra de progresso */}
       <div className="mb-6 flex items-center gap-4">
         <div
           className="bg-brand-soft h-1 flex-1 overflow-hidden rounded-full"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={quizSteps.length}
-          aria-valuenow={finished ? quizSteps.length : step}
+          aria-valuenow={answers.length}
           aria-label="Progresso do teste"
         >
           <span
             className="bg-brand block h-full origin-left rounded-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-            style={{ transform: `scaleX(${Math.max(progress, 0.03)})`, width: '100%' }}
+            style={{ transform: `scaleX(${Math.max(progress, 0.025)})`, width: '100%' }}
           />
         </div>
         <span className="ds-mono text-ink-muted shrink-0">
@@ -60,9 +53,9 @@ export default function LevelQuiz() {
         </span>
       </div>
 
-      {finished ? (
+      {finished && result ? (
         <div>
-          <span className="ds-mono text-brand">Resultado estimado</span>
+          <span className="ds-mono text-brand">Triagem orientativa</span>
 
           <div className="mt-3 flex flex-wrap items-baseline gap-3">
             <span className="text-ink font-mono text-3xl font-semibold tracking-tight">
@@ -78,9 +71,18 @@ export default function LevelQuiz() {
           <div className="bg-surface-alt ring-brand-soft/70 mt-6 p-5 ring-1 ring-inset">
             <span className="ds-mono text-ink-muted">Trilha recomendada</span>
             <p className="text-ink mt-2 text-lg font-semibold">{result.recommendLabel}</p>
-            <p className="text-ink-soft mt-1 text-sm">
-              Pontuação {score} de {QUIZ_MAX_SCORE}. O diagnóstico final é confirmado na aula
-              experimental.
+            <p className="text-ink-soft mt-1 text-sm leading-relaxed">{result.recommendReason}</p>
+          </div>
+
+          <div className="border-brand-soft/70 mt-4 border-t pt-4">
+            <span className="ds-mono text-ink-muted">Base da estimativa</span>
+            <p className="text-ink-soft mt-2 text-sm leading-relaxed">
+              {result.objectiveCorrect} de {result.objectiveTotal} itens objetivos · autoavaliação{' '}
+              {result.selfLevel} · consistência {result.consistency}.
+            </p>
+            <p className="text-ink-muted mt-1 text-xs leading-relaxed">
+              A confirmação exige conversa e produção escrita com um professor; este teste não
+              atribui C2.
             </p>
           </div>
 
@@ -108,12 +110,18 @@ export default function LevelQuiz() {
 
           <h3 className="text-ink mt-3 text-xl leading-snug font-semibold">{current.prompt}</h3>
 
+          {current.context && (
+            <p className="bg-brand-25 text-brand-deep ring-brand-soft/70 mt-4 p-4 font-mono text-sm leading-relaxed ring-1 ring-inset">
+              {current.context}
+            </p>
+          )}
+
           <ul className="mt-6 flex flex-col gap-2">
             {current.options.map((option) => (
-              <li key={option.label}>
+              <li key={option.value}>
                 <button
                   type="button"
-                  onClick={() => answer(option.score)}
+                  onClick={() => answer(option)}
                   className="group bg-surface-alt text-ink ring-brand-soft/70 hover:ring-brand flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left text-[0.9375rem] ring-1 transition-[background-color,box-shadow,transform] duration-200 ring-inset hover:-translate-y-px hover:bg-white hover:shadow-xs"
                 >
                   <span
