@@ -1,75 +1,155 @@
-﻿---
+---
 import riseLogo from '../../assets/shared/rise-logo.svg';
 import Button from '../ui/Button.astro';
 import { ctaLinks } from '../../data/site';
 ---
 
 <header class="blog-nav">
-  <div class="ds-shell blog-nav-inner">
-    <a href="/" class="blog-brand" aria-label="Rise Idiomas — início">
-      <img src={riseLogo.src} alt="" width="34" height="28" />
-      <span>Rise Idiomas</span>
-    </a>
-    <nav aria-label="Navegação principal">
-      <a href="/" class="home-link">Início</a>
-      <a href="/blog" aria-current="page">Blog</a>
-      <Button href={ctaLinks.trial} size="sm">Aula experimental</Button>
-    </nav>
+  <div class="ds-shell blog-nav-wrap">
+    <div class="blog-nav-surface">
+      <a href="/" class="blog-brand" aria-label="Rise Idiomas — início">
+        <img src={riseLogo.src} alt="" width="31" height="26" />
+        <span>Rise Idiomas</span>
+      </a>
+
+      <nav class="blog-nav-links" aria-label="Navegação principal">
+        <a href="/" class="blog-nav-link home-link">Início</a>
+        <a href="/blog" class="blog-nav-link" aria-current="page">Blog</a>
+        <Button href={ctaLinks.trial} size="sm" class="rounded-md! px-3.5!">
+          Agendar aula
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="ds-arrow"
+          >
+            <path d="M5 12h13M12 5l7 7-7 7"></path>
+          </svg>
+        </Button>
+      </nav>
+    </div>
   </div>
 </header>
+
 <style>
   .blog-nav {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--color-neutral-50);
+    padding-top: clamp(0.5rem, 1.2vw, 0.75rem);
   }
-  .blog-nav-inner {
-    min-height: 4.75rem;
+
+  .blog-nav-wrap {
+    position: relative;
+  }
+
+  .blog-nav-surface {
     display: flex;
+    height: 3.75rem;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.25rem;
+    padding: 0.375rem 0.5rem 0.375rem 0.875rem;
+    border: 1px solid color-mix(in srgb, var(--color-brand-100) 78%, transparent);
+    border-radius: 0.875rem;
+    background-color: color-mix(in srgb, var(--color-surface) 91%, transparent);
+    box-shadow:
+      0 12px 36px -16px rgb(6 27 49 / 0.2),
+      0 2px 8px rgb(6 27 49 / 0.05);
+    -webkit-backdrop-filter: blur(14px) saturate(1.35);
+    backdrop-filter: blur(14px) saturate(1.35);
   }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .blog-nav-surface {
+      background-color: var(--color-surface);
+    }
+  }
+
   .blog-brand {
-    display: flex;
+    display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     gap: 0.625rem;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
     color: var(--color-ink);
+    font-size: 0.875rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
   }
+
   .blog-brand img {
-    width: 2.125rem;
-    height: auto;
+    width: auto;
+    height: 1.5rem;
+    user-select: none;
+    transition: transform var(--dur-base) var(--ease-out-expo);
   }
-  nav {
+
+  .blog-brand:hover img {
+    transform: rotate(-4deg) scale(1.04);
+  }
+
+  .blog-nav-links {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+    gap: 0.25rem;
+  }
+
+  .blog-nav-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.6875rem;
     color: var(--color-ink-soft);
+    font-size: 0.8125rem;
+    font-weight: 520;
+    line-height: 1;
+    transition: color var(--dur-fast) var(--ease-out-expo);
   }
-  nav > a[aria-current] {
-    color: var(--color-brand);
+
+  .blog-nav-link::after {
+    content: '';
+    position: absolute;
+    right: 0.6875rem;
+    bottom: 0.2rem;
+    left: 0.6875rem;
+    height: 1px;
+    background-color: var(--color-brand);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-fast) var(--ease-out-expo);
   }
-  nav > a:hover {
-    color: var(--color-brand);
+
+  .blog-nav-link:hover,
+  .blog-nav-link[aria-current='page'] {
+    color: var(--color-ink);
   }
+
+  .blog-nav-link:hover::after,
+  .blog-nav-link:focus-visible::after,
+  .blog-nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
   @media (max-width: 600px) {
-    nav {
-      gap: 0.75rem;
-    }
     .home-link {
       display: none;
     }
   }
-  @media (max-width: 400px) {
+
+  @media (max-width: 440px) {
     .blog-brand span {
+      display: none;
+    }
+  }
+
+  @media (max-width: 350px) {
+    .blog-nav-link {
       display: none;
     }
   }

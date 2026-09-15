@@ -96,9 +96,6 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
     <main id="conteudo" class="ds-shell">
       <section class="page-header" aria-label="Cabeçalho do blog">
         <div class="ph-left">
-          <div class="ph-eyebrow">
-            <span class="ph-eline"></span>Artigos e Insights
-          </div>
           <h1 class="ph-hl">
             <span class="ph-hl-inner">Blog<span class="em">.</span></span>
           </h1>
@@ -300,9 +297,10 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
       }
 
       <div class="grid-header">
-        <div class="gh-label">
-          <span class="gh-line"></span>Artigos recentes
-        </div>
+        <h2 class="gh-title">
+          <span class="gh-orbit" aria-hidden="true"><span></span></span>
+          Artigos recentes
+        </h2>
         <span class="gh-count"
           ><span id="articles-count">{totalCountFormatted}</span> / artigos</span
         >
@@ -327,7 +325,9 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
 
       <section class="nl-strip" aria-label="Inscrição em newsletter">
         <div class="nl-left">
-          <div class="nl-label"><span></span>Newsletter</div>
+          <div class="nl-signal" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
           <div class="nl-hl">
             Conteúdo direto<br />no seu <span class="a">e-mail.</span>
           </div>
@@ -595,39 +595,23 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
   }
   .page-header {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(24rem, 0.9fr);
     align-items: end;
-    gap: 3rem;
-    padding-block: 5rem 3.5rem;
+    gap: clamp(2rem, 4vw, 4rem);
+    padding-block: clamp(4rem, 6vw, 6rem) clamp(3rem, 4vw, 4rem);
   }
   .ph-left {
     display: flex;
+    min-width: 0;
     flex-direction: column;
-    gap: 1.25rem;
-  }
-  .ph-eyebrow,
-  .gh-label,
-  .nl-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-eyebrow);
-    letter-spacing: 0.08em;
-    color: var(--color-brand);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .ph-eline,
-  .gh-line,
-  .nl-label > span {
-    width: 1.5rem;
-    height: 2px;
-    background: var(--color-brand);
+    justify-content: flex-end;
   }
   .ph-hl {
-    font-size: var(--text-hero);
-    line-height: var(--text-hero--line-height);
-    letter-spacing: var(--text-hero--letter-spacing);
-    font-weight: 600;
+    font-size: clamp(6rem, 12vw, 10.5rem);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    line-height: 0.84;
+    white-space: nowrap;
   }
   .ph-hl .em,
   .nl-hl .a {
@@ -640,8 +624,10 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
   }
   .ph-right {
     display: flex;
+    width: 100%;
     flex-direction: column;
     gap: 1.5rem;
+    padding-bottom: 0.35rem;
   }
   .ph-desc {
     font-size: var(--text-lead);
@@ -786,6 +772,48 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
     gap: 1rem;
     padding-block: 3.5rem 1.5rem;
   }
+  .gh-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-ink);
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+  }
+  .gh-orbit {
+    position: relative;
+    display: grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    place-items: center;
+    border: 1px solid var(--color-brand-100);
+    border-radius: 50%;
+  }
+  .gh-orbit::before {
+    content: '';
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--color-brand);
+  }
+  .gh-orbit > span {
+    position: absolute;
+    inset: -2px;
+    animation: gh-orbit-spin 3.6s linear infinite;
+  }
+  .gh-orbit > span::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    width: 0.25rem;
+    height: 0.25rem;
+    border-radius: 50%;
+    background: var(--color-aqua);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-aqua) 14%, transparent);
+    transform: translateX(-50%);
+  }
   .articles {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -828,8 +856,33 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
     background: var(--color-brand-25);
     border: 1px solid var(--color-brand-wash);
   }
-  .nl-label {
+  .nl-signal {
+    display: flex;
+    height: 1rem;
+    align-items: flex-end;
+    gap: 0.25rem;
     margin-bottom: 1rem;
+  }
+  .nl-signal span {
+    width: 0.25rem;
+    border-radius: 999px;
+    background: var(--color-brand);
+    animation: nl-signal-wave 1.8s var(--ease-inout) infinite alternate;
+  }
+  .nl-signal span:nth-child(1) {
+    height: 35%;
+  }
+  .nl-signal span:nth-child(2) {
+    height: 100%;
+    animation-delay: -0.45s;
+  }
+  .nl-signal span:nth-child(3) {
+    height: 58%;
+    animation-delay: -0.9s;
+  }
+  .nl-signal span:nth-child(4) {
+    height: 78%;
+    animation-delay: -1.35s;
   }
   .nl-hl {
     font-size: var(--text-title);
@@ -868,6 +921,19 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
   .nl-btn:hover {
     background: var(--color-brand-strong);
   }
+
+  @keyframes gh-orbit-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes nl-signal-wave {
+    to {
+      height: 30%;
+      opacity: 0.45;
+    }
+  }
   .nl-btn:disabled {
     opacity: 0.6;
     cursor: progress;
@@ -881,8 +947,16 @@ const totalCountFormatted = String(posts.length).padStart(3, '0');
   @media (max-width: 940px) {
     .page-header {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
-      padding-top: 3.5rem;
+      gap: 2.5rem;
+      padding-top: clamp(4rem, 12vw, 6.5rem);
+    }
+    .ph-hl {
+      font-size: clamp(4.75rem, 16vw, 7.5rem);
+      line-height: 0.86;
+    }
+    .ph-right {
+      max-width: 38rem;
+      padding-bottom: 0;
     }
     .articles {
       grid-template-columns: repeat(2, minmax(0, 1fr));
