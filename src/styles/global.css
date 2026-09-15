@@ -150,6 +150,12 @@
   --container-shell: 1264px;
   --container-prose: 1080px;
 
+  /* Dotted texture: quiet grid + sparse signal dots, inspired by Sanity's
+     technical surfaces. Components can override these locally. */
+  --pattern-dot-size: 1px;
+  --pattern-dot-gap: 24px;
+  --pattern-dot-signal-gap: 144px;
+
   /* Breakpoint da navegação, igual ao da Stripe */
   --breakpoint-nav: 940px;
 }
@@ -195,7 +201,45 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+    scrollbar-color: var(--color-brand-500) var(--color-neutral-50);
+    scrollbar-width: thin;
+  }
+
+  /* Scrollbar do produto: fina, legível e alinhada aos dois acentos da marca. */
+  html::-webkit-scrollbar {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  html::-webkit-scrollbar-track {
+    background-color: var(--color-neutral-50);
+  }
+
+  html::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    min-height: 3rem;
+    border: 3px solid transparent;
+    border-radius: 0;
+    background: linear-gradient(180deg, var(--color-brand-500), var(--color-ruby)) padding-box;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    border-width: 2px;
+    background: linear-gradient(180deg, var(--color-brand-600), #cf164f) padding-box;
+  }
+
+  html::-webkit-scrollbar-thumb:active {
+    background: var(--color-brand-700) padding-box;
+  }
+
+  html::-webkit-scrollbar-corner {
+    background-color: var(--color-neutral-50);
   }
 
   html.lenis,
@@ -237,7 +281,6 @@
 
   ::selection {
     background-color: color-mix(in srgb, var(--color-brand) 22%, transparent);
-    color: var(--color-brand-800);
   }
 
   :focus-visible {
@@ -316,6 +359,55 @@
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+
+/* Dotted fields are deliberately two-layered: the small neutral grid creates
+   rhythm, while one larger brand dot every six cells adds the "signal" that
+   keeps the texture from reading as generic graph paper. */
+@utility ds-dots {
+  --dot-color: color-mix(in srgb, var(--color-neutral-700) 24%, transparent);
+  --dot-signal: color-mix(in srgb, var(--color-brand) 72%, transparent);
+  --dot-gap: var(--pattern-dot-gap);
+  --dot-signal-gap: var(--pattern-dot-signal-gap);
+  --dot-origin: 50% 50%;
+  background-image:
+    radial-gradient(circle, var(--dot-signal) 0 1.5px, transparent 1.8px),
+    radial-gradient(
+      circle,
+      var(--dot-color) 0 var(--pattern-dot-size),
+      transparent calc(var(--pattern-dot-size) + 0.35px)
+    );
+  background-position:
+    calc(var(--dot-gap) * 2) var(--dot-gap),
+    0 0;
+  background-size:
+    var(--dot-signal-gap) var(--dot-signal-gap),
+    var(--dot-gap) var(--dot-gap);
+}
+
+@utility ds-dots-dark {
+  --dot-color: rgb(255 255 255 / 0.14);
+  --dot-signal: color-mix(in srgb, var(--color-aqua) 68%, transparent);
+}
+
+@utility ds-dots-dense {
+  --dot-gap: 18px;
+  --dot-signal-gap: 108px;
+}
+
+@utility ds-dots-fade {
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 74% at var(--dot-origin),
+    #000 4%,
+    rgb(0 0 0 / 0.9) 34%,
+    transparent 76%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 74% at var(--dot-origin),
+    #000 4%,
+    rgb(0 0 0 / 0.9) 34%,
+    transparent 76%
+  );
 }
 
 @utility ds-dashed {
