@@ -15,6 +15,7 @@ import Faq from '../sections/faq/Faq.astro';
 import CTA from '../sections/cta/CTA.astro';
 import Footer from '../sections/footer/Footer.astro';
 import WhatsAppFab from '../components/whatsapp-fab/WhatsAppFab.astro';
+import TrialInvite from '../components/ui/TrialInvite.astro';
 import Analytics from '@vercel/analytics/astro';
 
 import { courses } from '../data/courses';
@@ -97,6 +98,7 @@ const faqSchema = {
   </main>
 
   <Footer />
+  <TrialInvite />
   <WhatsAppFab />
   <Analytics />
 </BaseLayout>

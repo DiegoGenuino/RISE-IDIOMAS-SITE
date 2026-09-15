@@ -1,0 +1,390 @@
+---
+import { ctaLinks } from '../../data/site';
+---
+
+<aside
+  class="ds-trial-invite"
+  data-trial-invite
+  aria-labelledby="trial-invite-title"
+  aria-describedby="trial-invite-description"
+  inert
+>
+  <div class="ds-trial-pattern ds-dots ds-dots-dense" aria-hidden="true"></div>
+
+  <div class="ds-trial-topline">
+    <span class="ds-trial-status">
+      <span class="ds-trial-pulse" aria-hidden="true"></span>
+      Convite da Rise
+    </span>
+
+    <button type="button" class="ds-trial-close" data-trial-close aria-label="Fechar convite">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <path d="M6 6l12 12M18 6 6 18"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="ds-trial-copy">
+    <h2 id="trial-invite-title">Experimente uma aula antes de decidir.</h2>
+    <p id="trial-invite-description">
+      Conheça o método, fale com um professor e descubra o melhor ponto de partida para você.
+    </p>
+  </div>
+
+  <div class="ds-trial-actions">
+    <a
+      href={ctaLinks.trial}
+      class="ds-trial-cta"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-trial-cta
+    >
+      Agendar aula experimental
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 12h13M12 5l7 7-7 7"></path>
+      </svg>
+    </a>
+    <span>Sem compromisso</span>
+  </div>
+</aside>
+
+<style>
+  .ds-trial-invite {
+    position: fixed;
+    bottom: max(2rem, env(safe-area-inset-bottom));
+    left: max(1rem, calc((100vw - var(--container-shell)) / 2 + clamp(1rem, 4vw, 3rem)));
+    z-index: 60;
+    width: min(24rem, calc(100vw - 2rem));
+    overflow: hidden;
+    padding: 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-brand-100) 82%, transparent);
+    border-radius: 1rem;
+    background-color: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    box-shadow:
+      0 24px 70px -22px rgb(6 27 49 / 0.3),
+      0 4px 16px rgb(6 27 49 / 0.06);
+    -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    backdrop-filter: blur(18px) saturate(1.25);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, 1.25rem, 0) scale(0.96);
+    transform-origin: bottom left;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-fast) var(--ease),
+      transform var(--dur-base) var(--ease-out-expo),
+      visibility 0ms linear var(--dur-base);
+  }
+
+  .ds-trial-invite[data-visible] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0) scale(1);
+    visibility: visible;
+    transition:
+      opacity var(--dur-fast) var(--ease),
+      transform var(--dur-base) var(--ease-out-expo),
+      visibility 0ms linear;
+    animation: ds-trial-pop 0.72s var(--ease-out-expo) both;
+  }
+
+  .ds-trial-invite::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-brand), var(--color-aqua));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .ds-trial-invite[data-visible]::after {
+    animation: ds-trial-line 0.7s var(--ease-out-expo) 0.12s both;
+  }
+
+  .ds-trial-invite[data-visible] .ds-trial-topline,
+  .ds-trial-invite[data-visible] .ds-trial-copy,
+  .ds-trial-invite[data-visible] .ds-trial-actions {
+    animation: ds-trial-content 0.48s var(--ease-out-expo) both;
+  }
+
+  .ds-trial-invite[data-visible] .ds-trial-copy {
+    animation-delay: 0.08s;
+  }
+
+  .ds-trial-invite[data-visible] .ds-trial-actions {
+    animation-delay: 0.14s;
+  }
+
+  .ds-trial-pattern {
+    position: absolute;
+    top: -2rem;
+    right: -1.5rem;
+    width: 11rem;
+    height: 8rem;
+    opacity: 0.38;
+    -webkit-mask-image: radial-gradient(circle at 60% 30%, #000, transparent 70%);
+    mask-image: radial-gradient(circle at 60% 30%, #000, transparent 70%);
+    pointer-events: none;
+  }
+
+  .ds-trial-topline {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ds-trial-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ds-trial-pulse {
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background-color: var(--color-brand);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 32%, transparent);
+    animation: ds-trial-pulse 2.4s var(--ease) infinite;
+  }
+
+  .ds-trial-close {
+    display: grid;
+    width: 1.875rem;
+    height: 1.875rem;
+    place-items: center;
+    border-radius: 0.5rem;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+
+  .ds-trial-close:hover {
+    color: var(--color-ink);
+    background-color: var(--color-brand-25);
+  }
+
+  .ds-trial-copy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-top: 0.875rem;
+    padding-right: 1rem;
+  }
+
+  .ds-trial-copy h2 {
+    color: var(--color-ink);
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .ds-trial-copy p {
+    color: var(--color-ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .ds-trial-actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .ds-trial-actions > span {
+    color: var(--color-ink-muted);
+    font-size: 0.6875rem;
+  }
+
+  .ds-trial-cta {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-brand);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 650;
+    box-shadow: var(--shadow-brand);
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease-out-expo);
+  }
+
+  .ds-trial-cta:hover {
+    background-color: var(--color-brand-strong);
+    transform: translate3d(0, -1px, 0);
+  }
+
+  .ds-trial-cta svg {
+    transition: transform var(--dur-fast) var(--ease-out-expo);
+  }
+
+  .ds-trial-cta:hover svg {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  @keyframes ds-trial-pulse {
+    50% {
+      box-shadow: 0 0 0 0.375rem transparent;
+    }
+  }
+
+  @keyframes ds-trial-pop {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 1.5rem, 0) scale(0.94);
+    }
+    58% {
+      opacity: 1;
+      transform: translate3d(0, -0.25rem, 0) scale(1.012);
+    }
+    78% {
+      transform: translate3d(0, 0.1rem, 0) scale(0.997);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  @keyframes ds-trial-content {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.35rem, 0);
+    }
+  }
+
+  @keyframes ds-trial-line {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ds-trial-invite {
+      right: 0.75rem;
+      bottom: max(6rem, calc(5rem + env(safe-area-inset-bottom)));
+      left: 0.75rem;
+      width: auto;
+    }
+
+    .ds-trial-actions {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .ds-trial-cta {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  const invite = document.querySelector<HTMLElement>('[data-trial-invite]');
+  const closeButton = invite?.querySelector<HTMLButtonElement>('[data-trial-close]');
+  const cta = invite?.querySelector<HTMLAnchorElement>('[data-trial-cta]');
+  const storageKey = 'rise:trial-invite-seen:v2';
+  const engagementStartedAt = performance.now();
+  const minimumEngagementMs = 7000;
+
+  let isVisible = false;
+  let lastScrollY = window.scrollY;
+
+  const remember = () => {
+    try {
+      sessionStorage.setItem(storageKey, 'true');
+    } catch {
+      // Storage can be unavailable in strict privacy modes.
+    }
+  };
+
+  const wasSeen = () => {
+    try {
+      return sessionStorage.getItem(storageKey) === 'true';
+    } catch {
+      return false;
+    }
+  };
+
+  const hide = () => {
+    if (!invite || !isVisible) return;
+    isVisible = false;
+    invite.removeAttribute('data-visible');
+    remember();
+
+    window.setTimeout(() => {
+      if (!isVisible) invite.setAttribute('inert', '');
+    }, 500);
+  };
+
+  const show = () => {
+    if (!invite || isVisible || wasSeen()) return;
+    isVisible = true;
+    remember();
+    invite.removeAttribute('inert');
+    requestAnimationFrame(() => invite.setAttribute('data-visible', ''));
+    window.removeEventListener('scroll', handleScroll);
+  };
+
+  const handleScroll = () => {
+    const currentY = window.scrollY;
+    const threshold = Math.max(900, window.innerHeight * 1.15);
+    const isScrollingDown = currentY > lastScrollY;
+    const hasSpentTime = performance.now() - engagementStartedAt >= minimumEngagementMs;
+    lastScrollY = currentY;
+
+    if (isScrollingDown && currentY >= threshold && hasSpentTime) show();
+  };
+
+  if (invite && !wasSeen()) {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+  }
+
+  closeButton?.addEventListener('click', hide);
+  cta?.addEventListener('click', remember);
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isVisible) hide();
+  });
+</script>
