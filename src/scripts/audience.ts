@@ -38,6 +38,8 @@ export function initAudience(): void {
     root.dataset.audience = id;
 
     for (const shell of switches) {
+      shell.dataset.active = id;
+
       const options = Array.from(
         shell.querySelectorAll<HTMLButtonElement>('[data-audience-option]')
       );
@@ -54,11 +56,7 @@ export function initAudience(): void {
       if (!thumb) continue;
 
       if (!animate) thumb.style.transition = 'none';
-      thumb.style.setProperty('--thumb-w', `${active.offsetWidth}px`);
-      thumb.style.setProperty(
-        '--thumb-x',
-        `${active.offsetLeft - active.parentElement!.clientLeft - 4}px`
-      );
+      thumb.style.setProperty('--thumb-x', `${active.offsetLeft + active.offsetWidth / 2}px`);
 
       if (!animate) {
         // força um reflow único para que a transição volte a valer no próximo paint

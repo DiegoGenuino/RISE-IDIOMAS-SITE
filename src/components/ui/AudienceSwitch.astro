@@ -2,67 +2,304 @@
 import { audiences } from '../../data/site';
 
 interface Props {
-  /** `bar` = pílula compacta da navbar · `hero` = versão grande da dobra inicial */
+  /** `bar` = compact control · `hero` = primary control in the first fold */
   size?: 'bar' | 'hero';
   tone?: 'light' | 'dark';
   class?: string;
 }
 
 const { size = 'bar', tone = 'light', class: className = '' } = Astro.props;
-
-const isHero = size === 'hero';
-const shellTone =
-  tone === 'dark' ? 'bg-white/8 ring-white/15' : 'bg-surface-alt ring-brand-soft/70';
-const idleTone = tone === 'dark' ? 'text-abyss-ink' : 'text-ink-soft';
 ---
 
 <div
-  class={`ds-audience-switch relative inline-flex rounded-sm p-1 ring-1 ring-inset ${shellTone} ${className}`}
+  class={`ds-audience-switch ${className}`}
+  data-size={size}
+  data-tone={tone}
   role="tablist"
   aria-label="Escolha o perfil de conteúdo"
 >
+  <span class="ds-audience-rail" aria-hidden="true">
+    <span class="ds-audience-junction"></span>
+    <span class="ds-audience-thumb">
+      <span class="ds-audience-glow"></span>
+    </span>
+  </span>
+
   {
     audiences.map((audience) => (
       <button
         type="button"
         role="tab"
-        class:list={[
-          'ds-audience-option relative z-10 cursor-pointer rounded-xs font-semibold whitespace-nowrap transition-colors duration-200',
-          idleTone,
-          isHero ? 'px-4 py-2 text-sm sm:px-5 sm:text-[0.9375rem]' : 'px-3 py-1.5 text-[0.8125rem]',
-        ]}
+        class="ds-audience-option"
         data-audience-option={audience.id}
         aria-selected="false"
         aria-controls="audience-region"
       >
-        <span class="hidden sm:inline">{audience.label}</span>
-        <span class="sm:hidden">{audience.short}</span>
+        <span class="ds-audience-icon" aria-hidden="true">
+          {audience.id === 'tech' ? (
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="m7.2 6.1-3.7 3.9 3.7 3.9M12.8 6.1l3.7 3.9-3.7 3.9M11.4 4.6 8.6 15.4" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M10 2.8c.45 3.7 2.5 5.75 6.2 6.2-3.7.45-5.75 2.5-6.2 6.2C9.55 11.5 7.5 9.45 3.8 9 7.5 8.55 9.55 6.5 10 2.8Z" />
+              <path d="M15.7 2.8c.12 1.05.7 1.63 1.75 1.75-1.05.12-1.63.7-1.75 1.75-.12-1.05-.7-1.63-1.75-1.75 1.05-.12 1.63-.7 1.75-1.75Z" />
+            </svg>
+          )}
+        </span>
+
+        <span class="ds-audience-text">
+          <span class="ds-audience-full">{audience.label}</span>
+          <span class="ds-audience-short">{audience.short}</span>
+        </span>
       </button>
     ))
   }
-
-  <!-- Indicador deslizante: apenas transform, sem reflow -->
-  <span
-    class="ds-audience-thumb pointer-events-none absolute inset-y-1 left-1 rounded-xs bg-white shadow-xs"
-    aria-hidden="true"></span>
 </div>
 
 <style>
-  .ds-audience-thumb {
-    width: var(--thumb-w, 0);
-    transform: translate3d(var(--thumb-x, 0), 0, 0);
+  .ds-audience-switch {
+    --switch-accent: var(--color-brand);
+    position: relative;
+    isolation: isolate;
+    display: inline-grid;
+    grid-template-columns: repeat(2, auto);
+    column-gap: 1.25rem;
+    padding: 0 0 0.875rem;
+  }
+
+  .ds-audience-switch[data-active='young'] {
+    --switch-accent: var(--color-ruby);
+  }
+
+  .ds-audience-rail {
+    position: absolute;
+    right: 0.125rem;
+    bottom: 0.25rem;
+    left: 0.125rem;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-brand) 42%, transparent),
+      color-mix(in srgb, var(--color-brand-100) 64%, transparent) 44%,
+      color-mix(in srgb, var(--color-ruby) 24%, transparent) 56%,
+      color-mix(in srgb, var(--color-ruby) 44%, transparent)
+    );
+  }
+
+  .ds-audience-rail::before,
+  .ds-audience-rail::after {
+    position: absolute;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    content: '';
+    opacity: 0.5;
+    transform: translateY(-50%);
+  }
+
+  .ds-audience-rail::before {
+    left: 0;
+    color: var(--color-brand);
+  }
+
+  .ds-audience-rail::after {
+    right: 0;
+    color: var(--color-ruby);
+  }
+
+  .ds-audience-junction {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.375rem;
+    height: 0.375rem;
+    border: 1px solid color-mix(in srgb, var(--switch-accent) 52%, var(--color-surface));
+    background-color: var(--color-surface);
+    transform: translate(-50%, -50%) rotate(45deg);
     transition:
-      transform 0.35s var(--ease-out-expo),
-      width 0.35s var(--ease-out-expo);
+      border-color 0.35s var(--ease),
+      transform 0.65s var(--ease-out-expo);
+  }
+
+  .ds-audience-switch[data-active='young'] .ds-audience-junction {
+    transform: translate(-50%, -50%) rotate(135deg);
+  }
+
+  .ds-audience-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 2px solid var(--color-surface);
+    border-radius: 50%;
+    background-color: var(--switch-accent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--switch-accent) 38%, transparent),
+      0 3px 10px color-mix(in srgb, var(--switch-accent) 35%, transparent);
+    transform: translate3d(calc(var(--thumb-x, 0px) - 50%), -50%, 0);
+    transition:
+      transform 0.65s var(--ease-out-expo),
+      background-color 0.35s var(--ease),
+      box-shadow 0.35s var(--ease),
+      opacity var(--dur-fast) var(--ease);
     will-change: transform;
   }
 
-  /* Antes do JS medir os botões o indicador fica invisível para não piscar */
+  [data-tone='dark'] .ds-audience-thumb {
+    border-color: var(--color-abyss-deep);
+  }
+
+  .ds-audience-glow {
+    position: absolute;
+    inset: -0.375rem;
+    border-radius: 50%;
+    border: 1px solid var(--switch-accent);
+    opacity: 0;
+    animation: ds-audience-signal 2.4s var(--ease-out-expo) infinite;
+  }
+
   .ds-audience-switch:not([data-ready]) .ds-audience-thumb {
     opacity: 0;
   }
 
+  .ds-audience-option {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.125rem;
+    border-radius: 0;
+    color: var(--color-ink-soft);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    opacity: 0.64;
+    transition:
+      color 0.35s var(--ease),
+      opacity 0.35s var(--ease),
+      transform 0.45s var(--ease-out-expo);
+  }
+
+  [data-size='bar'] .ds-audience-option {
+    min-height: 1.75rem;
+    font-size: 0.75rem;
+  }
+
+  [data-size='hero'] .ds-audience-option {
+    min-height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .ds-audience-option:hover:not([aria-selected='true']) {
+    color: var(--color-ink);
+    opacity: 0.9;
+    transform: translate3d(0, -2px, 0);
+  }
+
   .ds-audience-option[aria-selected='true'] {
-    color: var(--color-brand-deep);
+    color: color-mix(in srgb, var(--switch-accent) 76%, var(--color-ink));
+    opacity: 1;
+  }
+
+  [data-tone='dark'] .ds-audience-option {
+    color: var(--color-abyss-ink);
+  }
+
+  [data-tone='dark'] .ds-audience-option[aria-selected='true'] {
+    color: #fff;
+  }
+
+  .ds-audience-icon {
+    display: grid;
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    place-items: center;
+    color: currentColor;
+    opacity: 0.62;
+    transform: scale(0.92);
+    transition:
+      opacity 0.35s var(--ease),
+      transform 0.55s var(--ease-out-expo);
+  }
+
+  [data-size='hero'] .ds-audience-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .ds-audience-icon svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ds-audience-option[aria-selected='true'] .ds-audience-icon {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  [data-audience-option='tech'][aria-selected='true'] .ds-audience-icon {
+    transform: scale(1) rotate(-3deg);
+  }
+
+  [data-audience-option='young'][aria-selected='true'] .ds-audience-icon {
+    transform: scale(1.08) rotate(8deg);
+  }
+
+  @keyframes ds-audience-signal {
+    0% {
+      opacity: 0.48;
+      transform: scale(0.45);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.55);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-audience-glow {
+      animation: none;
+    }
+  }
+
+  .ds-audience-short {
+    display: none;
+  }
+
+  @media (max-width: 420px) {
+    .ds-audience-switch {
+      column-gap: 0.875rem;
+    }
+
+    [data-size='bar'] .ds-audience-full {
+      display: none;
+    }
+
+    [data-size='bar'] .ds-audience-short {
+      display: inline;
+    }
+  }
+
+  @media (max-width: 360px) {
+    [data-size='hero'] .ds-audience-full {
+      display: none;
+    }
+
+    [data-size='hero'] .ds-audience-short {
+      display: inline;
+    }
   }
 </style>
